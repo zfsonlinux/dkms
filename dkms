@@ -326,6 +326,7 @@ function override_dest_module_location()
 	fc[12345]) ;;
         el[1234]) ;;
 	sles[123456789]) ;;
+	sles10) ;;
 	suse[123456789]) ;;
 	suse10\.[01]) ;;
 	fc*) echo "/extra" && return ;;
@@ -2272,7 +2273,7 @@ make_suse_driver_disk()
 			cp -f "$driver_disk_dir/$topdir/$arch_release/install/update.tar.gz" "$driver_disk_dir/$topdir/linux/$distro/$arch_release/install/"
 			if [ -d "$driver_disk_dir/$topdir/$arch_release/modules/" ]; then
 				echo $"  copying kernel modules for installation kernel to disk image..."
-				cp -f "$driver_disk_dir/$topdir/$arch_release/modules/*" "$driver_disk_dir/$topdir/linux/$distro/$arch_release/modules/" 2>/dev/null
+				cp -f $driver_disk_dir/$topdir/$suse_arch-$release/modules/* $driver_disk_dir/$topdir/linux/$distro/$arch_release/modules/ 2>/dev/null
 			else
 				echo $"  Warning! No kernel modules found for -default kernel."
 			fi
