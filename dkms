@@ -1247,6 +1247,11 @@ function install_module()
 	fi
     fi
 
+    # Notify udev if we installed something for the currently running kernel
+    if [ -x /sbin/udevtrigger -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
+	/sbin/udevtrigger
+    fi
+
     echo $""
     echo $"DKMS: install Completed."
 }
@@ -1451,9 +1456,9 @@ function possible_dest_module_locations()
     # override_dest_module_location() is what controls whether or not they're the same.
 
     local location
-    location[0]="${DEST_MODULE_LOCATION[$count]}"
-    [ "${location[0]}" != "${dest_module_location[$count]}" ] && \
-	location[1]="${dest_module_location[$count]}"
+    location[0]="${dest_module_location[$count]}"
+    [ "${DEST_MODULE_LOCATION[$count]}" != "${dest_module_location[$count]}" ] && \
+	location[1]="${DEST_MODULE_LOCATION[$count]}"
 
     echo "${location[0]} ${location[1]}"
 }
@@ -1580,6 +1585,9 @@ function do_uninstall()
     # Re-add entries to modules.conf if this module/version is still installed on another kernel
     # But only do this if it was just ACTIVE on the kernel we just uninstalled from
     [ -n "$was_active" ] && [ -n "$remake_initrd" ] && $0 status -m $module -v $module_version | grep -q "installed" && moduleconfig_add "$1"
+
+    # Run depmod because we changed /lib/modules
+    invoke_command "depmod -a ${kernelver_array[0]}" "depmod" background
 
     echo $""
     echo $"DKMS: uninstall Completed."
