@@ -1,3 +1,9 @@
+dkms (2.0.17.4-0ubuntu3) hardy; urgency=low
+
+  * dkms: call udevadm instead of udevtrigger
+
+ -- Scott James Remnant <scott@ubuntu.com>  Fri, 14 Dec 2007 16:15:13 +0000
+
 dkms (2.0.17.4-0ubuntu2) gutsy; urgency=low
 	
   * Correct DKMS file install/uninstall problems  (LP: #151644)

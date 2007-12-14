@@ -1248,8 +1248,8 @@ function install_module()
     fi
 
     # Notify udev if we installed something for the currently running kernel
-    if [ -x /sbin/udevtrigger -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
-	/sbin/udevtrigger
+    if [ -x /sbin/udevadm trigger -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
+	/sbin/udevadm trigger
     fi
 
     echo $""
