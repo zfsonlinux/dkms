@@ -157,7 +157,7 @@ function setup_kernels_arches ()
 	    arch_array[$i]=`echo $line | awk {'print $4'} | sed 's/:$//'`
 	    i=$(($i + 1))
 	done < <($0 status -m "$module" -v "$module_version" 2>/dev/null | \
-		 egrep "built|installed")
+		 egrep "built|installed" | egrep -v 'installed-weak')
     fi
 
     # Set default kernel version and arch, if none set (but only --all isn't set)
@@ -1249,7 +1249,9 @@ function install_module()
 
     # Notify udev if we installed something for the currently running kernel
     if [ -x /sbin/udevadm -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
-	/sbin/udevadm trigger
+       /sbin/udevadm trigger
+    elif [ -x /sbin/udevtrigger -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
+	/sbin/udevtrigger
     fi
 
     echo $""
@@ -3315,7 +3317,7 @@ while [ $# -gt 0 ]; do
 	    exec >/dev/null 2>&1
 	    ;;
 	--version|-V)
-	    echo $"dkms: 2.0.17.4"
+	    echo $"dkms: 2.0.17.6"
 	    exit 0
 	    ;;
 	--no-prepare-kernel)
