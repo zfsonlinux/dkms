@@ -1,8 +1,8 @@
 Summary: Dynamic Kernel Module Support Framework
 Name: dkms
-Version: 2.0.17.6
+Version: 2.0.19
 Release: 1%{?dist}
-License: GPL
+License: GPLv2+
 Group: System Environment/Base
 BuildArch: noarch
 Requires: sed gawk findutils modutils tar cpio gzip grep mktemp
@@ -90,13 +90,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/%{name}
 %{_localstatedir}/lib/%{name}
 /etc/init.d/dkms_autoinstaller
-%{_prefix}/lib/dkms/*
+%{_prefix}/lib/%{name}
 %{_mandir}/*/*
+%config(noreplace) %{_sysconfdir}/%{name}
 %doc sample.spec sample.conf AUTHORS COPYING README.dkms
 %doc sample-suse-9-mkkmp.spec sample-suse-10-mkkmp.spec
-%dir %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/%{name}/framework.conf
-%config(noreplace) %{_sysconfdir}/%{name}/template-dkms-mkrpm.spec
+# these dirs are for plugins - owned by other packages
+%{_sysconfdir}/kernel/postinst.d/%{name}
+%{_sysconfdir}/kernel/prerm.d/%{name}
 %{_sysconfdir}/bash_completion.d/%{name}
 
 %post
@@ -109,6 +110,24 @@ rm -rf $RPM_BUILD_ROOT
 [ $1 -lt 1 ] && /sbin/chkconfig dkms_autoinstaller off ||:
 
 %changelog
+* Tue Mar 25 2008 Matt Domsch <Matt_Domsch@dell.com> 2.0.19
+- fix dkms.spec file/dir ownerships yet again
+
+* Thu Mar 20 2008 Matt Domsch <Matt_Domsch@dell.com> 2.0.18
+- don't include dist/ in tarball
+- use /etc/kernel/{prerm,postinst}.d/dkms in RPMs now too
+- mkrpm: display rpmbuild log on error, write RPMs to $dkms_tree/$module/$module_version/rpm
+- clarify license in spec to GPLv2+
+
+* Fri Feb 15 2008 Matt Domsch <Matt_Domsch@dell.com> 2.0.17.6
+- call udevadm trigger instead of udevtrigger for newer udev (Launchpad #192241)
+- omit installed-weak modules from remove --all (Red Hat BZ#429410)
+
+* Wed Oct 10 2007 Matt Domsch <Matt_Domsch@dell.com> 2.0.17.5
+- call udevtrigger if we install a module for the currently running kernel
+- uninstall from /extra before DEST_MODULE_LOCATION (Red Hat BZ#264981)
+- Run depmod after uninstall
+
 * Wed Sep 19 2007 Matt Domsch <Matt_Domsch@dell.com> 2.0.17.4
 - upgrade to latest upstream
 

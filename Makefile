@@ -1,8 +1,8 @@
-RELEASE_DATE := "15-Feb-2008"
+RELEASE_DATE := "25-Mar-2008"
 RELEASE_MAJOR := 2
 RELEASE_MINOR := 0
-RELEASE_SUBLEVEL := 17
-RELEASE_EXTRALEVEL := .6
+RELEASE_SUBLEVEL := 19
+RELEASE_EXTRALEVEL :=
 RELEASE_NAME := dkms
 RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
 RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)
@@ -47,7 +47,9 @@ install:
 	gzip -c -9 dkms.8 > $(MAN)/dkms.8.gz
 	chmod 0644 $(MAN)/dkms.8.gz
 	touch --reference=dkms.8 $(MAN)/dkms.8.gz
-
+	mkdir   -p -m 0755 $(KCONF)/prerm.d $(KCONF)/postinst.d
+	install -p -m 0755 kernel_prerm.d_dkms  $(KCONF)/prerm.d/dkms
+	install -p -m 0755 kernel_postinst.d_dkms $(KCONF)/postinst.d/dkms
 
 DOCFILES=sample.spec sample.conf AUTHORS COPYING README.dkms sample-suse-9-mkkmp.spec sample-suse-10-mkkmp.spec
 
@@ -66,10 +68,8 @@ install-doc:
 	install -p -m 0644 $(DOCFILES) $(DOCDIR)
 
 install-ubuntu: install copy-init install-doc
-	mkdir   -p -m 0755 $(KCONF)/prerm.d $(KCONF)/postinst.d $(KCONF)/header_postinst.d
-	install -p -m 0755 debian/kernel_prerm.d_dkms  $(KCONF)/prerm.d/dkms
-	install -p -m 0755 debian/kernel_postinst.d_dkms $(KCONF)/postinst.d/dkms
-	install -p -m 0755 debian/kernel_postinst.d_dkms $(KCONF)/header_postinst.d/dkms
+	mkdir   -p -m 0755 $(KCONF)/header_postinst.d
+	install -p -m 0755 kernel_postinst.d_dkms $(KCONF)/header_postinst.d/dkms
 	mkdir   -p -m 0755 $(ETC)/template-dkms-mkdeb/debian
 	install -p -m 0664 template-dkms-mkdeb/Makefile $(ETC)/template-dkms-mkdeb/
 	install -p -m 0664 template-dkms-mkdeb/debian/* $(ETC)/template-dkms-mkdeb/debian/
