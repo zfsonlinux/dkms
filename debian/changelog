@@ -1,3 +1,10 @@
+dkms (2.0.19-0ubuntu2) hardy; urgency=low
+
+  * Depend on awk instead of gawk.  All variants of awk provide the
+    currently required functionality.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 26 Mar 2008 16:51:33 -0500
+
 dkms (2.0.19-0ubuntu1) hardy; urgency=low
 
   * New upstream version.
