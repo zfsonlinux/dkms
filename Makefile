@@ -1,11 +1,13 @@
-RELEASE_DATE := "25-Mar-2008"
+RELEASE_DATE := "27-June-2008"
 RELEASE_MAJOR := 2
 RELEASE_MINOR := 0
-RELEASE_SUBLEVEL := 19
-RELEASE_EXTRALEVEL :=
+RELEASE_SUBLEVEL := 20
+RELEASE_EXTRALEVEL := .0
 RELEASE_NAME := dkms
 RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
 RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)
+DIST := intrepid
+SHELL=bash
 
 SBIN = $(DESTDIR)/usr/sbin
 ETC = $(DESTDIR)/etc/dkms
@@ -23,10 +25,10 @@ TOPDIR := $(shell pwd)
 
 .PHONY = tarball
 
-all:
+all: clean tarball rpm debs
 
 clean:
-	-rm -f dkms-*.tar.gz dkms-*.src.rpm dkms-*.noarch.rpm *~ dist/
+	-rm -rf *~ dist/ dkms-freshmeat.txt
 
 clean-dpkg: clean
 	rm -f debian/dkms_autoinstaller.init
@@ -71,6 +73,7 @@ install-ubuntu: install copy-init install-doc
 	mkdir   -p -m 0755 $(KCONF)/header_postinst.d
 	install -p -m 0755 kernel_postinst.d_dkms $(KCONF)/header_postinst.d/dkms
 	mkdir   -p -m 0755 $(ETC)/template-dkms-mkdeb/debian
+	ln -s template-dkms-mkdeb $(ETC)/template-dkms-mkdsc
 	install -p -m 0664 template-dkms-mkdeb/Makefile $(ETC)/template-dkms-mkdeb/
 	install -p -m 0664 template-dkms-mkdeb/debian/* $(ETC)/template-dkms-mkdeb/debian/
 	rm $(DOCDIR)/COPYING*
@@ -90,8 +93,9 @@ $(TARBALL):
 	find $${tmp_dir}/$(RELEASE_STRING) -depth -name \*~ -type f -exec rm -f \{\} \; ; \
 	find $${tmp_dir}/$(RELEASE_STRING) -depth -name dkms\*.rpm -type f -exec rm -f \{\} \; ; \
 	find $${tmp_dir}/$(RELEASE_STRING) -depth -name dkms\*.tar.gz -type f -exec rm -f \{\} \; ; \
+	find $${tmp_dir}/$(RELEASE_STRING) -depth -name dkms-freshmeat.txt -type f -exec rm -f \{\} \; ; \
 	sync ; sync ; sync ; \
-	tar cvzf $(TARBALL) -C $${tmp_dir} $(RELEASE_STRING) ; \
+	tar cvzf $(TARBALL) -C $${tmp_dir} $(RELEASE_STRING) --exclude debian; \
 	rm -rf $${tmp_dir} ;
 
 
@@ -103,43 +107,26 @@ rpm: $(TARBALL) dkms.spec
 	pushd $${tmp_dir} > /dev/null 2>&1; \
 	rpmbuild -ba --define "_topdir $${tmp_dir}" SPECS/dkms.spec ; \
 	popd > /dev/null 2>&1; \
-	cp $${tmp_dir}/RPMS/noarch/* $${tmp_dir}/SRPMS/* . ; \
+	cp $${tmp_dir}/RPMS/noarch/* $${tmp_dir}/SRPMS/* dist ; \
 	rm -rf $${tmp_dir}
 
-# This is required to ensure DIST is set when necessary
-NEEDS_DIST = 0
-ifeq ($(MAKECMDGOALS),deb)
-  NEEDS_DIST = 1
-endif
-ifeq ($(MAKECMDGOALS),sdeb)
-  NEEDS_DIST = 1
-endif
-
-ifeq ($(NEEDS_DIST), 1)
-  ifndef DIST
-  $(error "Must set DIST={gutsy,hardy,sid,...} for deb and sdeb targets")
-  endif
-endif
-
-
 debmagic: $(TARBALL)
-	[ -n "$$DEB_TMP_BUILDDIR" ] || (echo "Must set DEB_TMP_BUILDDIR=/tmp/... for deb and sdeb targets"; exit 1)
-	[ -n "$$DIST" ] || (echo "Must set DIST={gutsy,hardy,sid,...} for deb and sdeb targets"; exit 1)
-	[ -n "$$DIST" ] || echo "Remember to set DISTTAG='~gutsy1' for deb and sdeb targets for backports"
-	mkdir -p dist/$(DIST)
+	mkdir -p dist/
 	cp $(TARBALL) $(DEB_TMP_BUILDDIR)/$(RELEASE_NAME)_$(RELEASE_VERSION).orig.tar.gz
 	tar -C $(DEB_TMP_BUILDDIR) -xzf $(TARBALL)
-	cp -ar pkg/debian $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian
+	cp -ar debian $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian
 	chmod +x $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/rules
-	sed -e "s/#DISTTAG#/$(DISTTAG)/g" -e "s/#DIST#/$(DIST)/g" $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/changelog.in > $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/changelog 
-	rm $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/changelog.in 
+	#only change the first (which is assumingly the header)
+	sed -i -e "s/RELEASE_VERSION/$(RELEASE_VERSION)/; s/UNRELEASED/$(DIST)/" $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/changelog
 	cd $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING) ; \
-	pdebuild --use-pdebuild-internal --buildresult $(TOPDIR)/dist/$(DIST) ; \
 	dpkg-buildpackage -D -S -sa -rfakeroot ; \
-	mv ../$(RELEASE_NAME)_* $(TOPDIR)/dist/$(DIST) ; \
+	mv ../$(RELEASE_NAME)_* $(TOPDIR)/dist/ ; \
 	cd -
 
 debs:
-	tmp_dir=`mktemp -d /tmp/firmware-tools.XXXXXXXX` ; \
-	make debmagic DEB_TMP_BUILDDIR=$${tmp_dir} DIST=$(DIST) DISTTAG=$(DISTTAG) ; \
+	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
+	make debmagic DEB_TMP_BUILDDIR=$${tmp_dir} DIST=$(DIST); \
 	rm -rf $${tmp_dir}
+
+fm:
+	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms-freshmeat.txt.in > dkms-freshmeat.txt

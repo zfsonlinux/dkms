@@ -1,3 +1,26 @@
+dkms (2.0.20.0-0ubuntu1) intrepid; urgency=low
+
+  [ Matt Domsch ]
+  *  depmod on uninstall before mkinitrd, depmod fix & cleanups
+  *  find_module_from_ko() could incorrectly return multiple values
+  * RPM:
+    - fix file/dir ownerships in dkms.spec
+  * use 'date -R' in mkdeb creating debian/changelog
+  * RPM:
+    - use /etc/kernel/{prerm,postinst}.d/dkms in RPMs now too
+    - mkrpm: display rpmbuild log on error, write RPMs $dkms_tree
+    - clarify license in spec to GPLv2+
+
+  [ Mario Limonciello ]
+  * Add support for OBSOLETE_BY to DKMS.
+  * debian/rules:
+    - Redo to use CDBS
+    - Add get-orig-source target rule.
+  * debian/control:
+    - Build depend on cdbs now
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Mon, 07 Jul 2008 18:12:07 -0500
+
 dkms (2.0.19-0ubuntu2) hardy; urgency=low
 
   * Depend on awk instead of gawk.  All variants of awk provide the
