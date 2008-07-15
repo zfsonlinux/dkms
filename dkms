@@ -564,10 +564,12 @@ function read_conf ()
     index=0
     count=0
     while [ "$index" -lt ${#PATCH[@]} ]; do
-	if [ -z "${PATCH_MATCH[$index]}" ] || \
-	    echo $1 | egrep -q "${PATCH_MATCH[$index]}"; then
-	    patch_array[$count]="${PATCH[$index]}"
-	    count=$(($count+1))
+	if [ -n "${PATCH[$index]}" ]; then
+		if [ -z "${PATCH_MATCH[$index]}" ] || \
+		    echo $1 | egrep -q "${PATCH_MATCH[$index]}"; then
+		    patch_array[$count]="${PATCH[$index]}"
+		    count=$(($count+1))
+		fi
 	fi
 	index=$(($index+1))
     done
@@ -3418,7 +3420,7 @@ while [ $# -gt 0 ]; do
         exec >/dev/null 2>&1
         ;;
     --version|-V)
-        echo $"dkms: 2.0.20.1"
+        echo $"dkms: 2.0.20.2"
         exit 0
         ;;
     --no-prepare-kernel)
