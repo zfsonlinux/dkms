@@ -707,6 +707,7 @@ function moduleconfig_add ()
 
     local temp_dir_name=`mktemp -d $tmp_location/dkms.XXXXXX`
     modconfig_files=""
+    [ -e /etc/modprobe.d/dkms ] && modconfig_files="/etc/modprobe.d/dkms"
     [ -e /etc/modules.conf ] && modconfig_files="/etc/modules.conf"
     [ -e /etc/modprobe.conf ] && modconfig_files="$modconfig_files /etc/modprobe.conf"
 
@@ -2233,14 +2234,10 @@ make_redhat_driver_disk()
     for f in $(echo -e ${modules_cgz_list}); do
 	module_wo_suffix=$(basename ${f} ${module_suffix})
 	tmp_alias="./modules.alias.${module_wo_suffix}"
+	f="./${f}"
 	depmod -n ${f} 2>/dev/null | grep ^alias > ${tmp_alias}
 	if [ -s ${tmp_alias} ]; then
 	    cat ${tmp_alias} >> ./modules.alias
-	else
-	    modinfo ${f} 2>/dev/null | grep ^alias: | xargs printf "%s %s ${module_wo_suffix}\n" > ${tmp_alias}
-	    if [ -s ${tmp_alias} ]; then
-		cat ${tmp_alias} >> ./modules.alias
-	    fi
 	fi
     done
     [ -e ./modules.alias ] && cp -f ./modules.alias "$driver_disk_dir/"
@@ -3423,7 +3420,7 @@ while [ $# -gt 0 ]; do
         exec >/dev/null 2>&1
         ;;
     --version|-V)
-        echo $"dkms: 2.0.20.3"
+        echo $"dkms: 2.0.20.4"
         exit 0
         ;;
     --no-prepare-kernel)
