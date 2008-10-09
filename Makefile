@@ -1,8 +1,8 @@
-RELEASE_DATE := "28-August-2008"
+RELEASE_DATE := "22-January-2009"
 RELEASE_MAJOR := 2
 RELEASE_MINOR := 0
-RELEASE_SUBLEVEL := 20
-RELEASE_EXTRALEVEL := .4
+RELEASE_SUBLEVEL := 21
+RELEASE_EXTRALEVEL := .0
 RELEASE_NAME := dkms
 RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
 RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)
@@ -31,10 +31,10 @@ clean:
 	-rm -rf *~ dist/ dkms-freshmeat.txt
 
 clean-dpkg: clean
-	rm -f debian/dkms_autoinstaller.init
+	rm -f debian/dkms.dkms_autoinstaller.init
 
 copy-init:
-	install -m 755 dkms_autoinstaller debian/dkms_autoinstaller.init
+	install -m 755 dkms_autoinstaller debian/dkms.dkms_autoinstaller.init
 
 install:
 	mkdir -m 0755 -p $(VAR) $(SBIN) $(MAN) $(INITD) $(ETC) $(BASHDIR)
