@@ -367,6 +367,8 @@ function read_conf ()
     CLEAN=""
     REMAKE_INITRD=""
     remake_initrd=""
+    UDEV_TRIGGER=""
+    udev_trigger="no"
     PACKAGE_NAME=""
     PACKAGE_VERSION=""
     POST_ADD=""
@@ -577,6 +579,9 @@ function read_conf ()
     # Set remake_initrd
     [ `echo "$REMAKE_INITRD" | grep -ic "^y"` -gt 0 ] && remake_initrd="yes"
 
+    # Set udev_trigger
+    [ `echo "$UDEV_TRIGGER" | grep -ic "^n"` -gt 0 ] && udev_trigger="no"
+
     # Set build_exclude
     if [ -n "$BUILD_EXCLUSIVE_KERNEL" ]; then
 	echo $1 | egrep -q "$BUILD_EXCLUSIVE_KERNEL" || build_exclude="yes"
@@ -615,20 +620,19 @@ function check_version_sanity ()
     # $1 = kernel_version
     # $2 = arch
     # $3 = obs by kernel version
+    # $4 = dest_module_name
 
     local lib_tree="$install_tree/$1"
-    local count=0
     echo $"Running module version sanity check."
-    while [ "$count" -lt ${#built_module_name[@]} ]; do
-	local module_count=`find $lib_tree -name ${dest_module_name[$count]}$module_suffix | wc -l | awk {'print $1'}`
+	local module_count=`find $lib_tree -name ${4}$module_suffix | wc -l | awk {'print $1'}`
 	if [ $module_count -gt 1 ]; then
-	    echo $"Warning! Cannot do version sanity checking because multiple ${dest_module_name[$count]}$module_suffix" >&2
+	    echo $"Warning! Cannot do version sanity checking because multiple ${4}$module_suffix" >&2
 	    echo $"modules were found in kernel $1." >&2
 	elif [ $module_count -eq 1 ]; then
-	    local kernels_module=`find $lib_tree -name ${dest_module_name[$count]}$module_suffix`
+	    local kernels_module=`find $lib_tree -name ${4}$module_suffix`
 	    local kernels_ver_string=`modinfo $kernels_module | grep "^version:"`
 	    local kernels_ver_value=`echo $kernels_ver_string | awk {'print $2'}`
-	    local dkms_module="$dkms_tree/$module/$module_version/$1/$2/module/${dest_module_name[$count]}$module_suffix"
+	    local dkms_module="$dkms_tree/$module/$module_version/$1/$2/module/${4}$module_suffix"
 	    local dkms_ver_string=`modinfo $dkms_module | grep "^version:"`
 	    local dkms_ver_value=`echo $dkms_ver_string | awk {'print $2'}`
 
@@ -645,21 +649,21 @@ function check_version_sanity ()
 	    if [ -n "$kernels_ver_checksum" -a -n "$dkms_ver_checksum" -a \
 		    "$kernels_ver_checksum" == "$dkms_ver_checksum" -a -z "$force" ]; then
 		echo $"" >&2
-		echo $"Good news! Module version $dkms_ver_value for ${dest_module_name[$count]}$module_suffix" >&2
+		echo $"Good news! Module version $dkms_ver_value for ${4}$module_suffix" >&2
 		echo $"exactly matches what is already found in kernel $1." >&2
 		echo $"DKMS will not replace this module." >&2
 		echo $"You may override by specifying --force." >&2
-		exit 101
+		return 1
 	    fi
 
 	    if [ -n "$kernels_ver_value" -a -n "$dkms_ver_value" ]; then
 		if [[ ! ( $(VER $dkms_ver_value) > \
 		          $(VER $kernels_ver_value) ) && -z "$force" ]]; then
 		    echo $"" >&2
-		    echo $"Error! Module version $dkms_ver_value for ${dest_module_name[$count]}$module_suffix" >&2
+		    echo $"Error! Module version $dkms_ver_value for ${4}$module_suffix" >&2
 		    echo $"is not newer than what is already found in kernel $1 ($kernels_ver_value)." >&2
 		    echo $"You may override by specifying --force." >&2
-		    exit 101
+		    return 1
 		fi
 	    fi
 
@@ -693,11 +697,10 @@ function check_version_sanity ()
 			echo $"in kernel $3.  We will avoid installing" >&2
 			echo $"for future kernels above $3." >&2
 			echo $"You may override by specifying --force." >&2
-			exit 101
+			return 1
 		fi
 	fi
-	count=$(($count + 1))
-    done
+    return 0
 }
 
 
@@ -708,7 +711,7 @@ function moduleconfig_add ()
     local temp_dir_name=`mktemp -d $tmp_location/dkms.XXXXXX`
     modconfig_files=""
     [ -e /etc/modprobe.d/dkms ] && modconfig_files="/etc/modprobe.d/dkms"
-    [ -e /etc/modules.conf ] && modconfig_files="/etc/modules.conf"
+    [ -e /etc/modules.conf ] && modconfig_files="$modconfig_files /etc/modules.conf"
     [ -e /etc/modprobe.conf ] && modconfig_files="$modconfig_files /etc/modprobe.conf"
 
     for moduleconfig in $modconfig_files; do
@@ -776,7 +779,8 @@ function moduleconfig_remove ()
 
     local temp_dir_name=`mktemp -d $tmp_location/dkms.XXXXXX`
     modconfig_files=""
-    [ -e /etc/modules.conf ] && modconfig_files="/etc/modules.conf"
+    [ -e /etc/modprobe.d/dkms ] && modconfig_files="/etc/modprobe.d/dkms"
+    [ -e /etc/modules.conf ] && modconfig_files="$modconfig_files /etc/modules.conf"
     [ -e /etc/modprobe.conf ] && modconfig_files="$modconfig_files /etc/modprobe.conf"
 
     for moduleconfig in $modconfig_files; do
@@ -1159,27 +1163,31 @@ function install_module()
 	force="true"
     fi
 
-    # Check this version against what is already in the kernel
-    check_version_sanity "${kernelver_array[0]}" "${arch_array[0]}" "$obsolete_by"
-
-    # Run the pre_install script
-    if [ -n "$pre_install" ] && [ -x `echo "$dkms_tree/$module/$module_version/source/$pre_install" | sed 's/ .*//'` ]; then
-	echo $""
-	echo $"Running the pre_install script:"
-	$dkms_tree/$module/$module_version/source/$pre_install
-	if [ "$?" -ne 0 -a -z "$force" ]; then
-	    echo $"pre_install failed, aborting install." >&2
-	    echo $"You may override by specifying --force." >&2
-	    exit 101
-	fi
-    fi
-
     # Save the original_module if one exists, none have been saved before, and this is the first module for this kernel
     local lib_tree="$install_tree/${kernelver_array[0]}"
     local count=0
     while [ "$count" -lt ${#built_module_name[@]} ]; do
-	echo $""
+    echo $""
 	echo $"${dest_module_name[$count]}$module_suffix:"
+	# Check this version against what is already in the kernel
+	if ! check_version_sanity "${kernelver_array[0]}" "${arch_array[0]}" "$obsolete_by" "${dest_module_name[$count]}"; then
+		count=$(($count + 1))
+		continue
+	fi
+
+	if [ "$count" -eq 0 ]; then
+        # Run the pre_install script
+        if [ -n "$pre_install" ] && [ -x `echo "$dkms_tree/$module/$module_version/source/$pre_install" | sed 's/ .*//'` ]; then
+	    echo $""
+	    echo $"Running the pre_install script:"
+	    $dkms_tree/$module/$module_version/source/$pre_install
+	    if [ "$?" -ne 0 -a -z "$force" ]; then
+	        echo $"pre_install failed, aborting install." >&2
+	        echo $"You may override by specifying --force." >&2
+	        exit 101
+	    fi
+        fi
+	fi
 	local module_count=`find $lib_tree -name ${dest_module_name[$count]}$module_suffix -type f | wc -l | awk {'print $1'}`
 	echo $" - Original module"
 	if ! [ -L "$dkms_tree/$module/kernel-${kernelver_array[0]}-${arch_array[0]}" ]; then
@@ -1289,10 +1297,10 @@ function install_module()
 	fi
     fi
 
-    # Notify udev if we installed something for the currently running kernel
-    if [ -x /sbin/udevadm -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
+    # Notify udev if we installed something for the currently running kernel as long as UDEV_TRIGGER is not set to no
+    if [ "${udev_trigger}" == "yes" -a -x /sbin/udevadm -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
        /sbin/udevadm trigger
-    elif [ -x /sbin/udevtrigger -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
+    elif [ "${udev_trigger}" == "yes" -a -x /sbin/udevtrigger -a "${kernelver_array[0]}" == "$(uname -r)" -a "${arch_array[0]}" == "$(uname -m)" ]; then
 	/sbin/udevtrigger
     fi
 
@@ -1572,6 +1580,7 @@ function do_uninstall()
 	    if [ -e "$dkms_tree/$module/original_module/$1/$2/${dest_module_name[$count]}$module_suffix" ]; then
 		echo $"   - Archived original module found in the DKMS tree"
 		echo $"   - Moving it to: $install_tree/$1${DEST_MODULE_LOCATION[$count]}/"
+		mkdir -p "$install_tree/$1${DEST_MODULE_LOCATION[$count]}/"
 		mv -f "$dkms_tree/$module/original_module/$1/$2/${dest_module_name[$count]}$module_suffix" "$install_tree/$1${DEST_MODULE_LOCATION[$count]}/" 2>/dev/null
 	    else
 		echo $"   - No original module was found for this module on this kernel."
@@ -1958,6 +1967,46 @@ show_status ()
     fi
 }
 
+function create_temporary_trees ()
+{
+    if [ -n "$module" ] || [ -n "$module_version" ]; then
+	return
+    fi
+
+    [ -r dkms.conf ] || return
+
+    . dkms.conf
+    module="$PACKAGE_NAME"
+    module_version="$PACKAGE_VERSION"
+
+    source_tree=`mktemp -d`
+    dkms_tree=`mktemp -d`
+
+    local source_tree_dir="$source_tree/$PACKAGE_NAME-$PACKAGE_VERSION"
+    mkdir -p "$source_tree_dir"
+    cp -a * "$source_tree_dir" # intentionally skip .git or .hg
+    add_module
+    temporary_trees_del_command="rm -rf $source_tree $dkms_tree"
+}
+
+function delete_temporary_trees ()
+{
+    $temporary_trees_del_command
+    if [ -n "$temporary_trees_del_command" ]; then
+	module=
+	module_version=
+	source_tree=
+	dkms_tree=
+	temporary_trees_del_command=
+    fi
+}
+
+function in_temporary_trees ()
+{
+    [ -n "$temporary_trees_del_command" ]
+    return $?
+}
+
 media_valid()
 {
     if [ "$media" == "floppy" ] ||
@@ -2332,12 +2381,43 @@ make_suse_driver_disk()
 
 			echo $"  copying update.tar.gz for $arch_release to disk image..."
 			cp -f "$driver_disk_dir/$topdir/$arch_release/install/update.tar.gz" "$driver_disk_dir/$topdir/linux/$distro/$arch_release/install/"
+
+			i=0
+			postkernels=
+			archtest=`echo ${arch_release} | sed 's/-.*//'`
+			while [ "$i" -lt "${#kernelver_array[@]}" ]; do
+				if [ "${arch_array[$i]}" = "${archtest}" ]; then
+					postkernels="${postkernels} ${kernelver_array[$i]}"
+				fi
+				i=$(($i+1))
+			done
+
+			if [ -n "${postkernels}" ]; then
+				dstfile="$driver_disk_dir/$topdir/linux/$distro/$arch_release/install/update.post"
+				echo $"  creating update.post for $arch_release..."
+				(cat << EOF
+#!/bin/sh
+
+EOF
+				 echo "kernlist=\"${postkernels}\""
+				 echo
+				 echo 'for kernel in ${kernlist}; do'
+				 echo '	if [ -e /boot/System.map-${kernel} ]; then'
+				 echo '		depmod -a -F /boot/System.map-${kernel} ${kernel}'
+				 echo '	fi'
+				 echo 'done'
+				) > ${dstfile}
+				chmod a+x ${dstfile}
+			fi
+
 			if [ -d "$driver_disk_dir/$topdir/$arch_release/modules/" ]; then
 				echo $"  copying kernel modules for installation kernel to disk image..."
-				cp -f $driver_disk_dir/$topdir/$suse_arch-$release/modules/* $driver_disk_dir/$topdir/linux/$distro/$arch_release/modules/ 2>/dev/null
+				cp -f $driver_disk_dir/$topdir/$arch_release/modules/* $driver_disk_dir/$topdir/linux/$distro/$arch_release/modules/ 2>/dev/null
 			else
 				echo $"  Warning! No kernel modules found for -default kernel."
 			fi
+
+			rm -fr "$driver_disk_dir/$topdir/$arch_release"
 		done
 
 		# ---
@@ -2991,6 +3071,9 @@ function make_debian()
 {
     create_type="$1"
 
+    create_temporary_trees
+    trap "delete_temporary_trees" EXIT HUP TERM
+
     make_common_test "mk${create_type}"
 
     debian_package=$(echo $module | sed s/_/-/)
@@ -3042,7 +3125,7 @@ function make_debian()
             echo $INSTALL_PACKAGES | sed 's/|/\ install\
 /g' > $TEMPFILE
             $ROOT "sh -c '/usr/sbin/synaptic --set-selections --non-interactive --hide-main-window < $TEMPFILE'"
-            trap 'rm -f $TEMPFILE' EXIT HUP TERM
+            trap "rm -f $TEMPFILE; delete_temporary_trees" EXIT HUP TERM
         else
             $ROOT apt-get -y install $INSTALL_PACKAGES
         fi
@@ -3096,7 +3179,7 @@ function make_debian()
 
     #prepare build directory and copy template
     local temp_dir=`mktemp -d $tmp_location/dkms.XXXXXX`
-    trap 'rm -rf $temp_dir' EXIT HUP TERM
+    trap "rm -rf $temp_dir; delete_temporary_trees" EXIT HUP TERM
     local temp_dir_debian="$temp_dir/$debian_package-dkms-$module_version"
     invoke_command "cp -ar '$DEBDIR/' '$temp_dir_debian'" "copying template"
     pushd "$temp_dir_debian" > /dev/null 2>&1
@@ -3133,9 +3216,16 @@ function make_debian()
             invoke_command "mv '$temp_dir/${debian_package}-dkms_${module_version}_all.deb' '$deb_basedir'" "Moving built files to $deb_basedir"
             ;;
     esac
+    popd > /dev/null 2>&1
+
+    if in_temporary_trees; then
+	echo "Copying built files to "`pwd`"/.." >&2
+	cp "$dkms_tree/$module/$module_version/deb/"* ..
+    fi
 
     #cleanup
     invoke_command "rm $temp_dir -fr" "Cleaning up temporary files"
+    delete_temporary_trees
 
     #done
     if [ "$?" -eq 0 ]; then
@@ -3420,7 +3510,7 @@ while [ $# -gt 0 ]; do
         exec >/dev/null 2>&1
         ;;
     --version|-V)
-        echo $"dkms: 2.0.20.4"
+        echo $"dkms: 2.0.21.0"
         exit 0
         ;;
     --no-prepare-kernel)
