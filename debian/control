@@ -1,14 +1,15 @@
 Source: dkms
 Section: admin
 Priority: optional
-Maintainer: David Paleino <d.paleino@gmail.com>
-Uploaders: Mario Limonciello <Mario_Limonciello@dell.com>
+Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
+Uploaders: David Paleino <d.paleino@gmail.com>,
+ Mario Limonciello <Mario_Limonciello@dell.com>
 DM-Upload-Allowed: yes
-Build-Depends: debhelper (>= 6), quilt
+Build-Depends: debhelper (>= 7), quilt
 Standards-Version: 3.8.0
 Homepage: http://linux.dell.com/dkms
-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/dkms/trunk
-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/dkms/trunk
+Vcs-Svn: svn://svn.debian.org/svn/pkg-dkms/dkms/trunk
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-dkms/dkms/trunk
 
 Package: dkms
 Architecture: all
