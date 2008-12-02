@@ -1,5 +1,6 @@
 dkms (2.0.20.4-1) unstable; urgency=low
 
+  [ David Paleino ]
   * First Debian release (Closes: #481590)
   * debian/control:
     - using new Homepage field in source stanza
@@ -8,7 +9,6 @@ dkms (2.0.20.4-1) unstable; urgency=low
     - setting team as Maintainer
     - addinf myself and Mario Limonciello as Uploaders
     - removed awk dependency: it's an "essential" (de facto) package
-    - Standards-Version bumped to 3.8.0 (no changes needed)
     - DM-Upload-Allowed set
   * debian/copyright:
     - updated to machine-readable format
@@ -23,7 +23,14 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * debian/HOWTO.Debian from Ubuntu package added
   * debian/modprobe added
 
- -- David Paleino <d.paleino@gmail.com>  Tue, 02 Dec 2008 19:30:51 +0100
+  [ Giuseppe Iuculano ]
+  * Added myself as Uploader
+  * Standards-Version bumped to 3.8.0
+    - Add debian/README.source to document quilt usage
+  * debian/prerm: quiet grep, do not write anything to standard output.
+  * debian/rules: remove some pointless blank lines
+
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Tue, 02 Dec 2008 20:23:35 +0100
 
 dkms (2.0.19-0ubuntu2) hardy; urgency=low
 
