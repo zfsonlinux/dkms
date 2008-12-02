@@ -4,6 +4,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+CURVER = $(shell dpkg-parsechangelog | grep ^Version | cut -d" " -f2 | cut -d"-" -f1 )
+
 include /usr/share/quilt/quilt.make
 
 build: build-stamp
@@ -54,4 +56,13 @@ binary-indep: build install
 	dh_builddeb
 
 binary: binary-indep
+
+get-orig-source:
+	[ -d ../tarballs ] || mkdir ../tarballs
+	uscan \
+		--force-download \
+		--download-version $(CURVER) \
+		--rename \
+		--destdir ../tarballs
+
 .PHONY: build clean binary-indep binary-arch binary install
