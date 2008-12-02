@@ -1,0 +1,78 @@
+dkms (2.0.20.4-1) unstable; urgency=low
+
+  * First Debian release (Closes: #481590)
+  * debian/control:
+    - using new Homepage field in source stanza
+    - removed Vcs-git field
+    - added Vcs-Svn and Vcs-Browser fields
+    - setting myself as Maintainer
+    - removed awk dependency: it's an "essential" (de facto) package
+    - Standards-Version bumped to 3.8.0 (no changes needed)
+    - DM-Upload-Allowed set
+  * debian/copyright:
+    - updated to machine-readable format
+    - clarified license for debian/HOWTO.Debian
+  * debian/compat bumped to 6
+  * debian/docs:
+    - sample.{conf,spec} moved to debian/examples
+  * debian/rules updated
+  * debian/patches/01-fix_manpage.patch added, to fix hyphen-used-as-minus-sign
+    lintian warning
+  * debian/postinst added
+  * debian/HOWTO.Debian from Ubuntu package added
+  * debian/modprobe added
+
+ -- David Paleino <d.paleino@gmail.com>  Sat, 01 Nov 2008 20:46:27 +0100
+
+dkms (2.0.19-0ubuntu2) hardy; urgency=low
+
+  * Depend on awk instead of gawk.  All variants of awk provide the
+    currently required functionality.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 26 Mar 2008 16:51:33 -0500
+
+dkms (2.0.19-0ubuntu1) hardy; urgency=low
+
+  * New upstream version.
+    - Fixes appending date to debian/changelog in mkdeb.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 26 Mar 2008 10:46:52 -0500
+
+dkms (2.0.17.6-0ubuntu1) hardy; urgency=low
+
+  [ Matt Domsch ]
+  * Correct kernel uninstall trigger (LP: #192240)
+  * Call udevadm trigger if present, fall back to udevtrigger (LP: #192241)
+  * Fix uninstallation with weak modules (Red Hat BZ#429410)
+  * debian/control:
+    - Update standards version to 3.7.3
+    - Add Vcs-git repository.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Mon, 18 Feb 2008 09:40:18 -0600
+
+dkms (2.0.17.4-0ubuntu4) hardy; urgency=low
+
+  * Fix -x call.
+
+ -- Scott James Remnant <scott@ubuntu.com>  Fri, 14 Dec 2007 16:52:51 +0000
+
+dkms (2.0.17.4-0ubuntu3) hardy; urgency=low
+
+  * dkms: call udevadm instead of udevtrigger
+
+ -- Scott James Remnant <scott@ubuntu.com>  Fri, 14 Dec 2007 16:15:13 +0000
+
+dkms (2.0.17.5-0ubuntu1) hardy; urgency=low
+	
+  * Correct DKMS file install/uninstall problems  (LP: #151644)
+    - call udevtrigger if we install a module for the currently running kernel
+    - uninstall from /extra before DEST_MODULE_LOCATION
+    - Run depmod after uninstall
+
+ -- Matt Domsch <Matt_Domsch@dell.com>  Mon, 10 Oct 2007 16:50:00 -0500
+
+dkms (2.0.17.4-0ubuntu1) gutsy; urgency=low
+
+  * initial debian packaging for Ubuntu (LP: #121676)
+
+ -- Matt Domsch <Matt_Domsch@dell.com>  Mon, 17 Sep 2007 09:58:46 -0500
