@@ -5,7 +5,8 @@ dkms (2.0.20.4-1) unstable; urgency=low
     - using new Homepage field in source stanza
     - removed Vcs-git field
     - added Vcs-Svn and Vcs-Browser fields
-    - setting myself as Maintainer
+    - setting team as Maintainer
+    - addinf myself and Mario Limonciello as Uploaders
     - removed awk dependency: it's an "essential" (de facto) package
     - Standards-Version bumped to 3.8.0 (no changes needed)
     - DM-Upload-Allowed set
