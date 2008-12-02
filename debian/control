@@ -3,7 +3,8 @@ Section: admin
 Priority: optional
 Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
 Uploaders: David Paleino <d.paleino@gmail.com>,
- Mario Limonciello <Mario_Limonciello@dell.com>
+ Mario Limonciello <Mario_Limonciello@dell.com>,
+ Giuseppe Iuculano <giuseppe@iuculano.it>
 DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 7), quilt
 Standards-Version: 3.8.0
