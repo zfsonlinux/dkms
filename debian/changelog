@@ -12,7 +12,7 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * debian/copyright:
     - updated to machine-readable format
     - clarified license for debian/HOWTO.Debian
-  * debian/compat bumped to 6
+  * debian/compat bumped to 7
   * debian/docs:
     - sample.{conf,spec} moved to debian/examples
   * debian/rules updated
