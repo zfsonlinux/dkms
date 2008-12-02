@@ -1,4 +1,4 @@
-dkms (2.0.20.4-1) unstable; urgency=low
+dkms (2.0.20.4-1) UNRELEASED; urgency=low
 
   * First Debian release (Closes: #481590)
   * debian/control:
