@@ -25,14 +25,11 @@ install: build
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
-
 	$(MAKE) install-ubuntu DESTDIR=$(CURDIR)/debian/dkms
-	
 	chmod a+x $(CURDIR)/debian/dkms/etc/dkms/template-dkms-mkdeb/debian/postinst
 	chmod a+x $(CURDIR)/debian/dkms/etc/dkms/template-dkms-mkdeb/debian/postrm
 	chmod a+x $(CURDIR)/debian/dkms/etc/dkms/template-dkms-mkdeb/debian/prerm
 	chmod a+x $(CURDIR)/debian/dkms/etc/dkms/template-dkms-mkdeb/debian/rules
-	
 	rm -rf $(CURDIR)/debian/dkms/usr/share/doc/dkms/sample*
 	
 binary-arch: build install
