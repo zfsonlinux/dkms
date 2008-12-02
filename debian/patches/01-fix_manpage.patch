@@ -1,4 +1,4 @@
-fix Lintian info 'hypen-used-as-minus-sign
+fix Lintian info hypen-used-as-minus-sign
 --- dkms-2.0.20.4.orig/dkms.8
 +++ dkms-2.0.20.4/dkms.8
 @@ -14,7 +14,7 @@
