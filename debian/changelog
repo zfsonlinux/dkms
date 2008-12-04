@@ -1,3 +1,11 @@
+dkms (2.0.20.4-0ubuntu3) jaunty; urgency=low
+
+  * Ensure that the /lib/modules/<version>/updates/dkms directory is
+    removed if it is empty after a removal.  This allows the modules
+    directory to be removed as it becomes empty.  (LP: #300773)
+
+ -- Andy Whitcroft <apw@canonical.com>  Thu, 04 Dec 2008 16:48:10 +0000
+
 dkms (2.0.20.4-0ubuntu2) intrepid; urgency=low
 
   * Backport these fixes from trunk:
