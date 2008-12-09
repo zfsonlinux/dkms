@@ -1,2 +1,3 @@
 01-fix_manpage.patch
 02-fix_distribution.patch
+03-remove_dkms_lib_directory_if_empty.patch

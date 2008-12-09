@@ -1,3 +1,12 @@
+dkms (2.0.20.4-2) unstable; urgency=low
+
+  * debian/patches/03-remove_dkms_lib_directory_if_empty.patch: Merge from
+    Ubuntu, ensure that the /lib/modules/<version>/updates/dkms directory is
+    removed if it is empty after a removal.  This allows the modules directory
+    to be removed as it becomes empty.
+
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Mon, 08 Dec 2008 11:25:17 +0100
+
 dkms (2.0.20.4-1) unstable; urgency=low
 
   [ David Paleino ]
