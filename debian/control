@@ -15,7 +15,7 @@ Vcs-Browser: http://svn.debian.org/wsvn/pkg-dkms/dkms/trunk
 Package: dkms
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends},
- module-init-tools, linux-headers, awk
+ module-init-tools, linux-headers
 Recommends: patch, make, gcc, fakeroot
 Description: Dynamic Kernel Module Support Framework
  DKMS is a framework designed to allow individual kernel modules to be upgraded

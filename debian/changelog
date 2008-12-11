@@ -1,4 +1,4 @@
-dkms (2.0.20.4-1) UNRELEASED; urgency=low
+dkms (2.0.20.4-1) unstable; urgency=low
 
   [ David Paleino ]
   * First Debian release (Closes: #481590)
@@ -35,7 +35,7 @@ dkms (2.0.20.4-1) UNRELEASED; urgency=low
     removed if it is empty after a removal.  This allows the modules directory
     to be removed as it becomes empty.
 
- -- David Paleino <d.paleino@gmail.com>  Thu, 11 Dec 2008 17:40:40 +0100
+ -- David Paleino <d.paleino@gmail.com>  Thu, 11 Dec 2008 18:13:19 +0100
 
 dkms (2.0.19-0ubuntu2) hardy; urgency=low
 

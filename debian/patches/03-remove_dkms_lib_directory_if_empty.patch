@@ -1,3 +1,6 @@
+Merge from Ubuntu, ensure that the /lib/modules/<version>/updates/dkms
+directory is removed if it is empty after a removal.  This allows the
+modules directory to be removed as it becomes empty.
 --- a/kernel_prerm.d_dkms
 +++ b/kernel_prerm.d_dkms
 @@ -13,4 +13,7 @@
