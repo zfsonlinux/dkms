@@ -55,11 +55,9 @@ binary-indep: build install
 binary: binary-indep
 
 get-orig-source:
-	[ -d ../tarballs ] || mkdir ../tarballs
 	uscan \
 		--force-download \
 		--download-version $(CURVER) \
-		--rename \
-		--destdir ../tarballs
+		--rename
 
 .PHONY: build clean binary-indep binary-arch binary install
