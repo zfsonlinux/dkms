@@ -2,27 +2,14 @@
 
 set -e
 
-case "$1" in
-    remove|deconfigure)
+kconf="/etc/kernel-img.conf"
+hookline="header_postinst_hook = /etc/kernel/postinst.d/dkms"
 
-    kconf="/etc/kernel-img.conf"
-    hookline="header_postinst_hook = /etc/kernel/postinst.d/dkms"
-
-    if [ -e $kconf ]; then
-        if grep -q "$hookline" "$kconf" ; then
-            sed -i "\@$hookline@d" "$kconf"
-        fi
+if [ -e $kconf ]; then
+    if grep -q "$hookline" "$kconf" ; then
+        sed -i "\@$hookline@d" "$kconf"
     fi
-    ;;
-
-    failed-upgrade)
-    ;;
-
-    *)
-        echo "prerm called with unknown argument \`$1'" >&2
-        exit 1
-    ;;
-esac
+fi
 
 #DEBHELPER#
 
