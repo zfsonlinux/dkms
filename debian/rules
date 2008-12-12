@@ -60,4 +60,8 @@ get-orig-source:
 		--download-version $(CURVER) \
 		--rename
 
+get-svn-source:
+	[ -d ../tarballs ] || mkdir ../tarballs
+	cd ../tarballs && make -f $(CURDIR)/debian/rules get-orig-source
+
 .PHONY: build clean binary-indep binary-arch binary install
