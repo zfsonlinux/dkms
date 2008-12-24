@@ -2,3 +2,4 @@
 02-fix_distribution.patch
 03-remove_dkms_lib_directory_if_empty.patch
 04-use_su-to-root.patch
+05-do_not_check_admin_group.patch

@@ -1,0 +1,12 @@
+admin group is not a standard group in Debian, so check only if $ROOT is non-null
+--- a/dkms
++++ b/dkms
+@@ -3033,7 +3033,7 @@
+     #test if we are missing dependencies that are needed during package build
+     INSTALL_PACKAGES="`make_debian_test_depends`"
+     if [ ! -z "$INSTALL_PACKAGES" ]; then
+-        if [ -z "ADMINABLE" ]; then
++        if [ -z "$ROOT" ]; then
+             echo $"" >&2
+             echo $"Error! Missing $INSTALL_PACKAGES" >&2
+             echo $"and unable to install.  Please ask an admin to install for you." >&2
