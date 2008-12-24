@@ -4,3 +4,4 @@
 04-use_su-to-root.patch
 05-do_not_check_admin_group.patch
 06-fakeroot.patch
+07-exit-if-build-fails.patch
