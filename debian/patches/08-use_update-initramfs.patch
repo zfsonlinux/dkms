@@ -1,0 +1,35 @@
+Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
+--- a/dkms
++++ b/dkms
+@@ -212,6 +212,11 @@
+         mkinitrd='mkinitramfs'
+     fi
+ 
++    # Support update-initramfs (Debian)
++    if type update-initramfs >/dev/null 2>&1; then
++	mkinitrd='update-initramfs'
++    fi
++
+     $mkinitrd --version >/dev/null 2>&1
+     if [ "$?" -eq 0 ]; then
+       	echo $""
+@@ -235,12 +240,13 @@
+     elif [ -e /etc/debian_version ]; then
+       	echo $""
+ 	initrd_dir="/boot"
+-	echo $"Saving old initrd as $initrd_dir/initrd.img_old-$1"
+-	cp -f "$initrd_dir/initrd.img-$1" "$initrd_dir/initrd.img_old-$1"
+-	echo $"Making new initrd as $initrd_dir/initrd.img-$1"
+-	echo $"(If next boot fails, revert to the _old initrd image)"
+-	invoke_command "$mkinitrd -o $initrd_dir/initrd.img-$1 $1" "$mkinitrd" background
+-	exitval="$?"
++	if [ -f "/etc/initramfs-tools/update-initramfs.conf" ] && \
++	   ! ( grep ^update_initramfs /etc/initramfs-tools/update-initramfs.conf | grep -qi no ); then
++		echo $"Updating initrd"
++		echo $"(If next boot fails, revert to the .bak initrd image)"
++		invoke_command "$mkinitrd -u" "$mkinitrd" background
++		exitval="$?"
++	fi
+     else
+ 	echo $""
+ 	echo $"Calling $mkinitrd (bad exit status 9 may occur)"
