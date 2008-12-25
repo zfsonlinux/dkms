@@ -9,14 +9,14 @@ DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 7), quilt
 Standards-Version: 3.8.0
 Homepage: http://linux.dell.com/dkms
-Vcs-Svn: svn://svn.debian.org/svn/pkg-dkms/dkms/trunk
-Vcs-Browser: http://svn.debian.org/wsvn/pkg-dkms/dkms/trunk
+Vcs-Git: git://git.debian.org/git/users/hanska-guest/dkms.git
+Vcs-Browser: http://git.debian.org/git/users/hanska-guest/dkms.git
 
 Package: dkms
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends},
  module-init-tools, linux-headers
-Recommends: patch, make, gcc, fakeroot
+Recommends: patch, make, gcc, fakeroot, lsb-release
 Description: Dynamic Kernel Module Support Framework
  DKMS is a framework designed to allow individual kernel modules to be upgraded
  without changing the whole kernel. It is also very easy to rebuild modules as
