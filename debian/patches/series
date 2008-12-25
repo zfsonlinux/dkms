@@ -7,3 +7,4 @@
 07-exit-if-build-fails.patch
 08-use_update-initramfs.patch
 09-lilo_detection.patch
+10-lsb.patch

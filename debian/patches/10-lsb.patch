@@ -1,0 +1,16 @@
+/etc/lsb-release is not present in Debian, so run run lsb_release
+--- a/dkms
++++ b/dkms
+@@ -300,6 +300,12 @@
+     if [ -r /etc/lsb-release ]; then
+ 	. /etc/lsb-release
+ 	LSB_RELEASE=1
++    else
++	if type lsb_release >/dev/null 2>&1; then
++		DISTRIB_ID=$(lsb_release -i -s)
++		DISTRIB_RELEASE=$(lsb_release -r -s)
++		LSB_RELEASE=1
++	fi
+     fi
+ 
+     if [ -n "${FEDORA_RELEASE}" ]; then
