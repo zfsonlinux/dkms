@@ -14,3 +14,11 @@
      fi
  
      if [ -n "${FEDORA_RELEASE}" ]; then
+@@ -345,6 +351,7 @@
+ 	sles*) echo "/updates" && return ;;
+ 	suse*) echo "/updates" && return ;;
+ 	Ubuntu*) echo "/updates/dkms" && return ;;
++	Debian*) echo "/updates/dkms" && return ;;
+ 	*) ;;
+     esac
+     echo "$orig_location"
