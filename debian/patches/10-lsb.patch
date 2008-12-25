@@ -1,7 +1,7 @@
 /etc/lsb-release is not present in Debian, so run run lsb_release
---- a/dkms
-+++ b/dkms
-@@ -300,6 +300,12 @@
+--- dkms.orig/dkms
++++ dkms/dkms
+@@ -316,6 +316,12 @@
      if [ -r /etc/lsb-release ]; then
  	. /etc/lsb-release
  	LSB_RELEASE=1
@@ -14,7 +14,7 @@
      fi
  
      if [ -n "${FEDORA_RELEASE}" ]; then
-@@ -345,6 +351,7 @@
+@@ -361,6 +367,7 @@
  	sles*) echo "/updates" && return ;;
  	suse*) echo "/updates" && return ;;
  	Ubuntu*) echo "/updates/dkms" && return ;;

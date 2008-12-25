@@ -1,7 +1,7 @@
 check /etc/kernel-img.conf to find if user is using grub
---- a/dkms
-+++ b/dkms
-@@ -255,7 +255,7 @@
+--- dkms.orig/dkms
++++ dkms/dkms
+@@ -271,7 +271,7 @@
      fi
  
      # Rerun lilo if necessary
