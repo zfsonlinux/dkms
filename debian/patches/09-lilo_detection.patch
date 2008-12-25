@@ -1,0 +1,12 @@
+check /etc/kernel-img.conf to find if user is using grub
+--- a/dkms
++++ b/dkms
+@@ -255,7 +255,7 @@
+     fi
+ 
+     # Rerun lilo if necessary
+-    if ! [ -e /boot/grub/grub.conf ] && [ -e /etc/lilo.conf ] && ! [ -e /boot/grub/menu.lst ]; then
++    if ( grep ^postinst_hook /etc/kernel-img.conf |  grep -q grub ) && [ -e /etc/lilo.conf ]; then
+ 	invoke_command "/sbin/lilo" "Updating lilo"
+     fi
+ 
