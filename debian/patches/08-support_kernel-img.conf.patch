@@ -1,6 +1,6 @@
 Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
---- dkms.orig/dkms
-+++ dkms/dkms
+--- a/dkms
++++ b/dkms
 @@ -212,6 +212,20 @@
          mkinitrd='mkinitramfs'
      fi
@@ -22,7 +22,7 @@ Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
      $mkinitrd --version >/dev/null 2>&1
      if [ "$?" -eq 0 ]; then
        	echo $""
-@@ -235,11 +249,19 @@
+@@ -235,11 +249,20 @@
      elif [ -e /etc/debian_version ]; then
        	echo $""
  	initrd_dir="/boot"
@@ -34,7 +34,8 @@ Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
 -	invoke_command "$mkinitrd -o $initrd_dir/initrd.img-$1 $1" "$mkinitrd" background
 +	echo $"(If next boot fails, revert to the .bak initrd image)"
 +	if [ -f "/etc/initramfs-tools/update-initramfs.conf" ] && \
-+	   ! ( grep ^update_initramfs /etc/initramfs-tools/update-initramfs.conf | grep -qi no ); then
++	   ! ( grep ^update_initramfs /etc/initramfs-tools/update-initramfs.conf | grep -qi no ) && \
++	   [ "$mkinitrd" == "update-initramfs" ]; then
 +		invoke_command "$mkinitrd -u" "$mkinitrd" background
 +	else
 +		echo $"Saving old initrd as $initrd_dir/initrd.img_old-$1"
