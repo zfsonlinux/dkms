@@ -15,8 +15,15 @@ Vcs-Browser: http://git.debian.org/git/users/hanska-guest/dkms.git
 Package: dkms
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends},
- module-init-tools, linux-headers
-Recommends: patch, make, gcc, fakeroot, lsb-release
+ module-init-tools,
+ linux-headers
+Recommends: patch,
+ make,
+ gcc,
+ fakeroot,
+ lsb-release,
+ dpkg-dev,
+ menu | sudo
 Description: Dynamic Kernel Module Support Framework
  DKMS is a framework designed to allow individual kernel modules to be upgraded
  without changing the whole kernel. It is also very easy to rebuild modules as
