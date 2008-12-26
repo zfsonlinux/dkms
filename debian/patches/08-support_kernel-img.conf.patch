@@ -8,11 +8,11 @@ Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
 +    # Support /etc/kernel-img.conf (Debian)
 +    if [ -f "/etc/kernel-img.conf" ]; then
 +        # we use the first one listed
-+        mkinitrd = $(sed -e '/^\s*ramdisk/!d' \
-+                         -e 's/^\s*ramdisk\s*=\s*\(.*\)/\1/' \
-+                         -e "s/['\"]*//g" \
-+                         /etc/kernel-img.conf | \
-+                     awk '{print $1}')
++        mkinitrd=$(sed -e '/^\s*ramdisk/!d' \
++                       -e 's/^\s*ramdisk\s*=\s*\(.*\)/\1/' \
++                       -e "s/['\"]*//g" \
++                       /etc/kernel-img.conf | \
++                   awk '{print $1}')
 +    else
 +        if type update-initramfs >/dev/null 2>&1; then
 +            mkinitrd='update-initramfs'
