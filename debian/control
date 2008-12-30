@@ -17,6 +17,7 @@ Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends},
  module-init-tools,
  linux-headers
+ build-essential
 Recommends: patch,
  make,
  gcc,
