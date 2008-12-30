@@ -58,8 +58,10 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * debian/control: 
     - Added lsb-release in Recommends
     - Updated VCS control field
+  * debian/patches/11-bash-completition.patch: Improve bash-completition
+    support (Origin Mandriva)
 
- -- David Paleino <d.paleino@gmail.com>  Fri, 26 Dec 2008 12:59:06 +0100
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Tue, 30 Dec 2008 15:34:23 +0100
 
 dkms (2.0.19-0ubuntu2) hardy; urgency=low
 
