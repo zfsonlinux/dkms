@@ -8,4 +8,4 @@
 08-support_kernel-img.conf.patch
 09-lilo_detection.patch
 10-lsb.patch
-11-bash-completition.patch
+11-bash-completion.patch
