@@ -1,7 +1,7 @@
 fix Lintian info hypen-used-as-minus-sign
---- dkms-2.0.20.4.orig/dkms.8
-+++ dkms-2.0.20.4/dkms.8
-@@ -14,7 +14,7 @@
+--- a/dkms.8
++++ b/dkms.8
+@@ -14,7 +14,7 @@ for each kernel on your system in a simp
  .B add
  Adds a module/version combination to the tree for builds and installs.
  Requires source in
@@ -10,7 +10,7 @@ fix Lintian info hypen-used-as-minus-sign
  as well as a properly
  formatted
  .I dkms.conf
-@@ -24,14 +24,14 @@
+@@ -24,14 +24,14 @@ file.
  Removes a module/version or module/version/kernel combination from the
  tree.  If the modules is currently installed, it first uninstalls it
  and if applicable, will replace it with its original_module.  Use the
@@ -23,11 +23,11 @@ fix Lintian info hypen-used-as-minus-sign
  no kernel is specified it builds for the currently running kernel.  All builds
  occur in the directory
 -.I /var/dkms/<module>/<module-version>/build/.
-+.I /var/dkms/<module>/<module\-version>/build/.
++.I /var/lib/dkms/<module>/<module\-version>/build/.
  .TP
  .B install
  Installs a built module/version combo onto the kernel it was built for. If
-@@ -61,15 +61,15 @@
+@@ -61,15 +61,15 @@ subdirectory of your module source direc
  must specify the distro while using this action.  Driver disks can be made
  for single kernels or can be made to support multiple kernels.  To create
  a driver disk image with modules for multiple kernels, just specify multiple
@@ -47,7 +47,7 @@ fix Lintian info hypen-used-as-minus-sign
  , you can force a version 1 driver disk image.
  
  Note that redhat1 driver disks actually supported multiple architectures when
-@@ -87,21 +87,21 @@
+@@ -87,21 +87,21 @@ or higher to generate a proper driver di
  
  For suse/UnitedLinux driver disks, /usr/share/YaST2/modules/Vendor.ycp
  will also be copied to the driver disk; no other files are needed.
@@ -75,7 +75,7 @@ fix Lintian info hypen-used-as-minus-sign
  to generate a tar file.
  
  You may copy the floppy or ISO image file to a USB key to be used with
-@@ -115,13 +115,13 @@
+@@ -115,13 +115,13 @@ in the DKMS tree for that module/version
  the source and any built modules for kernels in the tree (as specified).
  Otherwise, you can specify
  a singular kernel to archive only, or multiple kernels to archive
@@ -93,7 +93,7 @@ fix Lintian info hypen-used-as-minus-sign
  can be used to specify that no prebuilt binaries should be included in the tarball.
  In general,
  .B mktarball
-@@ -135,7 +135,7 @@
+@@ -135,7 +135,7 @@ without having to wait for anything to c
  This takes a tarball made from the
  .B mktarball
  command and specified with the
@@ -102,7 +102,7 @@ fix Lintian info hypen-used-as-minus-sign
  option and loads it into your DKMS tree.  This will leave any
  newly added modules in the built state and
  .B dkms install
-@@ -143,33 +143,33 @@
+@@ -143,33 +143,33 @@ should then be called to install any of 
  exist where
  .B ldtarball
  is attempting to place them, it will warn and not copy over them.  The
@@ -143,7 +143,7 @@ fix Lintian info hypen-used-as-minus-sign
  in the mkdeb command.
  .TP
  .B mkdsc
-@@ -177,20 +177,20 @@
+@@ -177,20 +177,20 @@ This action allows you to create a debia
  It will create a .tar.gz, and a .dsc.  All options supported by
  .B mkdeb
  are supported by it.  The main difference in it's usage is that it will look in
@@ -169,7 +169,7 @@ fix Lintian info hypen-used-as-minus-sign
  as the basis for the RPM.  The generated source RPM may then be built using SuSE's build.rpm or
  Fedora/RHEL's mock chroot environments.  See http://kerneldrivers.org/ for
  more details on KMPs.
-@@ -202,46 +202,46 @@
+@@ -202,46 +202,46 @@ Status can be shown for just a certain m
  a module/version combination or a module/version/kernel combination.
  .SH OPTIONS
  .TP
@@ -231,7 +231,7 @@ fix Lintian info hypen-used-as-minus-sign
  The distribution being used.  This is only currently needed for
  .B mkdriverdisk.
  The supported distros are
-@@ -255,26 +255,26 @@
+@@ -255,26 +255,26 @@ and
  .B mkkmp
  for more information.
  .TP
@@ -263,7 +263,7 @@ fix Lintian info hypen-used-as-minus-sign
  If the config for the kernel that you
  are building a module for is not located here or does not have the expected
  name in this location, you will need to tell
-@@ -282,25 +282,25 @@
+@@ -282,25 +282,25 @@ name in this location, you will need to 
  where the necessary .config can be found so that your kernel can be properly
  prepared for the module build.
  .TP
@@ -293,7 +293,7 @@ fix Lintian info hypen-used-as-minus-sign
  This option can be used in conjunction with
  .B mktarball
  in order to create a DKMS tarball which does not contain the source for the
-@@ -312,7 +312,7 @@
+@@ -312,7 +312,7 @@ have the module source in that systems D
  .B will refuse
  to load a binaries-only tarball.
  .TP
@@ -302,7 +302,7 @@ fix Lintian info hypen-used-as-minus-sign
  This option can be used in conjunction with
  .B mktarball
  or
-@@ -328,38 +328,38 @@
+@@ -328,38 +328,38 @@ but do not want the RPM you create to ha
  passing this option will keep its internal DKMS tarball from containing any
  prebuilt modules.
  .TP
@@ -350,7 +350,7 @@ fix Lintian info hypen-used-as-minus-sign
  This flag should be used when packaging DKMS enabled modules in RPMs.  It should
  be specified during both the
  .B add
-@@ -370,27 +370,27 @@
+@@ -370,27 +370,27 @@ scenarios when upgrading between various
  RPM package.  See the sample.spec file for an example or read more in the section
  below on Creating RPMs Which Utilize DKMS.
  .TP
@@ -383,7 +383,16 @@ fix Lintian info hypen-used-as-minus-sign
  A supplemental configuration file to the systemwide dkms framework, typically located
  in /etc/dkms/framework.conf.  All option that are normally provided on a command line
  can be provided in this file.
-@@ -433,11 +433,11 @@
+@@ -417,7 +417,7 @@ replaced.
+ If more than one is found, then the first one located (by preference indicated
+ above) will be considered the "original_module".  As well, all copies of the same-named
+ module will be removed from your kernel tree and placed into
+-.I /var/dkms/<module>/original_module/$kernelver/collisions
++.I /var/lib/dkms/<module>/original_module/$kernelver/collisions
+ so that they can be *manually* accessible later. DKMS will never actually do anything
+ with the modules found underneath the /collisions directory, and they will be stored there
+ until you manually delete them.
+@@ -433,11 +433,11 @@ how and where the module should be insta
  are required, providing as many as possible helps to limit any ambiguity.  Note
  that the
  .I dkms.conf
@@ -397,7 +406,7 @@ fix Lintian info hypen-used-as-minus-sign
  .B ALL CAPS.
  
  It is important to understand that many of the DKMS directives are arrays whose index
-@@ -547,7 +547,7 @@
+@@ -547,7 +547,7 @@ your module will be added as "scsi_hosta
  include:
  .B scsi_hostadapter
  ,
@@ -406,7 +415,7 @@ fix Lintian info hypen-used-as-minus-sign
  and
  .B eth.
  Note that the numeric value of
-@@ -558,7 +558,7 @@
+@@ -558,7 +558,7 @@ and DEST_MODULE_LOCATION.  The index is 
  .B MODULES_CONF_OBSOLETES[#]=
  This directive array tells DKMS what modules.conf alias references are obsoleted by the
  module you are installing.  If your module obsoletes more than one module, this directive
@@ -415,7 +424,7 @@ fix Lintian info hypen-used-as-minus-sign
  MODULES_CONF_OBSOLETES[0]="megaraid,megaraid_2002"). When you are installing your module,
  DKMS ensures that any entries in
  .I /etc/modules.conf
-@@ -568,12 +568,12 @@
+@@ -568,12 +568,12 @@ are changed over to the new module name.
  your module, depending on the modules in your
  .I /lib/modules
  tree, DKMS will take different actions.
@@ -431,7 +440,7 @@ fix Lintian info hypen-used-as-minus-sign
  .B #
  is tied to the index of BUILD_MODULE_NAME, BUILT_MODULE_LOCATION, DEST_MODULE_NAME
  and DEST_MODULE_LOCATION.  The index is also tied to MODULES_CONF_ALIAS_TYPE.
-@@ -589,12 +589,12 @@
+@@ -589,12 +589,12 @@ array directive.
  .TP
  .B STRIP[#]=
  By default strip is considered to be "yes".  If set to "no", DKMS will not
@@ -446,7 +455,7 @@ fix Lintian info hypen-used-as-minus-sign
  option when building, adding, etc. and may not necessarily be the same as the MODULE_NAME.  This
  directive must be present in every dkms.conf.
  .TP
-@@ -622,7 +622,7 @@
+@@ -622,7 +622,7 @@ implications of modifying
  .B OBSOLETE_BY=
  This directive allows you to specify a kernel version that obsoletes the necessity for this
  particular DKMS module.  This can be specified as a particular upstream kernel or an ABI
@@ -455,7 +464,7 @@ fix Lintian info hypen-used-as-minus-sign
  represent an ABI bump for a kernel.  Both are valid in this area.
  
  Please avoid the use of
-@@ -643,8 +643,8 @@
+@@ -643,8 +643,8 @@ If you feel you must use it, please use 
  
   ubuntu_804="Ubuntu
   8.04"
@@ -466,7 +475,7 @@ fix Lintian info hypen-used-as-minus-sign
       OBSOLETE_BY="2.6.25"
     fi
   fi
-@@ -652,13 +652,13 @@
+@@ -652,13 +652,13 @@ If you feel you must use it, please use 
  .TP
  .B PATCH[#]=
  Use the PATCH directive array to specify patches which should be applied to your source before a build occurs.
@@ -479,11 +488,11 @@ fix Lintian info hypen-used-as-minus-sign
  ).  If any patch fails to apply, the build will be halted and the rejections can be
  inspected in
 -.I /var/dkms/<module>/<module-version>/build/.
-+.I /var/dkms/<module>/<module\-version>/build/.
++.I /var/lib/dkms/<module>/<module\-version>/build/.
  If a PATCH should only be applied conditionally, the
  .B PATCH_MATCH[#]
  array should be used, and a corresponding regular expression should be placed in
-@@ -729,14 +729,14 @@
+@@ -729,14 +729,14 @@ is performed. The path should be given r
  The name of the script to be run before an
  .B install
  is performed. The path should be given relative to the root directory
@@ -500,11 +509,13 @@ fix Lintian info hypen-used-as-minus-sign
  values.
  .TP
  .B $kernelver
-@@ -749,14 +749,14 @@
+@@ -748,15 +748,15 @@ module (eg. MAKE="make all INCLUDEDIR=/l
+ .B $dkms_tree
  See the section on /etc/dkms/framework.conf for more information.  This variable represents
  the location of the DKMS tree on the local system.  By default this is
- .I /var/dkms
+-.I /var/dkms
 -, but this value should not be hard-coded into a dkms.conf in the event that the local user
++.I /var/lib/dkms
 +, but this value should not be hard\-coded into a dkms.conf in the event that the local user
  has changed it on their system.
  .TP
@@ -517,7 +528,7 @@ fix Lintian info hypen-used-as-minus-sign
  has changed it on their system.
  .TP
  .B $kernel_source_dir
-@@ -764,7 +764,7 @@
+@@ -764,7 +764,7 @@ This variable holds the value of the loc
  will be
  .I /lib/modules/$kernelver/build
  , unless otherwise specified with the
@@ -526,7 +537,7 @@ fix Lintian info hypen-used-as-minus-sign
  option.
  .SH /etc/dkms/framework.conf
  This configuration file controls how the overall DKMS framework handles.  It is sourced
-@@ -776,10 +776,10 @@
+@@ -776,10 +776,10 @@ default values for the variables.
  and
  .B $install_tree
  which control where DKMS looks for its framework.  Note that these variables can also
@@ -540,7 +551,7 @@ fix Lintian info hypen-used-as-minus-sign
  .B AUTOINSTALL="yes"
  set in its
  .B dkms.conf
-@@ -860,8 +860,8 @@
+@@ -860,8 +860,8 @@ file packaged with
  as an example for what your RPM spec file might look like.
  Creating RPMs which utilize
  .B dkms
@@ -551,7 +562,7 @@ fix Lintian info hypen-used-as-minus-sign
  and then employ
  .B dkms
  itself to do all the work of installation.  As such, the RPM should first untar the source into
-@@ -869,29 +869,28 @@
+@@ -869,29 +869,28 @@ this directory.  From here, within the R
  .I .spec
  file, a
  .B dkms add
@@ -588,7 +599,7 @@ fix Lintian info hypen-used-as-minus-sign
  
  It should be noted that a binary RPM which contains source is not a traditional practice.
  However, given the benefits of
-@@ -903,29 +902,29 @@
+@@ -903,29 +902,29 @@ is not architecture specific,
  should be specified in the
  .I .spec
  file to indicate that the package can work regardless of the system architecture.  Also
