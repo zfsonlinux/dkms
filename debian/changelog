@@ -27,6 +27,9 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * added get-svn-source to debian/rules
   * debian/patches/08-use_update-initramfs.patch: updated to parse
     /etc/kernel-img.conf
+  * debian/patches/11-bash-completion.patch:
+    - better usage of bash builtins
+    - _filename_parts(): fix wrong behaviour when /usr/src/ is a symlink
 
   [ Giuseppe Iuculano ]
   * Added myself as Uploader
@@ -64,7 +67,7 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * debian/patches/01-fix_manpage.patch: fix wrong path into man page
     (LP: #292289)
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Tue, 30 Dec 2008 16:41:17 +0100
+ -- David Paleino <d.paleino@gmail.com>  Tue, 30 Dec 2008 16:48:48 +0100
 
 dkms (2.0.19-0ubuntu2) hardy; urgency=low
 
