@@ -14,10 +14,9 @@ Vcs-Browser: http://git.debian.org/git/users/hanska-guest/dkms.git
 
 Package: dkms
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, build-essential,
  module-init-tools,
  linux-headers
- build-essential
 Recommends: patch,
  fakeroot,
  lsb-release,
