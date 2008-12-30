@@ -1,3 +1,5 @@
+Merge patch from Mandriva to bash-completion snippet.
+Edited by David Paleino <d.paleino@gmail.com>
 --- dkms.orig/dkms.bash-completion
 +++ dkms/dkms.bash-completion
 @@ -5,7 +5,20 @@
