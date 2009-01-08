@@ -23,7 +23,7 @@ clean: unpatch
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
+	dh_prep 
 	dh_installdirs
 	$(MAKE) install-ubuntu DESTDIR=$(CURDIR)/debian/dkms
 	chmod a+x $(CURDIR)/debian/dkms/etc/dkms/template-dkms-mkdeb/debian/postinst
