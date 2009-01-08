@@ -38,7 +38,10 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * Standards-Version bumped to 3.8.0
     - Add debian/README.source to document quilt usage
   * debian/prerm: quiet grep, do not write anything to standard output.
-  * debian/rules: remove some pointless blank lines
+  * debian/rules: 
+    - remove some pointless blank lines
+    - fix dh-clean-k-is-deprecated lintian warning, use dh_prep instead of
+      dh_clean -k
   * debian/patches/03-remove_dkms_lib_directory_if_empty.patch: Merge from
     Ubuntu, ensure that the /lib/modules/<version>/updates/dkms directory is
     removed if it is empty after a removal.  This allows the modules directory
@@ -69,7 +72,7 @@ dkms (2.0.20.4-1) unstable; urgency=low
   * debian/patches/01-fix_manpage.patch: fix wrong path into man page
     (LP: #292289)
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Thu, 08 Jan 2009 10:18:20 +0100
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Thu, 08 Jan 2009 14:50:22 +0100
 
 dkms (2.0.19-0ubuntu2) hardy; urgency=low
 
