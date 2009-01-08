@@ -9,3 +9,4 @@
 09-lilo_detection.patch
 10-lsb.patch
 11-bash-completion.patch
+12-use_invoke-rc.d.patch
