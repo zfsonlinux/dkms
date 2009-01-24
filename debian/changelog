@@ -1,7 +1,15 @@
+dkms (2.0.21.0-1) unstable; urgency=low
+
+  * [0c2c36b] New Upstream version 2.0.21.0
+  * First Debian release (Closes: #481590)
+  * [6723982] debian/patches/: Refreshed patches, and deleted
+    03-remove_dkms_lib_directory_if_empty.patch (now it is in upstream)
+
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Sat, 24 Jan 2009 11:52:59 +0100
+
 dkms (2.0.20.4-1) unstable; urgency=low
 
   [ David Paleino ]
-  * First Debian release (Closes: #481590)
   * debian/control:
     - using new Homepage field in source stanza
     - setting team as Maintainer
