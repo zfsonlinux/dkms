@@ -1,6 +1,6 @@
 Summary: Dynamic Kernel Module Support Framework
 Name: dkms
-Version: 2.0.20.4
+Version: 2.0.21.0
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Base
@@ -12,8 +12,10 @@ Provides: dkms-minimal = %{version}
 URL: http://linux.dell.com/dkms
 Source0: http://linux.dell.com/dkms/permalink/dkms-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-# when building for Fedora, uncomment this Requires
-#Requires: kernel-devel
+
+%if 0%{?fedora}
+Requires: kernel-devel
+%endif
 
 %description
 This package contains the framework for the Dynamic
@@ -99,6 +101,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/kernel/postinst.d/%{name}
 %{_sysconfdir}/kernel/prerm.d/%{name}
 %{_sysconfdir}/bash_completion.d/%{name}
+
+%if 0%{?suse_version}
+# suse doesnt yet support /etc/kernel/{prerm.d,postinst.d}, but will fail build
+# with unowned dirs if we dont own them ourselves
+# when opensuse *does* add this support, we will need to BuildRequires kernel
+%dir %{_sysconfdir}/kernel
+%dir %{_sysconfdir}/kernel/postinst.d
+%dir %{_sysconfdir}/kernel/prerm.d
+%endif
+
 
 %post
 [ -e /sbin/dkms ] && mv -f /sbin/dkms /sbin/dkms.old 2>/dev/null
