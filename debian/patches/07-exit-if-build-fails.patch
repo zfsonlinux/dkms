@@ -1,7 +1,7 @@
 Fix exit when build fails
 --- a/dkms
 +++ b/dkms
-@@ -3128,10 +3128,27 @@
+@@ -3211,10 +3211,27 @@ function make_debian()
      case "$create_type" in
          dsc)
              invoke_command "dpkg-buildpackage -S -us -uc 1>/dev/null" "Building source package"
@@ -29,8 +29,8 @@ Fix exit when build fails
              invoke_command "mv '$temp_dir/${debian_package}-dkms_${module_version}_all.deb' '$deb_basedir'" "Moving built files to $deb_basedir"
              ;;
      esac
-@@ -3140,12 +3157,9 @@
-     invoke_command "rm $temp_dir -fr" "Cleaning up temporary files"
+@@ -3230,12 +3247,9 @@ function make_debian()
+     delete_temporary_trees
  
      #done
 -    if [ "$?" -eq 0 ]; then

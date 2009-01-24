@@ -1,7 +1,7 @@
 Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
 --- a/dkms
 +++ b/dkms
-@@ -212,6 +212,20 @@
+@@ -212,6 +212,20 @@ function remake_initrd()
          mkinitrd='mkinitramfs'
      fi
  
@@ -22,7 +22,7 @@ Use update-initramfs tool instead of mkinitrd/mkinitrd.yaird/mkinitramfs
      $mkinitrd --version >/dev/null 2>&1
      if [ "$?" -eq 0 ]; then
        	echo $""
-@@ -235,11 +249,20 @@
+@@ -235,11 +249,20 @@ function remake_initrd()
      elif [ -e /etc/debian_version ]; then
        	echo $""
  	initrd_dir="/boot"

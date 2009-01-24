@@ -1,63 +1,28 @@
 Merge patch from Mandriva to bash-completion snippet.
 Edited by David Paleino <d.paleino@gmail.com>
---- dkms.orig/dkms.bash-completion
-+++ dkms/dkms.bash-completion
-@@ -5,7 +5,20 @@
+--- a/dkms.bash-completion
++++ b/dkms.bash-completion
+@@ -5,20 +5,19 @@
  #
  _kernels()
  {
 -        COMPREPLY=( $( command ls /lib/modules | grep "^$cur" ) )
 +        COMPREPLY=( $( cd /lib/modules && compgen -d -- "$cur" ) )
-+}
-+
-+# complete on full directory names under $1
-+_subdirectories()
-+{
-+	COMPREPLY=( $( cd $1 && compgen -d -- "$cur" ) )
-+}
-+
-+# complete on $2 part of filenames matching pattern $1 under /usr/src
-+_filename_parts()
-+{
-+	COMPREPLY=( $( command ls -F /usr/src/ 2>/dev/null | grep -E '^'$1'/$' \
-+		| sed -r -e 's/^([^-]+)-(.+)\/$/\'$2'/' | grep "^$cur" ) )
  }
  
- _dkms()
-@@ -22,9 +35,14 @@
- 	else
+ # complete on full directory names under $1
+ _subdirectories()
+ {
+-	COMPREPLY=( $( command ls -F $1 2>/dev/null | awk -F \/ '/\/$/ \
+-		{print $1}' | grep "^$cur" ) )
++	COMPREPLY=( $( cd $1 && compgen -d -- "$cur" ) )
+ }
  
- 		prev=${COMP_WORDS[COMP_CWORD-1]}
-+		command=${COMP_WORDS[1]}
- 		case $prev in
- 			-m)
--				COMPREPLY=( $( command ls -F /var/lib/dkms | grep '/$' | sed -e 's|/$||' | grep "^$cur" ) )
-+				if [ "$command" = 'add' ]; then
-+					_filename_parts '.*-.*' 1
-+				else
-+					_subdirectories /var/lib/dkms
-+				fi
- 				return 0
- 				;;
- 			-v)
-@@ -35,7 +53,11 @@
- 					fi
- 				done
- 				if [ -n "$module" ]; then
--					COMPREPLY=( $( command ls -F /var/lib/dkms/$module | grep '/$' | sed -e 's|/$||' | grep "^$cur" ) )
-+					if [ "$command" = 'add' ]; then
-+						_filename_parts "$module-.*" 2
-+					else
-+						_subdirectories /var/lib/dkms/$module
-+					fi
- 					return 0
- 				fi
- 				;;
-@@ -53,7 +75,6 @@
- 				;;
- 		esac
+ # complete on $2 part of filenames matching pattern $1 under /usr/src
+ _filename_parts()
+ {
+-	COMPREPLY=( $( command ls -F /usr/src 2>/dev/null | grep -E '^'$1'/$' \
++	COMPREPLY=( $( command ls -F /usr/src/ 2>/dev/null | grep -E '^'$1'/$' \
+ 		| sed -r -e 's/^([^-]+)-(.+)\/$/\'$2'/' | grep "^$cur" ) )
+ }
  
--		command=${COMP_WORDS[1]}
- 
- 		if [[ "$cur" == -* ]]; then
- 			case $command in

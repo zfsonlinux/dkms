@@ -1,7 +1,7 @@
 replace intrepid (Ubuntu) DIST with unstable
---- trunk.orig/Makefile
-+++ trunk/Makefile
-@@ -6,7 +6,7 @@
+--- a/Makefile
++++ b/Makefile
+@@ -6,7 +6,7 @@ RELEASE_EXTRALEVEL := .0
  RELEASE_NAME := dkms
  RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
  RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)

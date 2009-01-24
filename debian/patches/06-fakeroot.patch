@@ -1,7 +1,7 @@
 Do not use fakeroot for source-only build, and use -rfakeroot for binary build
 --- a/dkms
 +++ b/dkms
-@@ -3127,11 +3127,11 @@
+@@ -3210,11 +3210,11 @@ function make_debian()
      pushd "$temp_dir_debian" > /dev/null 2>&1
      case "$create_type" in
          dsc)
