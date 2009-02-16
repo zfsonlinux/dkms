@@ -1,0 +1,11 @@
+Fix script-calls-init-script-directly lintian warning
+--- a/kernel_postinst.d_dkms
++++ b/kernel_postinst.d_dkms
+@@ -4,6 +4,6 @@
+ inst_kern=$1
+ 
+ [ -x /etc/init.d/dkms_autoinstaller ] && \
+-  /etc/init.d/dkms_autoinstaller start $inst_kern
++  invoke-rc.d dkms_autoinstaller start $inst_kern
+ 
+ exit 0
