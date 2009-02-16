@@ -16,7 +16,8 @@ Package: dkms
 Architecture: all
 Depends: ${misc:Depends}, build-essential,
  module-init-tools,
- linux-headers
+ linux-headers,
+ kernel-package (>= 11.017)
 Recommends: patch,
  fakeroot,
  lsb-release,
