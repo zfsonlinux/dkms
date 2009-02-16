@@ -1,18 +1,27 @@
 Source: dkms
 Section: admin
 Priority: optional
-Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
-XSBC-Original-Maintainer: Matt Domsch <Matt_Domsch@dell.com>
-Build-Depends: debhelper (> 5)
-Standards-Version: 3.7.2
+Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
+Uploaders: David Paleino <d.paleino@gmail.com>,
+ Mario Limonciello <Mario_Limonciello@dell.com>,
+ Giuseppe Iuculano <giuseppe@iuculano.it>
+Build-Depends: debhelper (>= 7), quilt
+Standards-Version: 3.8.0
+Homepage: http://linux.dell.com/dkms
+Vcs-Git: git://git.debian.org/git/users/hanska-guest/dkms.git
+Vcs-Browser: http://git.debian.org/git/users/hanska-guest/dkms.git
 
 Package: dkms
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
- gawk, module-init-tools, bash (>> 1.99), linux-image, linux-headers
-Recommends: patch, make, gcc, fakeroot
+Depends: ${misc:Depends}, build-essential,
+ module-init-tools,
+ linux-headers,
+ kernel-package (>= 11.017)
+Recommends: patch,
+ fakeroot,
+ lsb-release,
+ menu | sudo
 Description: Dynamic Kernel Module Support Framework
- This package contains the framework for the Dynamic Kernel Module
- Support (DKMS) method for installing and updating kernel modules.
- .
-  Homepage:  http://linux.dell.com/dkms
+ DKMS is a framework designed to allow individual kernel modules to be upgraded
+ without changing the whole kernel. It is also very easy to rebuild modules as
+ you upgrade kernels.

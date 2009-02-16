@@ -1,3 +1,147 @@
+dkms (2.0.21.0-1) unstable; urgency=low
+
+  * [0c2c36b] New Upstream version 2.0.21.0
+  * First Debian release (Closes: #481590)
+  * [6723982] debian/patches/: Refreshed patches, and deleted
+    03-remove_dkms_lib_directory_if_empty.patch (now it is in upstream)
+  * [592acec] debian/patches/04-use_su-to-root.patch: Do not test for $DISPLAY
+    as su-to-root does not require an X display
+  * [22d2ce2] debian/patches/09-lilo_detection.patch: grep for
+    do_bootloader instead of postinst_hook
+  * [b910eb3] debian/patches/03-use-new-
+    header_postinst.d_directory.patch: Use new
+    /etc/kernel/header_postinst.d directory introduced in kernel-package
+    11.017
+  * [f59cc66] debian/control: Add kernel-package (>= 11.017) in Depends
+  * [6ebb0c4] Removed debian/postinst and debian/prerm
+
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Mon, 16 Feb 2009 11:06:58 +0100
+
+dkms (2.0.20.4-1) unstable; urgency=low
+
+  [ David Paleino ]
+  * debian/control:
+    - using new Homepage field in source stanza
+    - setting team as Maintainer
+    - adding myself and Mario Limonciello as Uploaders
+    - removed awk and bash dependencies: they are "essential" (de facto)
+      packages (LP: #314774)
+    - DM-Upload-Allowed set
+    - added menu|sudo to Recommends
+  * debian/copyright:
+    - updated to machine-readable format
+    - clarified license for debian/HOWTO.Debian
+  * debian/compat bumped to 7
+  * debian/docs:
+    - sample.{conf,spec} moved to debian/examples
+  * debian/rules updated
+  * debian/patches/01-fix_manpage.patch added, to fix hyphen-used-as-minus-sign
+    lintian warning
+  * debian/postinst added
+  * debian/HOWTO.Debian from Ubuntu package added
+  * debian/modprobe added
+  * debian/prerm:
+    - use sed instead of tricky grep hack
+    - always do the default thing
+  * added get-svn-source to debian/rules
+  * debian/patches/08-use_update-initramfs.patch: updated to parse
+    /etc/kernel-img.conf
+  * debian/patches/11-bash-completion.patch:
+    - better usage of bash builtins
+    - _filename_parts(): fix wrong behaviour when /usr/src/ is a symlink
+    - added patch description
+
+  [ Giuseppe Iuculano ]
+  * Added myself as Uploader
+  * Standards-Version bumped to 3.8.0
+    - Add debian/README.source to document quilt usage
+  * debian/prerm: quiet grep, do not write anything to standard output.
+  * debian/rules: 
+    - remove some pointless blank lines
+    - fix dh-clean-k-is-deprecated lintian warning, use dh_prep instead of
+      dh_clean -k
+  * debian/patches/03-remove_dkms_lib_directory_if_empty.patch: Merge from
+    Ubuntu, ensure that the /lib/modules/<version>/updates/dkms directory is
+    removed if it is empty after a removal.  This allows the modules directory
+    to be removed as it becomes empty.
+  * debian/patches/04-use_su-to-root.patch:  Use su-to-root if available
+  * debian/patches/05-do_not_check_admin_group.patch:
+    - Do not check for admin group, this isn't a Debian standard group.
+    - added a g modifier to replace all underscores in function make_debian()
+  * debian/patches/06-fakeroot.patch: Do not use fakeroot for source-
+    only build, and use -rfakeroot for binary build
+  * debian/patches/07-exit-if-build-fails.patch: Fix exit when build
+    fails
+  * debian/patches/08-support_kernel-img.conf.patch: Use update-initramfs
+    if ramdisk value in /etc/kernel-img.conf is missing
+  * debian/patches/09-lilo_detection.patch: check /etc/kernel-img.conf
+    to find if user is using grub
+  * debian/patches/10-lsb.patch: 
+    - /etc/lsb-release is not present in Debian, so run run lsb_release
+    - Added Debian as known distro in override_dest_module_location()
+  * debian/control: 
+    - Added lsb-release in Recommends
+    - Updated VCS control field
+    - Added build-essential in Depends (LP: #304014), 
+      Removed ${shlibs:Depends} from Depends and removed make, dpkg-dev and
+      gcc from Recommends
+  * debian/patches/11-bash-completion.patch: Improve bash-completion
+    support (Origin Mandriva)
+  * debian/patches/01-fix_manpage.patch: fix wrong path into man page
+    (LP: #292289)
+  * debian/patches/12-use_invoke-rc.d.patch: Use invoke-rc.d in
+    kernel_postinst.d_dkms and fix script-calls-init-script-directly lintian
+    warning
+
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Thu, 08 Jan 2009 15:01:39 +0100
+
+dkms (2.0.19-0ubuntu2) hardy; urgency=low
+
+  * Depend on awk instead of gawk.  All variants of awk provide the
+    currently required functionality.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 26 Mar 2008 16:51:33 -0500
+
+dkms (2.0.19-0ubuntu1) hardy; urgency=low
+
+  * New upstream version.
+    - Fixes appending date to debian/changelog in mkdeb.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 26 Mar 2008 10:46:52 -0500
+
+dkms (2.0.17.6-0ubuntu1) hardy; urgency=low
+
+  [ Matt Domsch ]
+  * Correct kernel uninstall trigger (LP: #192240)
+  * Call udevadm trigger if present, fall back to udevtrigger (LP: #192241)
+  * Fix uninstallation with weak modules (Red Hat BZ#429410)
+  * debian/control:
+    - Update standards version to 3.7.3
+    - Add Vcs-git repository.
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Mon, 18 Feb 2008 09:40:18 -0600
+
+dkms (2.0.17.4-0ubuntu4) hardy; urgency=low
+
+  * Fix -x call.
+
+ -- Scott James Remnant <scott@ubuntu.com>  Fri, 14 Dec 2007 16:52:51 +0000
+
+dkms (2.0.17.4-0ubuntu3) hardy; urgency=low
+
+  * dkms: call udevadm instead of udevtrigger
+
+ -- Scott James Remnant <scott@ubuntu.com>  Fri, 14 Dec 2007 16:15:13 +0000
+
+dkms (2.0.17.5-0ubuntu1) hardy; urgency=low
+	
+  * Correct DKMS file install/uninstall problems  (LP: #151644)
+    - call udevtrigger if we install a module for the currently running kernel
+    - uninstall from /extra before DEST_MODULE_LOCATION
+    - Run depmod after uninstall
+
+ -- Matt Domsch <Matt_Domsch@dell.com>  Mon, 10 Oct 2007 16:50:00 -0500
+
 dkms (2.0.17.4-0ubuntu1) gutsy; urgency=low
 
   * initial debian packaging for Ubuntu (LP: #121676)

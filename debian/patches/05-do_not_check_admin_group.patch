@@ -1,0 +1,21 @@
+admin group is not a standard group in Debian, so check only if $ROOT is non-null
+--- a/dkms
++++ b/dkms
+@@ -3076,7 +3076,7 @@ function make_debian()
+ 
+     make_common_test "mk${create_type}"
+ 
+-    debian_package=$(echo $module | sed s/_/-/)
++    debian_package=$(echo $module | sed s/_/-/g)
+ 
+     SYNAPTIC=""
+     #Synaptic availablity
+@@ -3116,7 +3116,7 @@ function make_debian()
+     #test if we are missing dependencies that are needed during package build
+     INSTALL_PACKAGES="`make_debian_test_depends`"
+     if [ ! -z "$INSTALL_PACKAGES" ]; then
+-        if [ -z "ADMINABLE" ]; then
++        if [ -z "$ROOT" ]; then
+             echo $"" >&2
+             echo $"Error! Missing $INSTALL_PACKAGES" >&2
+             echo $"and unable to install.  Please ask an admin to install for you." >&2

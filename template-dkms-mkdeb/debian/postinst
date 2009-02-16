@@ -17,9 +17,11 @@ case "$1" in
       fi
 
       echo "Loading new $NAME-$VERSION DKMS files..."
-      #dkms add -m $NAME -v $VERSION
-      dkms ldtarball --archive "/usr/src/$NAME-$VERSION.dkms.tar.gz"
-      rm -f "/usr/src/$NAME-$VERSION.dkms.tar.gz"
+      if [ -f "/usr/src/$NAME-$VERSION.dkms.tar.gz" ]; then
+          dkms ldtarball --archive "/usr/src/$NAME-$VERSION.dkms.tar.gz"
+      else
+          dkms add -m $NAME -v $VERSION
+      fi
 
       echo "Installing prebuilt kernel module binaries (if any)"
       set +e
@@ -27,7 +29,7 @@ case "$1" in
 '
       for kern in `dkms status -m $NAME -v $VERSION -a $c_arch | grep ": built" | awk {'print $3'} | sed 's/,$//'`; do
          echo "Trying kernel: $kern"
-         dkms install --force -m $NAME -v $VERSION -k $kern -a $c_arch
+         dkms install -m $NAME -v $VERSION -k $kern -a $c_arch
       done
       unset IFS
       set -e
@@ -45,13 +47,13 @@ case "$1" in
             echo "Installing module..."
             dkms install -m $NAME -v $VERSION
          elif [ `echo $c_kern | grep -c "BOOT"` -gt 0 ]; then
-            echo -e ""
-            echo -e "Module build for the currently running kernel was skipped since you"
-            echo -e "are running a BOOT variant of the kernel."
+            echo ""
+            echo "Module build for the currently running kernel was skipped since you"
+            echo "are running a BOOT variant of the kernel."
          else
-            echo -e ""
-            echo -e "Module build for the currently running kernel was skipped since the"
-            echo -e "kernel source for this kernel does not seem to be installed."
+            echo ""
+            echo "Module build for the currently running kernel was skipped since the"
+            echo "kernel source for this kernel does not seem to be installed."
          fi
       fi
     ;;

@@ -1,0 +1,12 @@
+check /etc/kernel-img.conf to find if user is using grub
+--- a/dkms
++++ b/dkms
+@@ -272,7 +272,7 @@ function remake_initrd()
+     fi
+ 
+     # Rerun lilo if necessary
+-    if ! [ -e /boot/grub/grub.conf ] && [ -e /etc/lilo.conf ] && ! [ -e /boot/grub/menu.lst ]; then
++    if ( grep ^do_bootloader /etc/kernel-img.conf |  grep -qi yes  ) && [ -e /etc/lilo.conf ]; then
+ 	invoke_command "/sbin/lilo" "Updating lilo"
+     fi
+ 
