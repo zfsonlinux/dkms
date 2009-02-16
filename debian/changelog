@@ -4,8 +4,18 @@ dkms (2.0.21.0-1) unstable; urgency=low
   * First Debian release (Closes: #481590)
   * [6723982] debian/patches/: Refreshed patches, and deleted
     03-remove_dkms_lib_directory_if_empty.patch (now it is in upstream)
+  * [592acec] debian/patches/04-use_su-to-root.patch: Do not test for $DISPLAY
+    as su-to-root does not require an X display
+  * [22d2ce2] debian/patches/09-lilo_detection.patch: grep for
+    do_bootloader instead of postinst_hook
+  * [b910eb3] debian/patches/03-use-new-
+    header_postinst.d_directory.patch: Use new
+    /etc/kernel/header_postinst.d directory introduced in kernel-package
+    11.017
+  * [f59cc66] debian/control: Add kernel-package (>= 11.017) in Depends
+  * [6ebb0c4] Removed debian/postinst and debian/prerm
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Sat, 24 Jan 2009 11:52:59 +0100
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Mon, 16 Feb 2009 11:06:58 +0100
 
 dkms (2.0.20.4-1) unstable; urgency=low
 
