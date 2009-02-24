@@ -10,3 +10,4 @@
 10-lsb.patch
 11-bash-completion.patch
 12-use_invoke-rc.d.patch
+13-template.patch

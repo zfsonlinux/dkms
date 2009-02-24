@@ -1,0 +1,32 @@
+--- a/template-dkms-mkdeb/debian/changelog
++++ b/template-dkms-mkdeb/debian/changelog
+@@ -2,5 +2,5 @@ DEBIAN_PACKAGE-dkms (MODULE_VERSION) sta
+ 
+   * Automatically packaged by DKMS.
+ 
+- -- DKMS <dkms-devel@Dell.com>  DATE_STAMP
++ -- Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>  DATE_STAMP
+ 
+--- a/template-dkms-mkdeb/debian/compat
++++ b/template-dkms-mkdeb/debian/compat
+@@ -1 +1 @@
+-5
++7
+--- a/template-dkms-mkdeb/debian/control
++++ b/template-dkms-mkdeb/debian/control
+@@ -1,11 +1,11 @@
+ Source: DEBIAN_PACKAGE-dkms
+ Section: misc
+ Priority: optional
+-Maintainer: DKMS <dkms-devel@Dell.com>
+-Build-Depends: debhelper (>= 5)
+-Standards-Version: 3.7.2
++Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
++Build-Depends: debhelper (>= 7)
++Standards-Version: 3.8.0
+ 
+ Package: DEBIAN_PACKAGE-dkms
+ Architecture: all
+-Depends: dkms (>= 1.95), bash (>> 1.99)
++Depends: dkms (>= 1.95), bash, ${misc:Depends}
+ Description: DEBIAN_PACKAGE driver in DKMS format.
