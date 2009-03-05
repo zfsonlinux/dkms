@@ -1,3 +1,10 @@
+dkms (2.0.21.1-0ubuntu3) jaunty; urgency=low
+
+  * dkms: actually make the change I claimed to have made in the last release,
+    no idea where it went.
+
+ -- Scott James Remnant <scott@ubuntu.com>  Thu, 05 Mar 2009 16:28:41 +0000
+
 dkms (2.0.21.1-0ubuntu2) jaunty; urgency=low
 
   * Bump dependency on debhelper to install modules to install modprobe.d
