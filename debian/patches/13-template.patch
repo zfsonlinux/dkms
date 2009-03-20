@@ -1,12 +1,5 @@
----
- template-dkms-mkdeb/debian/changelog |    2 -
- template-dkms-mkdeb/debian/compat    |    2 -
- template-dkms-mkdeb/debian/control   |    8 ++---
- template-dkms-mkdeb/debian/rules     |   48 +++++++++--------------------------
- 4 files changed, 19 insertions(+), 41 deletions(-)
-
---- dkms.orig/template-dkms-mkdeb/debian/changelog
-+++ dkms/template-dkms-mkdeb/debian/changelog
+--- a/template-dkms-mkdeb/debian/changelog
++++ b/template-dkms-mkdeb/debian/changelog
 @@ -2,5 +2,5 @@ DEBIAN_PACKAGE-dkms (MODULE_VERSION) sta
  
    * Automatically packaged by DKMS.
@@ -14,13 +7,13 @@
 - -- DKMS <dkms-devel@Dell.com>  DATE_STAMP
 + -- Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>  DATE_STAMP
  
---- dkms.orig/template-dkms-mkdeb/debian/compat
-+++ dkms/template-dkms-mkdeb/debian/compat
+--- a/template-dkms-mkdeb/debian/compat
++++ b/template-dkms-mkdeb/debian/compat
 @@ -1 +1 @@
 -5
 +7
---- dkms.orig/template-dkms-mkdeb/debian/control
-+++ dkms/template-dkms-mkdeb/debian/control
+--- a/template-dkms-mkdeb/debian/control
++++ b/template-dkms-mkdeb/debian/control
 @@ -1,11 +1,11 @@
  Source: DEBIAN_PACKAGE-dkms
  Section: misc
@@ -37,66 +30,3 @@
 -Depends: dkms (>= 1.95), bash (>> 1.99)
 +Depends: dkms (>= 1.95), bash, ${misc:Depends}
  Description: DEBIAN_PACKAGE driver in DKMS format.
---- dkms.orig/template-dkms-mkdeb/debian/rules
-+++ dkms/template-dkms-mkdeb/debian/rules
-@@ -8,47 +8,25 @@ DEB_NAME=DEBIAN_PACKAGE
- NAME=MODULE_NAME
- VERSION=MODULE_VERSION
- 
--configure: configure-stamp
--configure-stamp:
--	dh_testdir
--	touch configure-stamp
--
--
- build: build-stamp
--
--build-stamp: configure-stamp 
--	dh_testdir
--	$(MAKE)
-+build-stamp:
-+	dh build
- 	touch $@
- 
- clean:
--	dh_testdir
--	dh_testroot
--	rm -f build-stamp configure-stamp
--	-$(MAKE) clean
--	dh_clean
--
--install: build
--	dh_testdir
--	dh_testroot
--	dh_clean -k
--	dh_installdirs
-+	dh $@
-+
-+install: install-stamp
-+install-stamp: build
-+	dh install --before dh_auto_install
- 	$(MAKE) DESTDIR=$(CURDIR)/debian/$(DEB_NAME)-dkms NAME=$(NAME) VERSION=$(VERSION) install
-+	dh install --after dh_auto_install
-+	touch $@
- 
--binary-arch: build install
-+binary-arch:
- 
--binary-indep: build install
--	dh_testdir
--	dh_testroot
--	dh_link
--	dh_strip
--	dh_compress
--	dh_fixperms
--	dh_installdeb
--	dh_shlibdeps
--	dh_gencontrol
--	dh_md5sums
--	dh_builddeb
-+binary-indep:
-+	dh $@
- 
- binary: binary-indep binary-arch
--.PHONY: build clean binary-indep binary-arch binary install configure
-+.PHONY: build clean binary-indep binary-arch binary install
