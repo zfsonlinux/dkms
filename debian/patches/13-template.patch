@@ -1,3 +1,8 @@
+Updated template-dkms-mkdeb Changes:
+    - Bump to debhelper 7 compatibility levels
+    - Updated to standards version 3.8.0
+    - Use Dynamic Kernel Modules Support Team as maintainer field
+    - Use an unversioned dependency on bash and add ${misc:Depends} in Depends
 --- a/template-dkms-mkdeb/debian/changelog
 +++ b/template-dkms-mkdeb/debian/changelog
 @@ -2,5 +2,5 @@ DEBIAN_PACKAGE-dkms (MODULE_VERSION) sta
