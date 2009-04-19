@@ -1,5 +1,5 @@
 Source: dkms
-Section: admin
+Section: kernel
 Priority: optional
 Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
 Uploaders: David Paleino <d.paleino@gmail.com>,
