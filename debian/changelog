@@ -13,8 +13,9 @@ dkms (2.0.21.1-1) unstable; urgency=low
     dh_installmodules now give files in /etc/modprobe.d a .conf syntax,
     as required by new module-init-tools.
   * [ceff6d3] Move to kernel section as by ftpmasters override
+  * [aa84c76] debian/control: Fix VCS-Browser field
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Sun, 19 Apr 2009 23:59:23 +0200
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Wed, 22 Apr 2009 15:03:34 +0200
 
 dkms (2.0.21.0-1) unstable; urgency=low
 
