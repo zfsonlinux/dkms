@@ -4,9 +4,10 @@ dkms (2.0.21.1-1) unstable; urgency=low
   * [487ad26] debian/patches/13-template.patch: 
     Updated template-dkms-mkdeb Changes: 
     - Bump to debhelper 7 compatibility levels 
-    - Updated to standards version 3.8.0 
+    - Updated to standards version 3.8.1 
     - Use Dynamic Kernel Modules Support Team as maintainer field
     - Use an unversioned dependency on bash and add ${misc:Depends} in Depends
+    - Use dh_prep instead og dh_clean -k
   * [c75e860] Updated to standards version 3.8.1 (No changes needed)
   * [0d14f3e] Update dkms to check for /etc/modprobe.d/dkms.conf,
     dh_installmodules now give files in /etc/modprobe.d a .conf syntax,
