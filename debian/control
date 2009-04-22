@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 7), quilt
 Standards-Version: 3.8.1
 Homepage: http://linux.dell.com/dkms
 Vcs-Git: git://git.debian.org/git/users/hanska-guest/dkms.git
-Vcs-Browser: http://git.debian.org/git/users/hanska-guest/dkms.git
+Vcs-Browser: http://git.debian.org/?p=users/hanska-guest/dkms.git
 
 Package: dkms
 Architecture: all
