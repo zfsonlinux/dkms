@@ -14,6 +14,13 @@ dkms (2.0.21.1-1) unstable; urgency=low
     as required by new module-init-tools.
   * [ceff6d3] Move to kernel section as by ftpmasters override
   * [aa84c76] debian/control: Fix VCS-Browser field
+  * [6cd45ec] debian/patches/15_modprobe.patch: Do not install
+    /etc/modprobe.d/dkms, it only contains comments and is opened and
+    parsed every time modprobe is run (and it is run very often at boot
+    time). Use instead (and create if necessary)
+    /etc/modprobe.d/package_name.conf. (Closes: #525379)
+  * [3fac4cc] debian/postinst: Remove /etc/modprobe.d/dkms on upgrade
+    only if unmodified
 
  -- Giuseppe Iuculano <giuseppe@iuculano.it>  Wed, 22 Apr 2009 15:03:34 +0200
 
