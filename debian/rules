@@ -41,7 +41,6 @@ binary-indep: build install
 	dh_installexamples
 	dh_installinit --name dkms_autoinstaller
 	dh_installman
-	#dh_installmodules
 	dh_link
 	dh_strip
 	dh_compress
