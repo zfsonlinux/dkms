@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = upgrade ]; then
+	if dpkg --compare-versions "$2" lt-nl "2.0.21.1-1" ; then
+		if [ -e "/etc/modprobe.d/dkms" ]; then
+			if [ "`md5sum \"/etc/modprobe.d/dkms\" | sed -e \"s/ .*//\"`" = \
+				"`dpkg-query -W -f='${Conffiles}' dkms | sed -n -e \"\\\\' /etc/modprobe.d/dkms's/.* //p\"`" ]
+			then
+				rm -f "/etc/modprobe.d/dkms"
+			fi
+		fi
+	fi
+fi
+
+#DEBHELPER#
