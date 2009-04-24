@@ -12,3 +12,4 @@
 12-use_invoke-rc.d.patch
 13-template.patch
 14_new_module-init-tools.patch
+15_modprobe.patch
