@@ -20,9 +20,8 @@ dkms (2.0.21.1-1) unstable; urgency=low
     time). Use instead (and create if necessary)
     /etc/modprobe.d/package_name.conf. (Closes: #525379)
   * [3fac4cc] debian/postinst: Remove /etc/modprobe.d/dkms on upgrade
-    only if unmodified
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Wed, 22 Apr 2009 15:03:34 +0200
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Thu, 30 Apr 2009 18:20:40 +0200
 
 dkms (2.0.21.0-1) unstable; urgency=low
 

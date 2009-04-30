@@ -10,6 +10,10 @@ if [ "$1" = upgrade ]; then
 			then
 				rm -f "/etc/modprobe.d/dkms"
 			fi
+		else
+			echo "Moving /etc/modprobe.d/dkms to /etc/modprobe.d/dkms.conf"
+			grep -v '^#' /etc/modprobe.d/dkms >> /etc/modprobe.d/dkms.conf
+			rm -f "/etc/modprobe.d/dkms"
 		fi
 	fi
 fi
