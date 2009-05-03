@@ -11,7 +11,7 @@ if dpkg --compare-versions "$2" lt-nl "2.0.21.1-1~" ; then
 			rm -f /etc/modprobe.d/dkms
 		else
 			echo "Moving /etc/modprobe.d/dkms to /etc/modprobe.d/dkms.conf ..."
-			grep -v '^#' /etc/modprobe.d/dkms >> /etc/modprobe.d/dkms.conf
+			mv /etc/modprobe.d/dkms /etc/modprobe.d/dkms.conf
 			rm -f /etc/modprobe.d/dkms
 		fi
 	fi
