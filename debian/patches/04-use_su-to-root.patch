@@ -1,7 +1,7 @@
 Use su-to-root if available
 --- a/dkms
 +++ b/dkms
-@@ -3088,7 +3088,9 @@ function make_debian()
+@@ -3076,7 +3076,9 @@ function make_debian()
      ROOT=""
      ADMINABLE=""
      if [ "$USER" != "root" ]; then
