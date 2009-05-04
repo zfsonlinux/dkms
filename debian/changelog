@@ -28,7 +28,7 @@ dkms (2.0.21.1-1) unstable; urgency=low
     must use /etc/kernel/postinst.d/ directory.
   * [eff2f3e] debian/control: demoted linux-headers and linux-image in
     Recommends, removed kernel-package and build-essential from Depends,
-    and added only gcc.
+    and added only gcc and make.
   * [508c115] debian/postinst: Remove also
     /etc/kernel/header_postinst.d/dkms and do an init script remove to
     un-do the "bad" links created by previous version
@@ -41,7 +41,7 @@ dkms (2.0.21.1-1) unstable; urgency=low
     doesn't do anything on shutdown.
 
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Thu, 30 Apr 2009 18:20:40 +0200
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Mon, 04 May 2009 09:55:18 +0200
 
 dkms (2.0.21.0-1) unstable; urgency=low
 
