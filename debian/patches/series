@@ -1,6 +1,5 @@
 01-fix_manpage.patch
 02-fix_distribution.patch
-03-use-new-header_postinst.d_directory.patch
 04-use_su-to-root.patch
 05-do_not_check_admin_group.patch
 06-fakeroot.patch
@@ -10,3 +9,6 @@
 10-lsb.patch
 11-bash-completion.patch
 12-use_invoke-rc.d.patch
+13-template.patch
+14_new_module-init-tools.patch
+15_modprobe.patch

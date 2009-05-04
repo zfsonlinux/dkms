@@ -39,9 +39,8 @@ binary-indep: build install
 	dh_installchangelogs 
 	dh_installdocs AUTHORS debian/HOWTO.Debian
 	dh_installexamples
-	dh_installinit --name dkms_autoinstaller
+	dh_installinit --name dkms_autoinstaller --update-rcd-params="start 20 2 3 4 5 ."
 	dh_installman
-	dh_installmodules
 	dh_link
 	dh_strip
 	dh_compress
