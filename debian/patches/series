@@ -1,14 +1,2 @@
-01-fix_manpage.patch
-02-fix_distribution.patch
-04-use_su-to-root.patch
-05-do_not_check_admin_group.patch
-06-fakeroot.patch
-07-exit-if-build-fails.patch
 08-support_kernel-img.conf.patch
-09-lilo_detection.patch
-10-lsb.patch
-11-bash-completion.patch
-12-use_invoke-rc.d.patch
-13-template.patch
-14_new_module-init-tools.patch
 15_modprobe.patch
