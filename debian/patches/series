@@ -1,2 +1,2 @@
-08-support_kernel-img.conf.patch
+08-use-update-initramfs.patch
 15_modprobe.patch
