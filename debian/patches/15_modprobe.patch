@@ -1,7 +1,7 @@
 do not create an empty /etc/modprobe.d/package_name.conf. it is opened and parsed every time modprobe is run (and it is run very often at boot time). Create it only if necessary.
 --- a/dkms
 +++ b/dkms
-@@ -750,8 +750,6 @@ function moduleconfig_add ()
+@@ -732,8 +732,6 @@ function moduleconfig_add ()
      [ -e /etc/modprobe.d/$package_name.conf ] && modconfig_files="/etc/modprobe.d/$package_name.conf"
  
      if [ -z "$modconfig_files" ]; then
@@ -10,7 +10,7 @@ do not create an empty /etc/modprobe.d/package_name.conf. it is opened and parse
  	    modconfig_files="/etc/modprobe.d/$package_name.conf"
      fi
  
-@@ -782,8 +780,13 @@ function moduleconfig_add ()
+@@ -764,8 +762,13 @@ function moduleconfig_add ()
  
  	    # Only add it if it can't be found already in config file
  	    if [ -n "${modules_conf_alias_type[$index]}" ] && \
