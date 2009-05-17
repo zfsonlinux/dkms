@@ -2,7 +2,7 @@ Use update-initramfs, it is the default in Debian/Ubuntu and it also computes an
 with update-initramfs no need to check for do_bootloader and lilo.
 --- a/dkms
 +++ b/dkms
-@@ -207,23 +207,12 @@ function remake_initrd()
+@@ -207,23 +207,10 @@ function remake_initrd()
      local exitval="0"
      local mkinitrd='mkinitrd'
  
@@ -23,16 +23,14 @@ with update-initramfs no need to check for do_bootloader and lilo.
 -    # Support initramfs distributions (Ubuntu).
 -    if [ -x "/usr/sbin/mkinitramfs" ]; then
 -        mkinitrd='mkinitramfs'
-+    
++
 +    # Support initramfs distributions (Debian/Ubuntu).
-+    if [-z "$mkinitrd" ] || [ "$mkinitrd" == "mkinitrd" ]; then
-+	    if [ -x "/usr/sbin/update-initramfs" ]; then
-+		    mkinitrd='update-initramfs'
-+	    fi
++    if [ -x "/usr/sbin/update-initramfs" ]; then
++	    mkinitrd='update-initramfs'
      fi
  
      $mkinitrd --version >/dev/null 2>&1
-@@ -262,9 +251,7 @@ function remake_initrd()
+@@ -262,9 +249,7 @@ function remake_initrd()
  	echo $"Updating initrd"
  	echo $"Making new initrd as $initrd_dir/initrd.img-$1"
  	echo $"(If next boot fails, revert to the .bak initrd image)"
@@ -43,7 +41,7 @@ with update-initramfs no need to check for do_bootloader and lilo.
  		invoke_command "$mkinitrd -u" "$mkinitrd" background
  	else
  		echo $"Saving old initrd as $initrd_dir/initrd.img_old-$1"
-@@ -281,11 +268,6 @@ function remake_initrd()
+@@ -281,11 +266,6 @@ function remake_initrd()
  	exitval="$?"
      fi
  
