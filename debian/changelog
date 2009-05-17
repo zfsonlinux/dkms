@@ -13,6 +13,7 @@ dkms (2.0.22.0-1) unstable; urgency=low
     it only if necessary.
   * [3731c00] debian/patches/08-support_kernel-img.conf.patch: Use
     mkinitramfs only if ramdisk is not set in /etc/kernel-img.conf.
+    (Closes: #529038)
 
  -- Giuseppe Iuculano <giuseppe@iuculano.it>  Fri, 15 May 2009 23:17:28 +0200
 
