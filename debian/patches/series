@@ -1,2 +1,3 @@
 08-use-update-initramfs.patch
 15_modprobe.patch
+16_dpkg-divert.patch
