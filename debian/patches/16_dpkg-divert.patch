@@ -1,7 +1,26 @@
 Use dpkg-divert to override an existing kernel module, thanks to Andrea Mennucci. (Closes: #529059)
 --- a/dkms
 +++ b/dkms
-@@ -1258,13 +1258,20 @@ function install_module()
+@@ -1234,11 +1234,13 @@ function install_module()
+ 	    local found_orginal=""
+ 	    for original_module in $archive_pref1 $archive_pref2 $archive_pref3 $archive_pref4; do
+ 		if [ -f "$original_module" ]; then
+-		    echo $"   - Found $original_module"
+-		    echo $"   - Storing in $dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
+-		    echo $"   - Archiving for uninstallation purposes"
+-		    mkdir -p "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}"
+-		    mv -f "$original_module" "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
++		    if ! which dpkg-divert >/dev/null 2>&1 ; then
++			    echo $"   - Found $original_module"
++			    echo $"   - Storing in $dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
++			    echo $"   - Archiving for uninstallation purposes"
++			    mkdir -p "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}"
++			    mv -f "$original_module" "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
++		    fi
+ 		    found_original="yes"
+ 		    break
+ 		fi
+@@ -1258,13 +1260,20 @@ function install_module()
  	if [ "$module_count" -gt 1 ]; then
  	    echo $" - Multiple same named modules!"
  	    echo $"   - $module_count named ${dest_module_name[$count]}$module_suffix in $lib_tree/"
@@ -27,7 +46,7 @@ Use dpkg-divert to override an existing kernel module, thanks to Andrea Mennucci
  	    done
  	fi
  
-@@ -1605,10 +1612,16 @@ function do_uninstall()
+@@ -1605,10 +1614,16 @@ function do_uninstall()
  	    rm -f "$install_tree/$1${real_dest_module_location}/${dest_module_name[$count]}$module_suffix"
  	    echo $" - Original module"
  	    if [ -e "$dkms_tree/$module/original_module/$1/$2/${dest_module_name[$count]}$module_suffix" ]; then
