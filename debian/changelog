@@ -17,8 +17,10 @@ dkms (2.0.22.0-1) unstable; urgency=low
   * [f4a197f] debian/patches/16_dpkg-divert.patch: Use dpkg-divert to
     override an existing kernel module, thanks to Andrea Mennucci.
     (Closes: #529059)
+  * [db7ffe7] debian/patches/01_kernel_postinst.patch: shut up "which" in the
+    the kernel kernel_postinst.d script, only the exit code is needed.
 
- -- Giuseppe Iuculano <giuseppe@iuculano.it>  Mon, 18 May 2009 22:15:12 +0200
+ -- Giuseppe Iuculano <giuseppe@iuculano.it>  Tue, 19 May 2009 23:41:33 +0200
 
 dkms (2.0.21.1-1) unstable; urgency=low
 
