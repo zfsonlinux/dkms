@@ -19,18 +19,17 @@ with update-initramfs no need to check for do_bootloader and lilo.
 -            mkinitrd='update-initramfs'
 -        fi
 -    fi
--
+ 
 -    # Support initramfs distributions (Ubuntu).
 -    if [ -x "/usr/sbin/mkinitramfs" ]; then
 -        mkinitrd='mkinitramfs'
-+
 +    # Support initramfs distributions (Debian/Ubuntu).
 +    if [ -x "/usr/sbin/update-initramfs" ]; then
 +	    mkinitrd='update-initramfs'
      fi
  
      $mkinitrd --version >/dev/null 2>&1
-@@ -262,9 +249,7 @@ function remake_initrd()
+@@ -262,12 +249,10 @@ function remake_initrd()
  	echo $"Updating initrd"
  	echo $"Making new initrd as $initrd_dir/initrd.img-$1"
  	echo $"(If next boot fails, revert to the .bak initrd image)"
@@ -40,7 +39,11 @@ with update-initramfs no need to check for do_bootloader and lilo.
 +	if [ "$mkinitrd" == "update-initramfs" ]; then
  		invoke_command "$mkinitrd -u" "$mkinitrd" background
  	else
- 		echo $"Saving old initrd as $initrd_dir/initrd.img_old-$1"
+-		echo $"Saving old initrd as $initrd_dir/initrd.img_old-$1"
++		echo $"Saving old initrd as $initrd_dir/initrd.img-$1.bak"
+ 		# we use the same convention as update-initramfs, so that we just
+ 		# print the warning once
+ 		cp -f "$initrd_dir/initrd.img-$1" "$initrd_dir/initrd.img-$1.bak"
 @@ -281,11 +266,6 @@ function remake_initrd()
  	exitval="$?"
      fi
