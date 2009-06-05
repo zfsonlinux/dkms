@@ -1,6 +1,6 @@
 Summary: Dynamic Kernel Module Support Framework
 Name: dkms
-Version: 2.0.21.1
+Version: 2.0.22.0
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Base
@@ -116,16 +116,6 @@ rm -rf $RPM_BUILD_ROOT
 [ -e /sbin/dkms ] && mv -f /sbin/dkms /sbin/dkms.old 2>/dev/null
 # enable on initial install
 [ $1 -lt 2 ] && /sbin/chkconfig dkms_autoinstaller on ||:
-
-#on sles11, we'll have this file and need to set this option
-#so that we can use DKMS modules
-if [ -f /etc/modprobe.conf.local ]; then
-    if grep ^allow_unsupported_modules /etc/modprobe.conf.local >/dev/null; then
-         sed -i -e 's/^allow_unsupported_modules.*/allow_unsupported_modules 1/' /etc/modprobe.conf.local
-    else
-         echo "allow_unsupported_modules 1" >> /etc/modprobe.conf.local
-    fi
-fi
 
 %preun
 # remove on uninstall
