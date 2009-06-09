@@ -14,7 +14,7 @@ dkms (2.0.22.0-1) unstable; urgency=low
   * [3731c00] debian/patches/08-support_kernel-img.conf.patch: Use
     update-initramfs, it is the default in Debian/Ubuntu and it also computes
     and stores some checksums. (Closes: #529038)
-  * [f4a197f] debian/patches/16_dpkg-divert.patch: Do not move away the old
+  * [f4a197f] debian/patches/16_old_module.patch: Do not move away the old
     module, by default dkms install the new one in
     /lib/modules/<kernelversion>/updates/dkms (Closes: #529059)
   * [db7ffe7] debian/patches/01_kernel_postinst.patch: shut up "which" in the

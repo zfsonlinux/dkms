@@ -1,4 +1,4 @@
 01_kernel_postinst.patch
 08-use-update-initramfs.patch
 15_modprobe.patch
-16_dpkg-divert.patch
+16_old_module.patch
