@@ -1,4 +1,5 @@
 01_kernel_postinst.patch
+02_dkms.8.patch
 08-use-update-initramfs.patch
 15_modprobe.patch
 16_old_module.patch
