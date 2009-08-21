@@ -1,33 +1,66 @@
-dkms (2.1.0.1-0ubuntu1) karmic; urgency=low
+dkms (2.1.1.0-0ubuntu1) lucid; urgency=low
 
-  * New upstream version.    
-    - When possible, run builds as the 'nobody' user rather than root. 
-      This appears to work well on Ubuntu, but F11 doesn't allow anyone
-      to run commands as 'nobody'.  So expect mixed behavior here on
-      other distros.
-    - Add support for Oracle VM and VMware 3.x
-    - For RPMs drop dependency on lsb and instead ship a private
-      lsb_release if a system lsb_release is not present.  Prevents
-      pulling in a large dependency chain since the 'lsb' package isn't
-      split up in RPM distros like in the DEB world.
-    - Standardize on the correct command for DEB distros for updating
-      the initramfs
-    - DEBs & RPMs no long exclusively store DKMS tarballs that get
-      loaded when the DEB or RPM is installed.  Instead, they will store
-      the actual source.
-    - When shipping binary modules with a DEB or RPM, they will still be
-      put into a DKMS tarball, but they are stored in a more appropriate
-      location on the system before getting loaded (generally /usr/share).
-    - If the DEB/RPM has a combination of these two, then it will ship
-      the source as part of the DEB/RPM and the binary modules inside
-      the tarball in /usr/share.
-    - Support for binaries only DEBS and RPMS has been added.  This
-      unfortunately requires that they DEB or RPM be installed on DKMS
-      2.1.0.0.  Keep in mind that you won't be able to let these DEBs or
-      RPMs rebuild automatically when new kernels are installed.
-    - A common postinstall script is now shipped and shared for DEBs and
-      RPMs.  The same actions are used on both types of installations.
-    - Cleanup stderr noise on remove (LP: #391023)
+  [ Mario Limonciello ]
+  * New upstream version
+  * dkms_autoinstall: Minor logic cleanups from submitted patches.
+  * dkms_autoinstall: Run under dash since dkms.conf isn't sourced anymore.
+  * dkms_autoinstall: Whitespace cleanup.
+  * Convert DKMS to an upstart script that starts up before GDM or KDM can
+    start.  This ensures that drivers are built before X tries to start.
+    (LP: #453365)
+  * dkms_autoinstall: Rather than having if/else clauses all over the script,
+    stub out any functions that aren't provided on Debian/Ubuntu when
+    /etc/debian_version isn't present.
+  * dkms_autoinstall: Exit immediately if this script is present but DKMS
+    isn't anymore rather than sourcing functions and then exiting.
+  * kernel_postinst.d_dkms: Launch the upstart script instead. In the process
+    all output will be going to /var/log/dkms_autoinstaller (LP: #292606)
+  * dkms_autoinstall: Don't ever output to stdout, even with kernel parameters.
+  * dkms_autoinstall: Don't log the situation that we already have everything
+    installed that needs to be.
+  * dkms_autoinstall: Rather than logging to /var/log/dkms_autoinstaller,
+    use logger to log to syslog during build and install.
+  * dkms_autoinstall: Clean up the method to get arch.  These hacks shouldn't
+    be necessary.  If you have problems with them gone, file a bug and we'll
+    fix them more cleanly.
+  * dkms_autoinstall: Notate the kernel we are building a module against
+    when building it.
+  * debian/rules: Don't attempt to stop DKMS on upgrades.  It's a task, not
+    a daemon, so stop wouldn't do anything.
+  * Makefile: Install the old initscript to /usr/lib so that different distros
+    can migrate to upstart at their leisure.
+  * Makefile: Move any debian specific calls into the Makefile.
+  * dkms: Revert the code that runs DKMS as the user "nobody".  
+    - It's causing problems with people with nonstandard PAM configs because it
+      uses "su". (LP: #484725)
+    - Also people have reported that nothing should be owned by 'nobody' per
+      Debian & Ubuntu policy.  This could have been fixed by creating a DKMS
+      user, but that still wouldn't solve the problems with using 'su'.
+  * dkms: Emit built-module MODULE=foo if initctl is available on the system
+    after done building a module.   
+  * Add a special apport package-hook for when package builds fail to try
+    to report them against the package providing that DKMS package.
+    (LP: #484871)
+  
+  [ Alberto Milone ]
+  * dkms_common.postinst: try to build the module for the most recent
+    kernel in addition to building it for the current kernel (LP: #474917).
+
+  [ Steve Langasek ]
+  * dkms_autoinstall: optimize with a single find call instead of multiple
+    loops with ls. (LP: 3484386)
+  * dkms_autoinstall: drop localization of the usage message - this is
+    inconsistent with all other init scripts on the system.
+
+  [ Pauli Virtanen ]
+  * Remove dependence from environment's umask and certain environment 
+    variables. (LP: #438393, #436039)
+
+  [ Giuseppe Iuculano ]
+  * dkms_autoinstall: Correct the provides in the LSB block.
+
+  [ David Paleino ]
+  * dkms: improve error message, and add Debian/Ubuntu specific suggestion.
 
  -- Mario Limonciello <mario_limonciello@dell.com>  Fri, 21 Aug 2009 15:49:58 -0500
 
