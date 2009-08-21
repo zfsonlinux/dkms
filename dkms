@@ -51,7 +51,7 @@ function show_usage ()
     echo $"              [--config=kernel-.config-location] [--archive=tarball-location]"
     echo $"              [--kernelsourcedir=source-location] [--no-prepare-kernel]"
     echo $"              [--binaries-only] [--source-only] [-r release (SuSE)] [--verbose]"
-    echo $"              [--size] [--spec=specfile] [--media=floppy|iso|tar]"
+    echo $"              [--size] [--spec=specfile] [--media=floppy|iso|tar] [--legacy-postinst=0|1]"
 }
 
 function readlink()
@@ -207,9 +207,10 @@ function remake_initrd()
     local exitval="0"
     local mkinitrd='mkinitrd'
 
-    # Support initramfs distributions (Ubuntu).
-    if [ -x "/usr/sbin/mkinitramfs" ]; then
-        mkinitrd='mkinitramfs'
+
+    # Support initramfs distributions (Debian/Ubuntu).
+    if [ -x "/usr/sbin/update-initramfs" ]; then
+	    mkinitrd='update-initramfs'
     fi
 
     $mkinitrd --version >/dev/null 2>&1
@@ -226,20 +227,37 @@ function remake_initrd()
     elif [ -e /etc/SuSE-release ] || [ -d /etc/SuSEconfig ]; then
 	echo $""
 	initrd_dir="/boot"
+	kernel_file="vmlinuz"
+	if [ ! -f "$initrd_dir/$kernel_file-$1" ]; then
+		kernel_file="vmlinux"
+		if [ ! -f "$initrd_dir/$kernel_file-$1" ]; then
+			echo $"Error! Unable to find valid kernel file under " >&2
+			echo $"$initrd_dir for kernel version $1" >&2
+			echo $"" >&2
+			return 1;
+		fi
+	fi
 	echo $"Saving old initrd as $initrd_dir/initrd-$1_old"
 	cp -f "$initrd_dir/initrd-$1" "$initrd_dir/initrd-$1_old"
 	echo $"Making new initrd as $initrd_dir/initrd-$1"
 	echo $"(If next boot fails, revert to the _old initrd image)"
-	invoke_command "$mkinitrd -k vmlinuz-$1 -i initrd-$1" "$mkinitrd" background
+	invoke_command "$mkinitrd -k $kernel_file-$1 -i initrd-$1" "$mkinitrd" background
 	exitval="$?"
     elif [ -e /etc/debian_version ]; then
       	echo $""
 	initrd_dir="/boot"
-	echo $"Saving old initrd as $initrd_dir/initrd.img_old-$1"
-	cp -f "$initrd_dir/initrd.img-$1" "$initrd_dir/initrd.img_old-$1"
+	echo $"Updating initrd"
 	echo $"Making new initrd as $initrd_dir/initrd.img-$1"
-	echo $"(If next boot fails, revert to the _old initrd image)"
-	invoke_command "$mkinitrd -o $initrd_dir/initrd.img-$1 $1" "$mkinitrd" background
+	echo $"(If next boot fails, revert to the .bak initrd image)"
+	if [ "$mkinitrd" == "update-initramfs" ]; then
+		invoke_command "$mkinitrd -u" "$mkinitrd" background
+	else
+		echo $"Saving old initrd as $initrd_dir/initrd.img-$1.bak"
+		# we use the same convention as update-initramfs, so that we just
+		# print the warning once
+		cp -f "$initrd_dir/initrd.img-$1" "$initrd_dir/initrd.img-$1.bak"
+		invoke_command "$mkinitrd -o $initrd_dir/initrd.img-$1 $1" "$mkinitrd" background
+	fi
 	exitval="$?"
     else
 	echo $""
@@ -248,78 +266,144 @@ function remake_initrd()
 	exitval="$?"
     fi
 
-    # Rerun lilo if necessary
-    if ! [ -e /boot/grub/grub.conf ] && [ -e /etc/lilo.conf ] && ! [ -e /boot/grub/menu.lst ]; then
-	invoke_command "/sbin/lilo" "Updating lilo"
-    fi
-
     return $exitval
+}
+
+function distro_version_rpm()
+{
+    local whatprovides_redhat
+    local whatprovides_suse
+    local whatprovides_sles
+    local whatprovides_ovm
+    local DISTRO
+    local VER
+    local dist=unknown
+
+    if ! which rpm > /dev/null 2>&1 ; then
+	echo "${dist}"
+	return
+    fi
+	
+    whatprovides_redhat=$(rpm -q --whatprovides redhat-release)
+    if [ $? -eq 0 ]; then
+	case "${whatprovides_redhat}" in
+	    redhat*)     DISTRO=redhat ;;
+	    centos*)     DISTRO=centos ;;
+	    enterprise*) DISTRO=oel ;; # Oracle Enterprise Linux
+	    sl*)         DISTRO=sl ;;  # Scientific Linux
+	    fedora*)     DISTRO=fedora ;;
+	    *) ;;
+	esac
+    fi
+    whatprovides_sles=$(rpm -q --whatprovides sles-release)
+    [ $? -eq 0 ] && DISTRO=sles
+    whatprovides_suse=$(rpm -q --whatprovides suse-release)
+    [ $? -eq 0 ] && DISTRO=suse
+    whatprovides_ovm=$(rpm -q --whatprovides ovs-release)
+    [ $? -eq 0 ] && DISTRO=ovm
+
+    case "${DISTRO}" in
+	redhat)
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_redhat})
+            # format is 3AS, 4AS, 5Desktop...
+	    VER=$(echo "${VER}" | sed -e 's/^\([[:digit:]]*\).*/\1/g')
+	    dist=el${VER}
+	    ;;
+	centos)
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_redhat})
+            # format is 3, 4, ...
+	    dist=el${VER}
+	    ;;
+	oel) 
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_redhat})
+            # format is 3, 4, ...
+	    dist=el${VER}
+	    ;;
+	ovm) 
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_ovm})
+            # format is 2.1
+	    dist=ovm${VER}
+	    ;;
+	sl) 
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_redhat})
+	    # format is 4.7, 5.3
+	    VER=$(echo "${VER}" | sed -e 's/^\([[:digit:]]*\).*/\1/g')
+	    dist=el${VER}
+	    ;;
+	fedora) 
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_redhat})
+	    dist=fc${VER}
+	    ;;
+	sles)
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_sles})
+	    dist=sles${VER}
+	    ;;
+	suse)
+	    VER=$(rpm -q --qf "%{version}\n" ${whatprovides_suse})
+	    dist=suse${VER}
+	    ;;
+	*)
+	    dist=unknown
+	    ;;
+    esac
+    echo "$dist"
 }
 
 function distro_version()
 {
 # What distribution are we running?
-    local WHATPROVIDES_REDHAT_RELEASE
-    local WHATPROVIDES_SLES_RELEASE
-    local WHATPROVIDES_SUSE_RELEASE
-    local REDHAT_RELEASE
-    local CENTOS_RELEASE
-    local FEDORA_RELEASE
     local LSB_RELEASE
+    local LSB_DESCRIPTION
+    local DISTRIB_ID
+    local DISTRIB_RELEASE
     local VER
     local dist=unknown
 
-    if which rpm > /dev/null 2>&1 ; then
-	WHATPROVIDES_REDHAT_RELEASE=$(rpm -q --whatprovides redhat-release)
-	if [ $? -eq 0 ]; then
-	    if $(echo "${WHATPROVIDES_REDHAT_RELEASE}" | grep redhat-release > /dev/null 2>&1) ; then
-		REDHAT_RELEASE=1
-	    elif (echo "${WHATPROVIDES_REDHAT_RELEASE}" | grep centos-release > /dev/null 2>&1) ; then
-		CENTOS_RELEASE=1
-	    elif $(echo "${WHATPROVIDES_REDHAT_RELEASE}" | grep fedora-release > /dev/null 2>&1) ; then
-		FEDORA_RELEASE=1
-	    fi
-	fi
-
-	WHATPROVIDES_SLES_RELEASE=$(rpm -q --whatprovides sles-release)
-	if [ $? -eq 0 ]; then
-	    SLES_RELEASE=1
-	fi
-
-	WHATPROVIDES_SUSE_RELEASE=$(rpm -q --whatprovides suse-release)
-	if [ $? -eq 0 ]; then
-	    SUSE_RELEASE=1
-	fi
-    fi
+# try the LSB-provided strings first
     if [ -r /etc/lsb-release ]; then
 	. /etc/lsb-release
 	LSB_RELEASE=1
+    elif type lsb_release >/dev/null 2>&1; then
+	DISTRIB_ID=$(lsb_release -i -s)
+	DISTRIB_RELEASE=$(lsb_release -r -s)
+	LSB_RELEASE=1
     fi
 
-    if [ -n "${FEDORA_RELEASE}" ]; then
-	VER=$(rpm -q --qf "%{version}\n" ${WHATPROVIDES_REDHAT_RELEASE})
-	dist=fc${VER}
-    elif [ -n "${REDHAT_RELEASE}" ]; then
-	VER=$(rpm -q --qf "%{version}\n" ${WHATPROVIDES_REDHAT_RELEASE})
-        # format is 3AS, 4AS, 5Desktop...
-	VER=$(echo "${VER}" | sed -e 's/^\([[:digit:]]*\).*/\1/g')
-	dist=el${VER}
-    elif [ -n "${CENTOS_RELEASE}" ]; then
-	VER=$(rpm -q --qf "%{version}\n" ${WHATPROVIDES_REDHAT_RELEASE})
-        # format is 3, 4, ...
-	dist=el${VER}
-    elif [ -n "${SLES_RELEASE}" ]; then
-	VER=$(rpm -q --qf "%{version}\n" ${WHATPROVIDES_SLES_RELEASE})
-	dist=sles${VER}
-    elif [ -n "${SUSE_RELEASE}" ]; then
-	VER=$(rpm -q --qf "%{version}\n" ${WHATPROVIDES_SUSE_RELEASE})
-	dist=suse${VER}
-    elif [ -n "${LSB_RELEASE}" ]; then
-	if [ -n "${DISTRIB_ID}" -a -n "${DISTRIB_RELEASE}" ]; then
-	    dist="${DISTRIB_ID}${DISTRIB_RELEASE}"
-	fi
-    fi
+    case "${DISTRIB_ID}" in
+	Fedora)             dist=fc${DISTRIB_RELEASE} ;;
+	RedHatEnterprise*)  # OEL also reports as such
+	    # format is 4.7, 5.3
+	    VER=$(echo "${DISTRIB_RELEASE}" | sed -e 's/^\([[:digit:]]*\).*/\1/g')
+	    dist=el${VER}
+	    ;;
+	CentOS)
+	    # format is 4.7, 5.3
+	    VER=$(echo "${DISTRIB_RELEASE}" | sed -e 's/^\([[:digit:]]*\).*/\1/g')
+	    dist=el${VER}
+	    ;;
+	ScientificSL)
+	    # format is 4.7, 5.3
+	    VER=$(echo "${DISTRIB_RELEASE}" | sed -e 's/^\([[:digit:]]*\).*/\1/g')
+	    dist=el${VER}
+	    ;;
+	SUSE*)
+	    LSB_DESCRIPTION="$(lsb_release -d -s)"
+	    if echo "${LSB_DESCRIPTION}" | grep Enterprise > /dev/null 2>&1; then
+		dist=sles${DISTRIB_RELEASE}
+	    else
+		dist=suse${DISTRIB_RELEASE}
+	    fi
+	    ;;
+	*) 	
+	    if [ -n "${LSB_RELEASE}" -a -n "${DISTRIB_ID}" -a -n "${DISTRIB_RELEASE}" ]; then
+		dist="${DISTRIB_ID}${DISTRIB_RELEASE}"
+	    fi
+	    ;;
+    esac
 
+    if [ "${dist}" == "unknown" ]; then
+	dist=$(distro_version_rpm)
+    fi
     echo "$dist"
 }
 
@@ -336,9 +420,11 @@ function override_dest_module_location()
 	suse10\.[01]) ;;
 	fc*) echo "/extra" && return ;;
 	el*) echo "/extra" && return ;;
+	ovm*) echo "/extra" && return ;;
 	sles*) echo "/updates" && return ;;
 	suse*) echo "/updates" && return ;;
 	Ubuntu*) echo "/updates/dkms" && return ;;
+	Debian*) echo "/updates/dkms" && return ;;
 	*) ;;
     esac
     echo "$orig_location"
@@ -705,9 +791,16 @@ function moduleconfig_add ()
 
     local temp_dir_name=`mktemp -d $tmp_location/dkms.XXXXXX`
     modconfig_files=""
+    [ -e /etc/modprobe.d/dkms.conf ] && modconfig_files="/etc/modprobe.d/dkms.conf"
     [ -e /etc/modprobe.d/dkms ] && modconfig_files="/etc/modprobe.d/dkms"
     [ -e /etc/modules.conf ] && modconfig_files="$modconfig_files /etc/modules.conf"
     [ -e /etc/modprobe.conf ] && modconfig_files="$modconfig_files /etc/modprobe.conf"
+    [ -e /etc/modprobe.d/$package_name.conf ] && modconfig_files="/etc/modprobe.d/$package_name.conf"
+
+    if [ -z "$modconfig_files" ]; then
+	    modconfig_files="/etc/modprobe.d/$package_name.conf"
+    fi
+
 
     for moduleconfig in $modconfig_files; do
 	local index=0
@@ -735,8 +828,13 @@ function moduleconfig_add ()
 
 	    # Only add it if it can't be found already in config file
 	    if [ -n "${modules_conf_alias_type[$index]}" ] && \
-	       ! grep -q "alias ${modules_conf_alias_type[$index]}[0-9]* ${dest_module_name[$index]}\b" $moduleconfig && \
+	       ! grep -qs "alias ${modules_conf_alias_type[$index]}[0-9]* ${dest_module_name[$index]}\b" $moduleconfig && \
 	       [ "${modules_conf_obsolete_only[$index]}" != "yes" ]; then
+	        if [ "$modconfig_files" == "/etc/modprobe.d/$package_name.conf" ] && \
+			[ ! -e /etc/modprobe.d/$package_name.conf ]; then
+			touch /etc/modprobe.d/$package_name.conf
+			echo $"created /etc/modprobe.d/$package_name.conf.">&2
+		fi
 		aliases=$(awk "/^alias ${modules_conf_alias_type[$index]}/ {print \$2}" $moduleconfig)
 		if [ -n "$aliases" ]; then
 			alias_number=$(($(echo "$aliases" | sed "s/${modules_conf_alias_type[$index]}//" | sort -n | tail -n 1) + 1))
@@ -774,9 +872,11 @@ function moduleconfig_remove ()
 
     local temp_dir_name=`mktemp -d $tmp_location/dkms.XXXXXX`
     modconfig_files=""
+    [ -e /etc/modprobe.d/dkms.conf ] && modconfig_files="/etc/modprobe.d/dkms.conf"
     [ -e /etc/modprobe.d/dkms ] && modconfig_files="/etc/modprobe.d/dkms"
     [ -e /etc/modules.conf ] && modconfig_files="$modconfig_files /etc/modules.conf"
     [ -e /etc/modprobe.conf ] && modconfig_files="$modconfig_files /etc/modprobe.conf"
+    [ -e /etc/modprobe.d/$package_name.conf ] && modconfig_files="/etc/modprobe.d/$package_name.conf"
 
     for moduleconfig in $modconfig_files; do
 	index=0
@@ -801,6 +901,11 @@ function moduleconfig_remove ()
 		    grep -v "alias ${modules_conf_alias_type[$index]}[0-9]* ${dest_module_name[$index]}" $moduleconfig > $temp_dir_name/moduleconfig.new
 		    mv -f $temp_dir_name/moduleconfig.new $moduleconfig
 		    echo $"$moduleconfig: removed alias for '${dest_module_name[$index]}'"
+		    if [ "$modconfig_files" == "/etc/modprobe.d/$package_name.conf" ]; then
+			    rm -f /etc/modprobe.d/$package_name.conf
+			    echo $"$moduleconfig: deleted /etc/modprobe.d/$package_name.conf file"
+		    fi
+
 		fi
 	    fi
 
@@ -979,9 +1084,10 @@ function prepare_kernel()
 
     # Set kernel_config
     if [ -e /etc/redhat-release ] || [ -e /etc/fedora-release ]; then
+	# Note this also applies to VMware 3.x
 	if [ -z "$kernel_config" ] && [ -d "$kernel_source_dir/configs" ]; then
 	    local kernel_trunc=`echo $1 | sed 's/-.*//'`
-	    for config_type in debug summit smp enterprise bigmem hugemem BOOT; do
+	    for config_type in debug summit smp enterprise bigmem hugemem BOOT vmnix; do
 		[ `echo "$1" | grep "$config_type"` ] && kernel_config="$kernel_source_dir/configs/kernel-$kernel_trunc-$2-$config_type.config"
 		[ ! -e "$kernel_config" ] && kernel_config=""
 	    done
@@ -1195,11 +1301,16 @@ function install_module()
 	    local found_orginal=""
 	    for original_module in $archive_pref1 $archive_pref2 $archive_pref3 $archive_pref4; do
 		if [ -f "$original_module" ]; then
-		    echo $"   - Found $original_module"
-		    echo $"   - Storing in $dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
-		    echo $"   - Archiving for uninstallation purposes"
-		    mkdir -p "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}"
-		    mv -f "$original_module" "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
+		    case "$running_distribution" in
+			    Debian* | Ubuntu* ) ;;
+			    *)
+			    echo $"   - Found $original_module"
+			    echo $"   - Storing in $dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
+			    echo $"   - Archiving for uninstallation purposes"
+			    mkdir -p "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}"
+			    mv -f "$original_module" "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/"
+			    ;;
+		    esac
 		    found_original="yes"
 		    break
 		fi
@@ -1219,13 +1330,23 @@ function install_module()
 	if [ "$module_count" -gt 1 ]; then
 	    echo $" - Multiple same named modules!"
 	    echo $"   - $module_count named ${dest_module_name[$count]}$module_suffix in $lib_tree/"
-	    echo $"   - All instances of this module will now be stored for reference purposes ONLY"
-	    echo $"   - Storing in $dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/collisions/"
+	    case "$running_distribution" in
+		    Debian* | Ubuntu* ) ;;
+		    *)
+		    echo $"   - All instances of this module will now be stored for reference purposes ONLY"
+		    echo $"   - Storing in $dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/collisions/"
+		    ;;
+	    esac
 	    for module_dup in `find $lib_tree -name ${dest_module_name[$count]}$module_suffix -type f`; do
 		dup_tree=`echo $module_dup | sed "s#^$lib_tree##" | sed "s#${dest_module_name[$count]}$module_suffix##"`
-		echo $"     - Stored $module_dup"
-		mkdir -p "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/collisions/$dup_tree"
-		mv -f $module_dup "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/collisions/$dup_tree"
+		case "$running_distribution" in
+			Debian* | Ubuntu* ) ;;
+			*)
+		       echo $"     - Stored $module_dup"
+		       mkdir -p "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/collisions/$dup_tree"
+		       mv -f $module_dup "$dkms_tree/$module/original_module/${kernelver_array[0]}/${arch_array[0]}/collisions/$dup_tree"
+		       ;;
+	       esac
 	    done
 	fi
 
@@ -1399,6 +1520,14 @@ function do_build()
     echo $"DKMS make.log for $module-$module_version for kernel ${kernelver_array[0]} (${arch_array[0]})" >> "$dkms_tree/$module/$module_version/build/make.log"
     echo $"`date`" >> "$dkms_tree/$module/$module_version/build/make.log"
     local the_make_command=`echo $make_command | sed "s/^make/make KERNELRELEASE=${kernelver_array[0]}/"`
+
+    #if we're root, try to run as a user instead
+    if [ "$USER" = "root" ] && getent passwd nobody 1>/dev/null && su nobody -c "/bin/true" 1>/dev/null; then
+        the_make_command="su nobody -c \"$the_make_command\""
+        chmod +x $dkms_tree/$module/$module_version/build
+        chown -R nobody $dkms_tree/$module/$module_version/build
+    fi
+
     invoke_command "$the_make_command >> $dkms_tree/$module/$module_version/build/make.log 2>&1" "$the_make_command" background
 
     # Make sure good return status
@@ -1566,10 +1695,16 @@ function do_uninstall()
 	    rm -f "$install_tree/$1${real_dest_module_location}/${dest_module_name[$count]}$module_suffix"
 	    echo $" - Original module"
 	    if [ -e "$dkms_tree/$module/original_module/$1/$2/${dest_module_name[$count]}$module_suffix" ]; then
-		echo $"   - Archived original module found in the DKMS tree"
-		echo $"   - Moving it to: $install_tree/$1${DEST_MODULE_LOCATION[$count]}/"
-		mkdir -p "$install_tree/$1${DEST_MODULE_LOCATION[$count]}/"
-		mv -f "$dkms_tree/$module/original_module/$1/$2/${dest_module_name[$count]}$module_suffix" "$install_tree/$1${DEST_MODULE_LOCATION[$count]}/" 2>/dev/null
+		case "$running_distribution" in
+			Debian* | Ubuntu* ) ;;
+			*)
+			echo $"   - Archived original module found in the DKMS tree"
+			echo $"   - Moving it to: $install_tree/$1${DEST_MODULE_LOCATION[$count]}/"
+			mkdir -p "$install_tree/$1${DEST_MODULE_LOCATION[$count]}/"
+			mv -f "$dkms_tree/$module/original_module/$1/$2/${dest_module_name[$count]}$module_suffix" \
+		       	"$install_tree/$1${DEST_MODULE_LOCATION[$count]}/" 2>/dev/null
+			;;
+		esac
 	    else
 		echo $"   - No original module was found for this module on this kernel."
 		echo $"   - Use the dkms install command to reinstall any previous module version."
@@ -1753,7 +1888,7 @@ function remove_module ()
     done
 
     # Delete the $module_version part of the tree if no other $module_version/$kernel_version dirs exist
-    if [ -z "$(find $dkms_tree/$module/$module_version/* -maxdepth 0 -type d 2>/dev/null | egrep -v "(build|tarball|driver_disk|rpm|deb)$")"  ]; then
+    if [ -z "$(find $dkms_tree/$module/$module_version/* -maxdepth 0 -type d 2>/dev/null | egrep -v "(build|tarball|driver_disk|rpm|deb|source)$")"  ]; then
 	echo $""
 	echo $"------------------------------"
 	echo $"Deleting module version: $module_version"
@@ -2088,7 +2223,7 @@ make_driver_disk_floppy()
     if [ "$fs" == 'vfat' ]; then
 	invoke_command "mkdosfs $image_name" "mkdosfs" background
     elif [ "$fs" == 'ext2' ]; then
- 	invoke_command "mke2fs $image_name" "mke2fs" background
+ 	invoke_command "mke2fs -F $image_name" "mke2fs" background
     fi
 
     local mntdir=`mktemp -d $tmp_location/dkms.XXXXXX`
@@ -2298,6 +2433,40 @@ make_redhat_driver_disk()
     echo $"DKMS: mkdriverdisk Completed."
 }
 
+find_external_dependencies()
+{
+	local mod deps 
+	local count=0
+	local i=0
+
+	# find all module dependencies
+	while [ "$count" -lt "${#dest_module_name[@]}" ]; do
+		i=0
+    		while [ "$i" -lt "${#kernelver_array[@]}" ]; do
+			set_module_suffix "${kernelver_array[$i]}"
+			mod="$dkms_tree/$module/$module_version/${kernelver_array[$i]}/${arch_array[$i]}/module/${dest_module_name[$count]}$module_suffix"
+			deps=(${deps[@]} $(modinfo "$mod" | sed -n 's/,/ /; s/^depends: *//p'))
+			i=$(($i+1))
+		done
+		count=$(($count+1))
+	done
+
+	# prune internally satisfied dependencies
+	i=0
+	while [ "$i" -lt "${#deps[@]}" ]; do
+		for mod in ${dest_module_name[@]}; do
+			[ "${deps[i]}" == "$mod" ] && deps[i]=
+		done
+		i=$(($i+1))
+	done
+
+	i=0
+	while [ "$i" -lt "${#deps[@]}" ]; do
+		echo "${deps[i]}"
+		i=$(($i+1))
+	done | sort -u
+}
+
 make_suse_driver_disk()
 {
 	if [ -z "$release" ]; then
@@ -2321,11 +2490,19 @@ make_suse_driver_disk()
 	echo $""
 	echo $"Creating driver disk:"
 
+	local deps="$(find_external_dependencies)"
+
+	local offset=0
+	if [ -n "${deps[*]}" ]; then
+		# reserve a place for dependencies
+		local offset=1
+	fi
+
 	local count=0
 	while [ "$count" -lt "${#dest_module_name[@]}" ]; do
 
 		local i=0
-		local topdir=`printf "%02d" $(($count+1))`
+		local topdir=`printf "%02d" $(($count+1+offset))`
     		while [ "$i" -lt "${#kernelver_array[@]}" ]; do
 			set_module_suffix "${kernelver_array[$i]}"
 
@@ -2354,6 +2531,9 @@ make_suse_driver_disk()
 					cp "$dkms_tree/$module/$module_version/${kernelver_array[$i]}/${arch_array[$i]}/module/${dest_module_name[$count]}$module_suffix" "$driver_disk_dir/$topdir/$suse_arch-$release/modules/"
 					;;
 			esac
+
+			# create directory for dependency information
+			[ -n "${deps[*]}" ] && mkdir -p "$driver_disk_dir/01/linux/$distro/$suse_arch-$release/modules"
 
 			i=$(($i+1))
 		done
@@ -2411,6 +2591,16 @@ EOF
 		# ---
 		count=$(($count+1))
 	done
+
+	local dir
+	if [ -n "${deps[*]}" ]; then
+		for dir in "$driver_disk_dir/01/linux/$distro/"*"/modules"; do
+			for dep in ${deps[@]}; do
+				echo $dep >> "$dir/module.order"
+			done
+		done
+	fi
+
         # FIXME: add suse-equivalent rpms/ directory, copy in KMP RPMs, run createrepo --pretty
 
 	mkdir -p "$image_dir"
@@ -2610,7 +2800,7 @@ make_tarball()
 	cp -rf $dkms_tree/$module/$module_version/source/* $temp_dir_name/dkms_source_tree
     else
 	echo $""
-	echo $"Binaries only specified.  Creating special tarball structure to accomodate."
+	echo $"Creating special tarball structure to accomodate only binaries."
 	mkdir $temp_dir_name/dkms_binaries_only
 	echo "$module" > $temp_dir_name/dkms_binaries_only/PACKAGE_NAME
 	echo "$module_version" > $temp_dir_name/dkms_binaries_only/PACKAGE_VERSION
@@ -2724,30 +2914,16 @@ load_tarball()
 	    rm -rf $temp_dir_name
 	    exit 5
 	fi
-	if [ "`$0 status -m $PACKAGE_NAME -v $PACKAGE_VERSION 2>/dev/null`" == "" ] && [ -z "$force" ]; then
-	    echo $"" >&2
-	    echo $"Error! Tarball is a DKMS binaries-only archive, but your DKMS tree" >&2
-	    echo $"does not have the source installed for $PACKAGE_NAME-$PACKAGE_VERSION." >&2
-	    echo $"To load a DKMS binaries-only archive, you must already have the module" >&2
-	    echo $"source in your DKMS tree." >&2
-	    echo $"" >&2
-	    echo $"This can be overridden by using --force, but this is not recommended since" >&2
-	    echo $"it will eliminate your ability to actually build for this module." >&2
-            rm -rf $temp_dir_name
-	    exit 6
-	elif [ "`$0 status -m $PACKAGE_NAME -v $PACKAGE_VERSION 2>/dev/null`" == "" ] && [ -n "$force" ]; then
+	if [ "`$0 status -m $PACKAGE_NAME -v $PACKAGE_VERSION 2>/dev/null`" == "" ]; then
 	    if [ -e "$temp_dir_name/dkms_binaries_only/dkms.conf" ]; then
 		echo $""
 		echo $"Binaries-only DKMS tarball to be loaded for $PACKAGE_NAME-$PACKAGE_VERSION"
-		echo $"even though source for this module is not added to the DKMS tree.  This"
-		echo $"will allow you to install the pre-built binaries contained within this"
+		echo $"even though source for this module is not added to the DKMS tree.  "
+                echo $"<<<<WARNING>>>>"
+		echo $"This will allow you to install the pre-built binaries contained within this"
 		echo $"tarball, but will prevent you from building new modules for other kernels."
 		echo $""
-		echo $"Creating $source_tree/$PACKAGE_NAME-$PACKAGE_VERSION..."
-		rm -rf $source_tree/$PACKAGE_NAME-$PACKAGE_VERSION
-		mkdir -p $source_tree/$PACKAGE_NAME-$PACKAGE_VERSION
-		echo $"Copying dkms.conf to $source_tree/$PACKAGE_NAME-$PACKAGE_VERSION..."
-		cp -rf $temp_dir_name/dkms_binaries_only/dkms.conf $source_tree/$PACKAGE_NAME-$PACKAGE_VERSION
+		. $temp_dir_name/dkms_binaries_only/dkms.conf 2>/dev/null
 	    else
 		echo $"" >&2
 		echo $"Binaries-only DKMS tarball does not seem to contain a dkms.conf file for" >&2
@@ -2792,7 +2968,7 @@ load_tarball()
     echo $"Loading tarball for module: $module / version: $module_version"
     echo $""
 
-    # Load the source from the tarball
+    # Load the source from the tarball or build it's structure (for binaries only)
     if [ -z "$is_binaries_only" ]; then
 	if [ "`$0 status -m $module -v $module_version 2>/dev/null`" != "" ] && [ -z "$force" ]; then
 	    echo $"Warning! Source for $module-$module_version already exists.  Skipping..." >&2
@@ -2804,6 +2980,11 @@ load_tarball()
 	fi
 
 	mkdir -p $dkms_tree/$module/$module_version
+    else
+        echo $"Creating $dkms_tree/$module/$module_version/source"
+	mkdir -p $dkms_tree/$module/$module_version/source
+	echo $"Copying dkms.conf to $dkms_tree/$module/$module_version/source..."
+	cp -rf $temp_dir_name/dkms_binaries_only/dkms.conf $dkms_tree/$module/$module_version/source
     fi
 
     # Load kernel directories
@@ -2829,10 +3010,9 @@ load_tarball()
 	fi
     done
 
-    # Create source symlink
-    if [ -h "$dkms_tree/$module/$module_version/source" ] && [ -z "$force" ]; then
-	echo $"Warning! $dkms_tree/$module/$module_version/source already exists.  Skipping..." >&2
-    else
+    # Create source symlink (if there isn't a real directory there)
+    if [ ! -h "$dkms_tree/$module/$module_version/source" ] && \
+       [ ! -d "$dkms_tree/$module/$module_version/source" ] || [ ! -z "$force" ]; then
 	echo $"Creating $dkms_tree/$module/$module_version/source symlink..."
 	rm -f "$dkms_tree/$module/$module_version/source"
 	ln -s "$source_tree/$module-$module_version" "$dkms_tree/$module/$module_version/source"
@@ -2984,11 +3164,18 @@ make_rpm()
 	exit 5
     fi
 
+    # Error out if binaries-only is set and source-only is set
+    if [ -n "$binaries_only" ] && [ -n "$source_only" ]; then
+        echo $"" >&2
+        echo $"Error!  You have specified both --binaries-only and --source-only." >&2
+        echo $"You cannot do this." >&2
+        exit 8
+    fi
+
     # Run a dkms mktarball for use in the rpm
     local mktarball_line
-    if [ -n "$source_only" ]; then
-	mktarball_line="--source-only"
-    else
+    if [ ! -n "$source_only" ] || [ -n "$binaries_only" ]; then
+	mktarball_line="--binaries-only"
 	local i=0
 	echo $""
 	while [ $i -lt ${#kernelver_array[@]} ]; do
@@ -3003,6 +3190,8 @@ make_rpm()
 	    mktarball_line="-k ${kernelver_array[$i]} -a ${arch_array[$i]} $mktarball_line"
 	    i=$(($i + 1))
 	done
+    else
+        mktarball_line="none"
     fi
 
     local RC=0
@@ -3010,6 +3199,17 @@ make_rpm()
     trap 'rm -rf $temp_dir_name' EXIT HUP TERM
     mkdir -p ${temp_dir_name}/{BUILD,RPMS,SRPMS,SPECS,SOURCES}
     cp ${SPECFILE} ${temp_dir_name}/SPECS/dkms_mkrpm.spec
+
+    #if using legacy mode, install common postinst
+    if [ "$legacy_postinst" != "0" ]; then
+        invoke_command "cp '$PREFIX/usr/lib/dkms/common.postinst' '${temp_dir_name}/SOURCES'" "copying legacy postinstall template"
+    fi
+
+    #Copy in the source tree
+    if [ ! -n "$binaries_only" ]; then
+        invoke_command "cp -Lpr '$dkms_tree/$module/$module_version/source' '${temp_dir_name}/SOURCES/$module-$module_version'" "Copying source tree"
+    fi
+
     invoke_command "LC_ALL=C rpmbuild --define \"_topdir ${temp_dir_name}\" --define \"version $module_version\" --define \"module_name $module\" --define \"kernel_versions ${kernelver_array[*]}\" --define \"mktarball_line $mktarball_line\" --define \"__find_provides  /usr/lib/dkms/find-provides\" --define \"_use_internal_dependency_generator 0\" -ba ${temp_dir_name}/SPECS/dkms_mkrpm.spec > ${temp_dir_name}/rpmbuild.log 2>&1" "rpmbuild"
     if [ "$?" -eq 0 ]; then
 	mkdir -p ${rpm_basedir}
@@ -3064,7 +3264,7 @@ function make_debian()
 
     make_common_test "mk${create_type}"
 
-    debian_package=$(echo $module | sed s/_/-/)
+    debian_package=$(echo $module | sed s/_/-/g)
 
     SYNAPTIC=""
     #Synaptic availablity
@@ -3074,20 +3274,16 @@ function make_debian()
 
     #test who we are
     ROOT=""
-    ADMINABLE=""
     if [ "$USER" != "root" ]; then
-        if [ -x /usr/bin/gksudo ] && [ ! -z "$DISPLAY" ]; then
+        if [ -x /usr/sbin/su-to-root ]; then
+            ROOT="/usr/sbin/su-to-root -c"
+        elif [ -x /usr/bin/gksudo ] && [ ! -z "$DISPLAY" ]; then
             ROOT="/usr/bin/gksudo --description 'DKMS Debian package builder' "
         elif [ -x /usr/bin/kdesu ] && [ ! -z "$DISPLAY" ]; then
             ROOT="/usr/bin/kdesu"
         elif [ -x /usr/bin/sudo ]; then
             ROOT="/usr/bin/sudo"
         fi
-        if groups | sed 's/lpadmin//' | grep admin 2>&1 1>/dev/null; then
-            ADMINABLE="TRUE"
-        fi
-    else
-        ADMINABLE="TRUE"
     fi
 
     # Read the conf file
@@ -3102,7 +3298,7 @@ function make_debian()
     #test if we are missing dependencies that are needed during package build
     INSTALL_PACKAGES="`make_debian_test_depends`"
     if [ ! -z "$INSTALL_PACKAGES" ]; then
-        if [ -z "ADMINABLE" ]; then
+        if [ -z "$ROOT" ]; then
             echo $"" >&2
             echo $"Error! Missing $INSTALL_PACKAGES" >&2
             echo $"and unable to install.  Please ask an admin to install for you." >&2
@@ -3110,8 +3306,7 @@ function make_debian()
         fi
         if [ ! -z "$SYNAPTIC" ] && [ ! -z "$DISPLAY" ]; then
             local TEMPFILE=`/bin/tempfile`
-            echo $INSTALL_PACKAGES | sed 's/|/\ install\
-/g' > $TEMPFILE
+            echo $INSTALL_PACKAGES | sed 's/|/\ install\/g' > $TEMPFILE
             $ROOT "sh -c '/usr/sbin/synaptic --set-selections --non-interactive --hide-main-window < $TEMPFILE'"
             trap "rm -f $TEMPFILE; delete_temporary_trees" EXIT HUP TERM
         else
@@ -3144,27 +3339,6 @@ function make_debian()
         exit 5
     fi
 
-    #test for binary or source modules
-    local mktarball_line
-    if [ -n "$source_only" ]; then
-        mktarball_line="--source-only"
-    else
-        local i=0
-        echo $""
-        while [ $i -lt ${#kernelver_array[@]} ]; do
-            if ! [ -d "$dkms_tree/$module/$module_version/${kernelver_array[$i]}/${arch_array[$i]}" ]; then
-                echo $"" >&2
-                echo $"You do not seem to have $module $module_version built for" >&2
-                echo $"${kernelver_array[$i]} (${arch_array[$i]}).  All modules must be in" >&2
-                echo $"the built state before you can use mkdeb." >&2
-                exit 5
-            fi
-            echo $"Marking ${kernelver_array[$i]} (${arch_array[$i]}) for deb..."
-            mktarball_line="-k ${kernelver_array[$i]} -a ${arch_array[$i]} $mktarball_line"
-            i=$(($i + 1))
-        done
-    fi
-
     #prepare build directory and copy template
     local temp_dir=`mktemp -d $tmp_location/dkms.XXXXXX`
     trap "rm -rf $temp_dir; delete_temporary_trees" EXIT HUP TERM
@@ -3177,15 +3351,28 @@ function make_debian()
     done
     popd > /dev/null 2>&1
 
-    #create tar.gz that lives in DKMS deb
-    archive_location="$module-$module_version.dkms.tar.gz"
-    invoke_command "make_tarball -m $module -v $version $mktarball_line" "gathering sources"
-    if [ -f $dkms_tree/$module/$module_version/tarball/$archive_location ]; then
-        invoke_command "cp '$dkms_tree/$module/$module_version/tarball/$archive_location' '$temp_dir_debian'" "Copying DKMS tarball into DKMS tree"
-    else
-        echo $"" >&2
-        echo $"Error! Unable to find created tarball." >&2
-        exit 12
+    #if using legacy mode, install common postinst
+    if [ "$legacy_postinst" != "0" ]; then
+        invoke_command "cp '$PREFIX/usr/lib/dkms/common.postinst' '$temp_dir_debian'" "copying legacy postinstall template"
+    fi
+
+    #Copy in the source tree
+    if [ ! -n "$binaries_only" ]; then
+        invoke_command "cp -Lpr '$dkms_tree/$module/$module_version/source' '$temp_dir_debian/$module-$module_version'" "Copying source tree"
+    fi
+
+    #Only if we are shipping binary modules, make a .tgz for the deb
+    local archive_location="$module-$module_version.dkms.tar.gz"
+    if [ ! -n "$source_only" ]; then
+        binaries_only="binaries-only"
+        invoke_command "make_tarball" "Gathering binaries"
+        if [ -f $dkms_tree/$module/$module_version/tarball/$archive_location ]; then
+            invoke_command "cp '$dkms_tree/$module/$module_version/tarball/$archive_location' '$temp_dir_debian'" "Copying DKMS tarball into DKMS tree"
+        else
+            echo $"" >&2
+            echo $"Error! Unable to find created tarball." >&2
+            exit 12
+        fi
     fi
 
     #calculate destination directory
@@ -3196,11 +3383,28 @@ function make_debian()
     pushd "$temp_dir_debian" > /dev/null 2>&1
     case "$create_type" in
         dsc)
-            invoke_command "fakeroot dpkg-buildpackage -S -us -uc 1>/dev/null" "Building source package"
+            invoke_command "dpkg-buildpackage -S -us -uc 1>/dev/null" "Building source package"
+	    if [ "$?" -eq 0 ]; then
+		    echo $""
+		    echo $"DKMS: mk${create_type} Completed."
+	    else
+		    echo $"" >&2
+		    echo $"Error! There was a problem creating your ${create_type}." >&2
+		    exit 7
+	    fi
             invoke_command "mv '$temp_dir/${debian_package}-dkms_${module_version}.dsc' '$temp_dir/${debian_package}-dkms_${module_version}.tar.gz' '$deb_basedir'" "Moving built files to $deb_basedir"
             ;;
         deb)
-            invoke_command "fakeroot dpkg-buildpackage -b -us -uc 1>/dev/null" "Building binary package"
+            invoke_command "dpkg-buildpackage -rfakeroot -d -b -us -uc 1>/dev/null" "Building binary package"
+            if [ "$?" -eq 0 ]; then
+		    echo $""
+		    echo $"DKMS: mk${create_type} Completed."
+	    else
+		    echo $"" >&2
+		    echo $"Error! There was a problem creating your ${create_type}." >&2
+		    exit 7
+	    fi
+
             invoke_command "mv '$temp_dir/${debian_package}-dkms_${module_version}_all.deb' '$deb_basedir'" "Moving built files to $deb_basedir"
             ;;
     esac
@@ -3216,12 +3420,9 @@ function make_debian()
     delete_temporary_trees
 
     #done
-    if [ "$?" -eq 0 ]; then
-        echo $""
-        echo $"DKMS: mk${create_type} Completed."
-    else
+    if [ "$?" -ne 0 ]; then
         echo $"" >&2
-        echo $"Error! There was a problem creating your ${create_type}." >&2
+	echo $"Error! There was a problem cleaning up temporary files." >&2
         exit 7
     fi
 }
@@ -3371,6 +3572,7 @@ case ":$PATH:" in
 	PATH="$PATH:/sbin"
 	;;
 esac
+PATH="$PATH:/usr/lib/dkms"
 
 # Set important variables
 current_kernel=`uname -r`
@@ -3413,6 +3615,7 @@ module_suffix=""
 rpm_safe_upgrade=""
 size="1440";
 specfile=""
+legacy_postinst="1"
 unset directive_array
 unset kernelver_array
 unset arch_array
@@ -3498,7 +3701,7 @@ while [ $# -gt 0 ]; do
         exec >/dev/null 2>&1
         ;;
     --version|-V)
-        echo $"dkms: 2.0.21.1"
+        echo $"dkms: 2.1.0.1"
         exit 0
         ;;
     --no-prepare-kernel)
@@ -3562,6 +3765,14 @@ while [ $# -gt 0 ]; do
             archive_location=`echo $1 | sed 's/^.*=//'`
         else
             archive_location="$2"
+            shift
+        fi
+        ;;
+    --legacy-postinst*)
+        if echo $1 | grep "=" >/dev/null ; then
+            legacy_postinst=`echo $1 | sed 's/^.*=//'`
+        else
+            legacy_postinst="$2"
             shift
         fi
         ;;

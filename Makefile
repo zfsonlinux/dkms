@@ -1,12 +1,12 @@
-RELEASE_DATE := "6-February-2009"
+RELEASE_DATE := "26-Aug-2009"
 RELEASE_MAJOR := 2
-RELEASE_MINOR := 0
-RELEASE_SUBLEVEL := 21
+RELEASE_MINOR := 1
+RELEASE_SUBLEVEL := 0
 RELEASE_EXTRALEVEL := .1
 RELEASE_NAME := dkms
 RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
 RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)
-DIST := jaunty
+DIST := unstable
 SHELL=bash
 
 SBIN = $(DESTDIR)/usr/sbin
@@ -40,6 +40,8 @@ install:
 	mkdir -m 0755 -p $(VAR) $(SBIN) $(MAN) $(INITD) $(ETC) $(BASHDIR)
 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms > dkms.versioned
 	mv -f dkms.versioned dkms
+	mkdir   -p -m 0755 $(LIBDIR)
+	install -p -m 0755 dkms_common.postinst $(LIBDIR)/common.postinst
 	install -p -m 0755 dkms $(SBIN)
 	install -p -m 0755 dkms_autoinstaller $(INITD)
 	install -p -m 0644 dkms_framework.conf $(ETC)/framework.conf
@@ -60,9 +62,9 @@ doc-perms:
 	chmod 0644 $(DOCFILES)
 
 install-redhat: install doc-perms
-	mkdir   -p -m 0755 $(LIBDIR)
 	install -p -m 0755 dkms_mkkerneldoth $(LIBDIR)/mkkerneldoth
 	install -p -m 0755 dkms_find-provides $(LIBDIR)/find-provides
+	install -p -m 0755 lsb_release $(LIBDIR)/lsb_release
 	install -p -m 0644 template-dkms-mkrpm.spec $(ETC)
 
 install-doc:
@@ -117,9 +119,8 @@ debmagic: $(TARBALL)
 	tar -C $(DEB_TMP_BUILDDIR) -xzf $(TARBALL)
 	cp -ar debian $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian
 	chmod +x $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/rules
-	#only change the first (which is assumingly the header)
-	sed -i -e "s/RELEASE_VERSION/$(RELEASE_VERSION)/; s/UNRELEASED/$(DIST)/" $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING)/debian/changelog
 	cd $(DEB_TMP_BUILDDIR)/$(RELEASE_STRING) ; \
+	dch -v $(RELEASE_VERSION)-0 "New upstream version, $(RELEASE_VERSION)"; \
 	dpkg-buildpackage -D -b -rfakeroot ; \
 	dpkg-buildpackage -D -S -sa -rfakeroot ; \
 	mv ../$(RELEASE_NAME)_* $(TOPDIR)/dist/ ; \
