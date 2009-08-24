@@ -1,12 +1,12 @@
 Summary: Dynamic Kernel Module Support Framework
 Name: dkms
-Version: 2.0.22.0
-Release: 1%{?dist}
+Version: 2.1.0.0
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Base
 BuildArch: noarch
 Requires: sed gawk findutils modutils tar cpio gzip grep mktemp
-Requires: bash > 1.99, lsb
+Requires: bash > 1.99
 # because Mandriva calls this package dkms-minimal
 Provides: dkms-minimal = %{version}
 URL: http://linux.dell.com/dkms
@@ -122,6 +122,18 @@ rm -rf $RPM_BUILD_ROOT
 [ $1 -lt 1 ] && /sbin/chkconfig dkms_autoinstaller off ||:
 
 %changelog
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.21.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
+* Wed Apr 15 2009 Matt Domsch <Matt_Domsch@dell.com> - 2.0.21.1-2
+- add Requires: lsb
+
+* Tue Apr 14 2009 Matt Domsch <Matt_Domsch@dell.com> 2.0.21.1-1
+- update to latest upstream
+
+* Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.19.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Wed May 28 2008 Matt Domsch <Matt_Domsch@dell.com> 2.0.19.1
 - depmod on uninstall before mkinitrd, depmod fix & cleanups
 - find_module_from_ko() could incorrectly return multiple values
