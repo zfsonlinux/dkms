@@ -3701,7 +3701,7 @@ while [ $# -gt 0 ]; do
         exec >/dev/null 2>&1
         ;;
     --version|-V)
-        echo $"dkms: 2.1.0.0"
+        echo $"dkms: 2.1.0.1"
         exit 0
         ;;
     --no-prepare-kernel)
