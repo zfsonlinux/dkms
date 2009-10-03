@@ -4,9 +4,9 @@ Priority: optional
 Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
 Uploaders: David Paleino <d.paleino@gmail.com>,
  Mario Limonciello <Mario_Limonciello@dell.com>,
- Giuseppe Iuculano <giuseppe@iuculano.it>
+ Giuseppe Iuculano <iuculano@debian.org>
 Build-Depends: debhelper (>= 7), quilt
-Standards-Version: 3.8.1
+Standards-Version: 3.8.3
 Homepage: http://linux.dell.com/dkms
 Vcs-Git: git://git.debian.org/git/users/hanska-guest/dkms.git
 Vcs-Browser: http://git.debian.org/?p=users/hanska-guest/dkms.git
