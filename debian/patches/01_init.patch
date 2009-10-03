@@ -1,0 +1,12 @@
+Added dkms_autoinstaller in Provides and fixed init.d-script-does-not-provide-itself lintian warning
+--- a/dkms_autoinstaller
++++ b/dkms_autoinstaller
+@@ -6,7 +6,7 @@
+ # description: An autoinstaller bootup service for DKMS
+ #
+ ### BEGIN INIT INFO
+-# Provides: dkms
++# Provides: dkms_autoinstaller dkms
+ # Default-Start: 2 3 4 5
+ # Default-Stop:
+ # Required-Start: $local_fs
