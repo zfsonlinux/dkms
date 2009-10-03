@@ -4,14 +4,17 @@ dkms (2.1.0.1-1) unstable; urgency=low
     thanks A. Costa (Closes: #534662)
   * [7735c89] Imported Upstream version 2.1.0.1
   * [3bdb6c1] Removed all patches, they are now merged in upstream.
-    Thanks Mario Limonciello.
+    Thanks to Mario Limonciello.
   * [dbb778c] debian/rules: template-dkms-mkdeb/debian/postrm was
     removed in upstream, do not chmod it
   * [09cd9d3] Updated to standards version 3.8.3 (No changes needed)
   * [96663f0] Updated my email address and removed DM-Upload-Allowed
     control field. Thanks to Ben Hutchings for his previous sponsorship
+  * [4848db2] debian/patches/01_init.patch: Added dkms_autoinstaller in
+    Provides and fixed init.d-script-does-not-provide-itself lintian
+    warning
 
- -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 03 Oct 2009 10:52:37 +0200
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 03 Oct 2009 11:12:04 +0200
 
 dkms (2.0.22.0-1) unstable; urgency=low
 
