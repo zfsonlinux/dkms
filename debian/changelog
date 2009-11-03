@@ -1,3 +1,16 @@
+dkms (2.1.0.1-2) unstable; urgency=low
+
+  [ David Paleino ]
+  * [47e453e] debian/patches/02-improve_error_message.patch: improve
+    error message, and add Debian/Ubuntu specific suggestion.
+    (Closes: #553600)
+
+  [ Giuseppe Iuculano ]
+  * [27f707a] Do not build as a nobody user and don't chown the build
+    directory, no files should be owned by nobody. (Closes: #554168)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 03 Nov 2009 22:52:30 +0100
+
 dkms (2.1.0.1-1) unstable; urgency=low
 
   * [34e006a] debian/patches/02_dkms.8.patch: Fix typos in the man page,
