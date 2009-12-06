@@ -6,8 +6,12 @@ drop localization of the usage message - this is
 inconsistent with all other init scripts on the system.
 use case instead of grep for string matching
 LP: #484386
---- a/dkms_autoinstaller
-+++ b/dkms_autoinstaller
+---
+ dkms_autoinstaller |   80 ++++++++++++++++++++++-------------------------------
+ 1 file changed, 34 insertions(+), 46 deletions(-)
+
+--- dkms.orig/dkms_autoinstaller
++++ dkms/dkms_autoinstaller
 @@ -1,4 +1,4 @@
 -#!/bin/bash
 +#!/bin/sh
@@ -96,7 +100,7 @@ LP: #484386
  			fi
 -			[ `echo "$AUTOINSTALL" | grep -ic "^y"` -gt 0 ] && do_autoinstall="yes"
 +			case $AUTOINSTALL in
-+				*y*)
++				[yY]*)
 +					do_autoinstall="yes"
 +					;;
 +			esac
