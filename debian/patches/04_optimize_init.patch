@@ -18,7 +18,7 @@ LP: #484386
  #
  # dkms_autoinstaller 		A service to automatically install DKMS modules
  # 				for new kernels.
-@@ -15,195 +15,140 @@
+@@ -15,195 +15,138 @@
  # Description: A service to automatically install DKMS modules for new kernels.
  ### END INIT INFO
  
@@ -86,8 +86,6 @@ LP: #484386
  dkms_tree="/var/lib/dkms"
  . /etc/dkms/framework.conf 2>/dev/null
 -
-+echo $arch
-+echo $kernel
  # See how we were called.
  case "$1" in
    start)
