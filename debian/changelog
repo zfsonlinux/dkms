@@ -1,3 +1,9 @@
+dkms (2.1.0.1-4) unstable; urgency=low
+
+  * [fdaa289] Use new upstream patch for optimized init. (Closes: #560267)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 11 Dec 2009 09:11:01 +0100
+
 dkms (2.1.0.1-3) unstable; urgency=low
 
   [ David Paleino ]
