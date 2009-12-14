@@ -1,3 +1,13 @@
+dkms (2.1.1.0-1) unstable; urgency=low
+
+  * [3122b6c] Imported Upstream version 2.1.1.0
+  * [ac6fb91] Removed patches applied in upstream
+  * [d40faf7] debian/rules: Use new make install-debian target
+  * [5d2e1e4] debian/rules: Do not stop /etc/init.d/dkms_autoinstaller
+    on upgrade
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Mon, 14 Dec 2009 22:38:54 +0100
+
 dkms (2.1.0.1-4) unstable; urgency=low
 
   * [fdaa289] Use new upstream patch for optimized init. (Closes: #560267)
