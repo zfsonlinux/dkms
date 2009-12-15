@@ -1,10 +1,10 @@
-dkms (2.1.1.0-0ubuntu2) UNRELEASED; urgency=low
+dkms (2.1.1.0-0ubuntu2) lucid; urgency=low
 
   * Remove the init script and Upstart job.
     There is no reason that DKMS needs to run on boot; you can build
     modules for non-running kernels just fine at installation time.
 
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 11:14:28 +0000
+ -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 11:20:37 +0000
 
 dkms (2.1.1.0-0ubuntu1) lucid; urgency=low
 
