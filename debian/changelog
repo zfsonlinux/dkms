@@ -1,3 +1,9 @@
+dkms (2.1.1.0-2) unstable; urgency=low
+
+  * [8510207] Do not install upstart job file
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 15 Dec 2009 08:57:24 +0100
+
 dkms (2.1.1.0-1) unstable; urgency=low
 
   * [3122b6c] Imported Upstream version 2.1.1.0
