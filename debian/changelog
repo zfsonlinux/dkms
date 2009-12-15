@@ -1,3 +1,13 @@
+dkms (2.1.1.0-0ubuntu3) UNRELEASED; urgency=low
+
+  * dkms_autoinstaller: Copy logic from update-initramfs; when no kernel
+    version is given, use the /vmlinuz link maintained by the kernel package
+    to select one (or fallback to the current).  This should build modules
+    for the right kernel from module package postinst; rebuilding when that
+    link is changed is already taken care of by the kernel postinst.
+
+ -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 11:31:43 +0000
+
 dkms (2.1.1.0-0ubuntu2) lucid; urgency=low
 
   * Remove the init script and Upstart job.
