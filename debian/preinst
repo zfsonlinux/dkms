@@ -26,7 +26,7 @@ install|upgrade)
         rm_conffile dkms "/etc/dkms/template-dkms-mkdeb/debian/postrm"
     fi
 
-    if dpkg --compare-versions "$2" le "2.1.1.0-0ubuntu2"; then
+    if dpkg --compare-versions "$2" le "2.1.1.0-0ubuntu7"; then
 	rm_conffile dkms "/etc/init.d/dkms_autoinstaller"
 	rm_conffile dkms "/etc/init/dkms_autoinstaller.conf"
     fi
