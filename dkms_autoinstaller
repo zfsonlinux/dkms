@@ -58,7 +58,7 @@ emit_module_status ()
 
 # Set Variables
 uname=`uname -mr`
-[ -n "$2" ] && kernel=$2 || kernel=${uname% *}
+[ -n "$2" ] && kernel=$2
 arch=${uname#* }
 kernel_preparation_done=""
 dkms_tree="/var/lib/dkms"
@@ -67,6 +67,16 @@ dkms_tree="/var/lib/dkms"
 # See how we were called.
 case "$1" in
   start)
+    if [ -z "$kernel" ]
+    then
+      if [ -L /vmlinuz -a -e /vmlinuz ]
+	linktarget="$(basename "$(readlink /vmlinuz)")"
+	kernel="${linktarget##vmlinuz-}"
+      else
+	kernel=${uname% *}
+      fi
+    fi
+
     log_daemon_msg "Running DKMS auto installation service for kernel $kernel"
 
     # Iterate over the modules
