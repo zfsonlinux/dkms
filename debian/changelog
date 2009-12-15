@@ -1,3 +1,9 @@
+dkms (2.1.1.0-0ubuntu5) UNRELEASED; urgency=low
+
+  * dkms_autoinstaller: Fix missing "then"
+
+ -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 15:09:41 +0000
+
 dkms (2.1.1.0-0ubuntu3) lucid; urgency=low
 
   * dkms_autoinstaller: Copy logic from update-initramfs; when no kernel
