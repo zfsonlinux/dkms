@@ -1,3 +1,42 @@
+dkms (2.1.1.0-2) unstable; urgency=low
+
+  * [8510207] Do not install upstart job file
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 15 Dec 2009 08:57:24 +0100
+
+dkms (2.1.1.0-1) unstable; urgency=low
+
+  * [3122b6c] Imported Upstream version 2.1.1.0
+  * [ac6fb91] Removed patches applied in upstream
+  * [d40faf7] debian/rules: Use new make install-debian target
+  * [5d2e1e4] debian/rules: Do not stop /etc/init.d/dkms_autoinstaller
+    on upgrade
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Mon, 14 Dec 2009 22:38:54 +0100
+
+dkms (2.1.0.1-4) unstable; urgency=low
+
+  * [fdaa289] Use new upstream patch for optimized init. (Closes: #560267)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 11 Dec 2009 09:11:01 +0100
+
+dkms (2.1.0.1-3) unstable; urgency=low
+
+  [ David Paleino ]
+  * [d3f1e76] debian/control: updated my email address
+
+  [ Giuseppe Iuculano ]
+  * [ad96cbc] Updated vcs control fields
+  * [40941ad] /etc/init.d/dkms_autoinstaller:
+    - optimize with a single find call instead of multiple loops with ls.
+    - port to POSIX sh and drop the /bin/bash from the shebang.
+    - drop localization of the usage message - this is inconsistent with all
+      other init scripts on the system.
+    - use case instead of grep for string matching
+    - Patch based on work done by Steve Langasek, thanks (LP: #484386)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sun, 06 Dec 2009 18:36:43 +0100
+
 dkms (2.1.0.1-2) unstable; urgency=low
 
   [ David Paleino ]
