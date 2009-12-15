@@ -70,6 +70,7 @@ case "$1" in
     if [ -z "$kernel" ]
     then
       if [ -L /vmlinuz -a -e /vmlinuz ]
+      then
 	linktarget="$(basename "$(readlink /vmlinuz)")"
 	kernel="${linktarget##vmlinuz-}"
       else
