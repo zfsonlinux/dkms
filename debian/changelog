@@ -1,8 +1,8 @@
-dkms (2.1.1.0-0ubuntu6) UNRELEASED; urgency=low
+dkms (2.1.1.0-0ubuntu6) lucid; urgency=low
 
   * Remove /etc/init/dkms_autoinstaller.conf on upgrade too.
 
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 16:50:45 +0000
+ -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 16:51:07 +0000
 
 dkms (2.1.1.0-0ubuntu5) lucid; urgency=low
 
