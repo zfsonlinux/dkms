@@ -28,7 +28,7 @@ install|upgrade)
 
     if dpkg --compare-versions "$2" le "2.1.1.0-0ubuntu2"; then
 	rm_conffile dkms "/etc/init.d/dkms_autoinstaller"
-	rm_conffile dkms "/etc/init/dkms_autoinstaller"
+	rm_conffile dkms "/etc/init/dkms_autoinstaller.conf"
     fi
 esac
 
