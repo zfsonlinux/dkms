@@ -1,8 +1,8 @@
-RELEASE_DATE := "14-Dec-2009"
+RELEASE_DATE := "25-Jan-2009"
 RELEASE_MAJOR := 2
 RELEASE_MINOR := 1
 RELEASE_SUBLEVEL := 1
-RELEASE_EXTRALEVEL := .0
+RELEASE_EXTRALEVEL := .1
 RELEASE_NAME := dkms
 RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
 RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)
@@ -13,6 +13,7 @@ SBIN = $(DESTDIR)/usr/sbin
 ETC = $(DESTDIR)/etc/dkms
 VAR = $(DESTDIR)/var/lib/dkms
 MAN = $(DESTDIR)/usr/share/man/man8
+INITD = $(DESTDIR)/etc/init.d
 LIBDIR = $(DESTDIR)/usr/lib/dkms
 BASHDIR = $(DESTDIR)/etc/bash_completion.d
 KCONF = $(DESTDIR)/etc/kernel
@@ -29,8 +30,6 @@ all: clean tarball rpm debs
 
 clean:
 	-rm -rf *~ dist/ dkms-freshmeat.txt
-
-clean-dpkg: clean
 
 install:
 	mkdir -m 0755 -p $(VAR) $(SBIN) $(MAN) $(ETC) $(BASHDIR) $(SHAREDIR) $(LIBDIR)
@@ -59,10 +58,12 @@ doc-perms:
 	chmod 0644 $(DOCFILES)
 
 install-redhat: install doc-perms
+	mkdir -m 0755 -p  $(INITD)
 	install -p -m 0755 dkms_mkkerneldoth $(LIBDIR)/mkkerneldoth
 	install -p -m 0755 dkms_find-provides $(LIBDIR)/find-provides
 	install -p -m 0755 lsb_release $(LIBDIR)/lsb_release
 	install -p -m 0644 template-dkms-mkrpm.spec $(ETC)
+	install -p -m 0755 dkms_autoinstaller $(INITD)
 
 install-doc:
 	mkdir -m 0755 -p $(DOCDIR)
