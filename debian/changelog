@@ -1,3 +1,11 @@
+dkms (2.1.1.1-0ubuntu2) lucid; urgency=low
+
+  * dkms:
+    - Make sure to reference depmod from /sbin to prevent wrapper scripts that
+      would cause depmod to fail on first boot to keep failing. (LP: #511445)
+
+ -- Mario Limonciello <superm1@ubuntu.com>  Tue, 26 Jan 2010 03:15:33 -0600
+
 dkms (2.1.1.1-0ubuntu1) lucid; urgency=low
 
   [ Mario Limonciello ]
