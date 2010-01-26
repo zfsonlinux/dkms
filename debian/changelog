@@ -1,3 +1,9 @@
+dkms (2.1.1.1-0ubuntu3) lucid; urgency=low
+
+  * Correct a minor shell error in dkms_autoinstaller (LP: #512661)
+
+ -- Mario Limonciello <superm1@ubuntu.com>  Tue, 26 Jan 2010 04:24:52 -0600
+
 dkms (2.1.1.1-0ubuntu2) lucid; urgency=low
 
   * dkms:
