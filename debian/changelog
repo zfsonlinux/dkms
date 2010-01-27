@@ -1,3 +1,18 @@
+dkms (2.1.1.1-1) unstable; urgency=low
+
+  [ David Paleino ]
+  * [19ac85e] Added DKMS debhelper script (Closes: #553665)
+
+  [ Giuseppe Iuculano ]
+  * [9d66264] Imported Upstream version 2.1.1.1
+  * [0735c11] Removed 01_upstart.patch
+  * [ec26539] Merge from Ubuntu: Remove the init script and Upstart job.
+    There is no reason that DKMS needs to run on boot; you can build
+    modules for non-running kernels just fine at installation time.
+  * [48ff9a4] Correct a minor shell error in dkms_autoinstaller
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Wed, 27 Jan 2010 09:53:26 +0100
+
 dkms (2.1.1.0-2) unstable; urgency=low
 
   * [8510207] Do not install upstart job file
