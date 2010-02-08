@@ -11,7 +11,7 @@ use Debian::Debhelper::Dh_Lib;
 
 =head1 SYNOPSIS
 
-B<dh_dkms> [S<I<debhelper options>>] [S<B<-l>>] [S<B<--> I<file>>]
+B<dh_dkms> [S<I<debhelper options>>] [S<B<-l>>] [S<B<-V>[I<version>]>] [S<B<--> I<file>>]
 
 =head1 DESCRIPTION
 
@@ -47,6 +47,11 @@ This file can only miss if a filename is provided when calling dh_dkms.
 =item B<-l>, B<--legacy>
 
 Add code to also support DKMS versions < 2.1.0.0.
+
+=item B<-V>, B<-V> I<version>
+
+Set C<PACKAGE_VERSION> in F<dkms.conf> to the given I<version> or, if none is
+given, default to the upstream version of the current package.
 
 =item B<--> I<file>
 
@@ -122,6 +127,23 @@ foreach my $package (@{$dh{DOPACKAGES}}) {
 	}
 	else {
 		addsubstvar($package, "misc:Depends", "dkms", ">= 2.1.0.0");
+	}
+
+	if ($dh{V_FLAG_SET}) {
+		$package_version = $dh{V_FLAG};
+		if ($package_version eq "") {
+			# Call isnative because it sets $dh{VERSION}
+			# as a side effect.
+			isnative($package);
+			$package_version = $dh{VERSION};
+			# Remove the Debian revision
+			$package_version =~ s/-[^-]+$//;
+		}
+
+		my $old_name = $name;
+		$name = "debian/".pkgext($package)."dkms.debhelper";
+		doit("cp", "-a", $old_name, $name);
+		doit("sed", "-i", "s/#MODULE_VERSION#/$package_version/g", $name);
 	}
 
 	autoscript($package, "prerm", "prerm-dkms",
