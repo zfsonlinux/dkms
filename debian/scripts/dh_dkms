@@ -108,7 +108,7 @@ foreach my $package (@{$dh{DOPACKAGES}}) {
 		$name = $ARGV[0];
 	}
 	else {
-		error "doing nothing!";
+		exit;
 	}
 	verbose_print "installing $name as dkms.conf";
 
