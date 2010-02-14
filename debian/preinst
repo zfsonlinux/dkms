@@ -23,13 +23,17 @@ rm_conffile() {
 
 case "$1" in
 install|upgrade)
-    if dpkg --compare-versions "$2" le "2.1.00.0-1"; then
+    if dpkg --compare-versions "$2" le "2.1.1.1-2"; then
         rm_conffile dkms "/etc/dkms/template-dkms-mkdeb/debian/postrm"
-    fi
-
-    if dpkg --compare-versions "$2" le "2.1.1.0-0ubuntu7"; then
-        rm_conffile dkms "/etc/init.d/dkms_autoinstaller"
+	if [ -e "/etc/init.d/dkms_autoinstaller" ]; then
+		update-rc.d -f dkms_autoinstaller remove >/dev/null 2>&1
+		rm_conffile dkms "/etc/init.d/dkms_autoinstaller"
+	fi
         rm_conffile dkms "/etc/init/dkms_autoinstaller.conf"
+	if [ -e "/etc/kernel/header_postinst.d/dkms" ]; then
+		rm_conffile dkms "/etc/kernel/header_postinst.d/dkms"
+		rmdir --ignore-fail-on-non-empty /etc/kernel/header_postinst.d/
+	fi
     fi
-esac
 
+esac
