@@ -1,3 +1,21 @@
+dkms (2.1.1.1-2) unstable; urgency=low
+
+  [ David Paleino ]
+  * [d56bce9] Add -V flag to dh_dkms, thanks to Frédéric Brière
+    <fbriere@fbriere.net> for the patch. (Closes: #568589)
+  * [dc7e358] dh_dkms: don't return an error if there's nothing to do
+    (Closes: #568580)
+  * [ecfc1c7] debian/scripts/postinst-dkms: don't exit on success, only
+    do it on errors (Closes: #568591)
+
+  [ Giuseppe Iuculano ]
+  * [adb3042] Really remove obsolete conffiles
+  * [3fe380c] Do not install /etc/header_postinst.d/dkms, at this moment
+    Debian kernel doesn't support it
+  * [ad6a1f2] Bump Standards-Version (no changes).
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sun, 14 Feb 2010 12:02:42 +0100
+
 dkms (2.1.1.1-1) unstable; urgency=low
 
   [ David Paleino ]

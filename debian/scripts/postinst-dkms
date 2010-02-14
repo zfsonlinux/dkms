@@ -10,7 +10,9 @@ case "$1" in
 		for DKMS_POSTINST in /usr/lib/dkms/common.postinst /usr/share/$DKMS_PACKAGE_NAME/postinst; do
 			if [ -f $DKMS_POSTINST ]; then
 				$DKMS_POSTINST $DKMS_NAME $DKMS_CVERSION /usr/share/$DKMS_PACKAGE_NAME "" $2
-				exit $?
+				if [ "$?" -ne 0 ]; then
+					exit $?
+				fi
 			fi
 			echo "WARNING: $DKMS_POSTINST does not exist."
 		done
