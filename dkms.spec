@@ -1,6 +1,6 @@
 Summary: Dynamic Kernel Module Support Framework
 Name: dkms
-Version: 2.1.1.1
+Version: 2.1.1.2
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Base
