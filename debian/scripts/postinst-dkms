@@ -3,7 +3,7 @@
 
 DKMS_NAME=#MODULE_NAME#
 DKMS_PACKAGE_NAME=$DKMS_NAME-dkms
-DKMS_CVERSION=$(dpkg-query -W -f='${Version}' $DKMS_PACKAGE_NAME | awk -F "-" '{print $1}' | cut -d\: -f2)
+DKMS_VERSION=#MODULE_VERSION#
 
 postinst_found=0
 
@@ -11,7 +11,7 @@ case "$1" in
 	configure)
 		for DKMS_POSTINST in /usr/lib/dkms/common.postinst /usr/share/$DKMS_PACKAGE_NAME/postinst; do
 			if [ -f $DKMS_POSTINST ]; then
-				$DKMS_POSTINST $DKMS_NAME $DKMS_CVERSION /usr/share/$DKMS_PACKAGE_NAME "" $2
+				$DKMS_POSTINST $DKMS_NAME $DKMS_VERSION /usr/share/$DKMS_PACKAGE_NAME "" $2
 				postinst_found=1
 				break
 			fi

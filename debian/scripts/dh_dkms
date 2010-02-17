@@ -150,7 +150,7 @@ foreach my $package (@{$dh{DOPACKAGES}}) {
 	autoscript($package, "prerm", "prerm-dkms",
 	    "s/#MODULE_NAME#/$package_name/;s/#MODULE_VERSION#/$package_version/");
 	autoscript($package, "postinst", "postinst-dkms",
-	    "s/#MODULE_NAME#/$package_name/");
+	    "s/#MODULE_NAME#/$package_name/;s/#MODULE_VERSION#/$package_version/");
 	doit("install", "-p", "-D", "-m644", "$name", "$tmp/usr/src/$package_name-$package_version/dkms.conf");
 }
 
