@@ -50,8 +50,9 @@ Add code to also support DKMS versions < 2.1.0.0.
 
 =item B<-V>, B<-V> I<version>
 
-Set C<PACKAGE_VERSION> in F<dkms.conf> to the given I<version> or, if none is
-given, default to the upstream version of the current package.
+If C<PACKAGE_VERSION> in F<dkms.conf> is set to C<#MODULE_VERSION#>, set it to
+the given I<version> or, if none is given, default to the upstream version of
+the current package. Otherwise, leave the value specified in F<dkms.conf>.
 
 =item B<--> I<file>
 
