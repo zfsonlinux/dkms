@@ -1,3 +1,31 @@
+dkms (2.1.1.2-1) unstable; urgency=low
+
+  [ David Paleino ]
+  * [ff95487] dh_dkms: continue the loop if there's nothing to do on the
+    current package. (Closes: #568580)
+  * [73dd83f] dh_dkms: specify that version mangling only happens if
+    PACKAGE_VERSION=#MODULE_VERSION# in dkms.conf
+  * [cdda61c] debian/scripts/postinst-dkms: really make sure the error
+    is thrown when nothing is found. (Closes: #568591)
+
+  [ Frédéric Brière ]
+  * [2930aa9] Insert the package version directly into postinst at
+    creation time
+  * [9ccbdc7] Skip prerm removal if there are no modules for that
+    version
+
+  [ Giuseppe Iuculano ]
+  * [898ab8c] Imported Upstream version 2.1.1.2
+  * [4fff928] Removed 01_shell_error.patch, merged in upstream
+  * [c5566c7] Removed 02_header_postinst.patch to avoid delta with
+    Ubuntu. Hopefully /etc/kernel/header_postinst.d directory will be
+    supported in Debian soon
+  * [e8aeb49] Add a comment in debian/patches/series and fix quilt-
+    build-dep-but-no-series-file lintian warning
+  * [bc89600] Fixed a minor spelling error in dh_dkms man page
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Mon, 22 Feb 2010 15:34:12 +0100
+
 dkms (2.1.1.1-2) unstable; urgency=low
 
   [ David Paleino ]
