@@ -196,7 +196,7 @@ function setup_kernels_arches ()
 function do_depmod()
 {
     # $1 = kernel version
-    depmod -au "$1" -F "/boot/System.map-$1"
+    /sbin/depmod -au "$1" -F "/boot/System.map-$1"
 }
 
 function remake_initrd()
@@ -3714,7 +3714,7 @@ while [ $# -gt 0 ]; do
         exec >/dev/null 2>&1
         ;;
     --version|-V)
-        echo $"dkms: 2.1.1.1"
+        echo $"dkms: 2.1.1.2"
         exit 0
         ;;
     --no-prepare-kernel)
