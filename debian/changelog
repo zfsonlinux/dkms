@@ -1,3 +1,10 @@
+dkms (2.1.1.2-2) unstable; urgency=low
+
+  * [67fb76a] Do not remove /etc/header_postinst.d/dkms in preinst. Hopefully
+    now Ubuntu can sync dkms from Debian
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 23 Feb 2010 10:02:40 +0100
+
 dkms (2.1.1.2-1) unstable; urgency=low
 
   [ David Paleino ]
