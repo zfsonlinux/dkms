@@ -30,10 +30,6 @@ install|upgrade)
 		rm_conffile dkms "/etc/init.d/dkms_autoinstaller"
 	fi
         rm_conffile dkms "/etc/init/dkms_autoinstaller.conf"
-	if [ -e "/etc/kernel/header_postinst.d/dkms" ]; then
-		rm_conffile dkms "/etc/kernel/header_postinst.d/dkms"
-		rmdir --ignore-fail-on-non-empty /etc/kernel/header_postinst.d/
-	fi
     fi
 
 esac
