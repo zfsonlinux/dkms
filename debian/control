@@ -8,8 +8,8 @@ Uploaders: David Paleino <dapal@debian.org>,
 Build-Depends: debhelper (>= 7), quilt
 Standards-Version: 3.8.4
 Homepage: http://linux.dell.com/dkms
-Vcs-Git: http://linux.dell.com/git/dkms.git 
-Vcs-Browser: http://linux.dell.com/git/dkms.git 
+Vcs-Git: git://git.debian.org/collab-maint/dkms.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/dkms.git
 
 Package: dkms
 Architecture: all

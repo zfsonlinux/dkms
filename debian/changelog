@@ -1,142 +1,148 @@
-dkms (2.1.1.2-0ubuntu1) lucid; urgency=low
+dkms (2.1.1.2-2fakesync1) lucid; urgency=low
 
-  [ Mario Limonciello ]
-  * dkms_autoinstaller:
-    - Fix a mismatched if/elif.
-  * dkms:
-    - Make sure to start up depmod from /sbin/
-  * Pull in changes from debian to support dh_dkms.
+  * Fakesync with debian (LP: #534843)
 
-  [ Anders Kaseorg ]
-  * Don't fail to run other debhelper steps in postinst if we fail. (LP: #497149)
+ -- Mario Limonciello <Mario_Limonciello@Dell.com>  Sun, 28 Mar 2010 00:45:36 -0500
 
- -- Mario Limonciello <Mario_Limonciello@Dell.com>  Tue, 16 Feb 2010 16:28:14 -0600
+dkms (2.1.1.2-2) unstable; urgency=low
 
-dkms (2.1.1.1-0ubuntu1) karmic; urgency=low
+  * [67fb76a] Do not remove /etc/header_postinst.d/dkms in preinst. Hopefully
+    now Ubuntu can sync dkms from Debian
 
-  [ Mario Limonciello ]
-  * dkms_common.postinst: Add some missing quotes around strings used in comparisons
-    to make sure that this is safe on more shells.
-  * Makefile, debian/rules: Only copy the init script in for redhat targets.
-  * kernel_postinst.d: Make sure that dkms_autoinstaller is executable (LP: #480055)
-  * Move the architecture mapping logic out of the DKMS template and into
-    common.postinst for Ubuntu only. (LP: #497149)
-  * template-dkms-mkdeb/debian/control: Build-depends on dkms (LP: #506959)
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 23 Feb 2010 10:02:40 +0100
 
-  [ Thomas Chenault ]
-  * Fix parsing in find_external_dependencies(). The existing code behaves improperly 
-    when a driver disk module has more than two dependencies.
-
- -- Mario Limonciello <mario_limonciello@dell.com>  Mon, 25 Jan 2010 17:42:40 -0600
-
-dkms (2.1.1.0-0ubuntu8) lucid; urgency=low
-
-  * kernel_postinst.d_dkms: Upload the fixed version. 
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 17:08:06 +0000
-
-dkms (2.1.1.0-0ubuntu7) lucid; urgency=low
-
-  * Argh, correct the preinst versioning.  I'm having a key mashing afternoon
-    clearly.
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 17:00:06 +0000
-
-dkms (2.1.1.0-0ubuntu6) lucid; urgency=low
-
-  * Remove /etc/init/dkms_autoinstaller.conf on upgrade too.
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 16:51:07 +0000
-
-dkms (2.1.1.0-0ubuntu5) lucid; urgency=low
-
-  * dkms_autoinstaller: Fix missing "then"
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 15:09:49 +0000
-
-dkms (2.1.1.0-0ubuntu3) lucid; urgency=low
-
-  * dkms_autoinstaller: Copy logic from update-initramfs; when no kernel
-    version is given, use the /vmlinuz link maintained by the kernel package
-    to select one (or fallback to the current).  This should build modules
-    for the right kernel from module package postinst; rebuilding when that
-    link is changed is already taken care of by the kernel postinst.
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 11:33:15 +0000
-
-dkms (2.1.1.0-0ubuntu2) lucid; urgency=low
-
-  * Remove the init script and Upstart job.
-    There is no reason that DKMS needs to run on boot; you can build
-    modules for non-running kernels just fine at installation time.
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 15 Dec 2009 11:20:37 +0000
-
-dkms (2.1.1.0-0ubuntu1) lucid; urgency=low
-
-  [ Mario Limonciello ]
-  * New upstream version
-  * dkms_autoinstall: Minor logic cleanups from submitted patches.
-  * dkms_autoinstall: Run under dash since dkms.conf isn't sourced anymore.
-  * dkms_autoinstall: Whitespace cleanup.
-  * Convert DKMS to an upstart script that starts up before GDM or KDM can
-    start.  This ensures that drivers are built before X tries to start.
-    (LP: #453365)
-  * dkms_autoinstall: Rather than having if/else clauses all over the script,
-    stub out any functions that aren't provided on Debian/Ubuntu when
-    /etc/debian_version isn't present.
-  * dkms_autoinstall: Exit immediately if this script is present but DKMS
-    isn't anymore rather than sourcing functions and then exiting.
-  * kernel_postinst.d_dkms: Launch the upstart script instead. In the process
-    all output will be going to /var/log/dkms_autoinstaller (LP: #292606)
-  * dkms_autoinstall: Don't ever output to stdout, even with kernel parameters.
-  * dkms_autoinstall: Don't log the situation that we already have everything
-    installed that needs to be.
-  * dkms_autoinstall: Rather than logging to /var/log/dkms_autoinstaller,
-    use logger to log to syslog during build and install.
-  * dkms_autoinstall: Clean up the method to get arch.  These hacks shouldn't
-    be necessary.  If you have problems with them gone, file a bug and we'll
-    fix them more cleanly.
-  * dkms_autoinstall: Notate the kernel we are building a module against
-    when building it.
-  * debian/rules: Don't attempt to stop DKMS on upgrades.  It's a task, not
-    a daemon, so stop wouldn't do anything.
-  * Makefile: Install the old initscript to /usr/lib so that different distros
-    can migrate to upstart at their leisure.
-  * Makefile: Move any debian specific calls into the Makefile.
-  * dkms: Revert the code that runs DKMS as the user "nobody".  
-    - It's causing problems with people with nonstandard PAM configs because it
-      uses "su". (LP: #484725)
-    - Also people have reported that nothing should be owned by 'nobody' per
-      Debian & Ubuntu policy.  This could have been fixed by creating a DKMS
-      user, but that still wouldn't solve the problems with using 'su'.
-  * dkms: Emit built-module MODULE=foo if initctl is available on the system
-    after done building a module.   
-  * Add a special apport package-hook for when package builds fail to try
-    to report them against the package providing that DKMS package.
-    (LP: #484871)
-  
-  [ Alberto Milone ]
-  * dkms_common.postinst: try to build the module for the most recent
-    kernel in addition to building it for the current kernel (LP: #474917).
-
-  [ Steve Langasek ]
-  * dkms_autoinstall: optimize with a single find call instead of multiple
-    loops with ls. (LP: 3484386)
-  * dkms_autoinstall: drop localization of the usage message - this is
-    inconsistent with all other init scripts on the system.
-
-  [ Pauli Virtanen ]
-  * Remove dependence from environment's umask and certain environment 
-    variables. (LP: #438393, #436039)
-
-  [ Giuseppe Iuculano ]
-  * dkms_autoinstall: Correct the provides in the LSB block.
+dkms (2.1.1.2-1) unstable; urgency=low
 
   [ David Paleino ]
-  * dkms: improve error message, and add Debian/Ubuntu specific suggestion.
+  * [ff95487] dh_dkms: continue the loop if there's nothing to do on the
+    current package. (Closes: #568580)
+  * [73dd83f] dh_dkms: specify that version mangling only happens if
+    PACKAGE_VERSION=#MODULE_VERSION# in dkms.conf
+  * [cdda61c] debian/scripts/postinst-dkms: really make sure the error
+    is thrown when nothing is found. (Closes: #568591)
 
- -- Mario Limonciello <mario_limonciello@dell.com>  Fri, 21 Aug 2009 15:49:58 -0500
+  [ Frédéric Brière ]
+  * [2930aa9] Insert the package version directly into postinst at
+    creation time
+  * [9ccbdc7] Skip prerm removal if there are no modules for that
+    version
+
+  [ Giuseppe Iuculano ]
+  * [898ab8c] Imported Upstream version 2.1.1.2
+  * [4fff928] Removed 01_shell_error.patch, merged in upstream
+  * [c5566c7] Removed 02_header_postinst.patch to avoid delta with
+    Ubuntu. Hopefully /etc/kernel/header_postinst.d directory will be
+    supported in Debian soon
+  * [e8aeb49] Add a comment in debian/patches/series and fix quilt-
+    build-dep-but-no-series-file lintian warning
+  * [bc89600] Fixed a minor spelling error in dh_dkms man page
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Mon, 22 Feb 2010 15:34:12 +0100
+
+dkms (2.1.1.1-2) unstable; urgency=low
+
+  [ David Paleino ]
+  * [d56bce9] Add -V flag to dh_dkms, thanks to Frédéric Brière
+    <fbriere@fbriere.net> for the patch. (Closes: #568589)
+  * [dc7e358] dh_dkms: don't return an error if there's nothing to do
+    (Closes: #568580)
+  * [ecfc1c7] debian/scripts/postinst-dkms: don't exit on success, only
+    do it on errors (Closes: #568591)
+
+  [ Giuseppe Iuculano ]
+  * [adb3042] Really remove obsolete conffiles
+  * [3fe380c] Do not install /etc/header_postinst.d/dkms, at this moment
+    Debian kernel doesn't support it
+  * [ad6a1f2] Bump Standards-Version (no changes).
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sun, 14 Feb 2010 12:02:42 +0100
+
+dkms (2.1.1.1-1) unstable; urgency=low
+
+  [ David Paleino ]
+  * [19ac85e] Added DKMS debhelper script (Closes: #553665)
+
+  [ Giuseppe Iuculano ]
+  * [9d66264] Imported Upstream version 2.1.1.1
+  * [0735c11] Removed 01_upstart.patch
+  * [ec26539] Merge from Ubuntu: Remove the init script and Upstart job.
+    There is no reason that DKMS needs to run on boot; you can build
+    modules for non-running kernels just fine at installation time.
+  * [48ff9a4] Correct a minor shell error in dkms_autoinstaller
+  * [5c76a45] Fixed a minor spelling error in dh_dkms man page
+  * [c611461] debian/preinst: Use set -e
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Wed, 27 Jan 2010 10:02:27 +0100
+
+dkms (2.1.1.0-2) unstable; urgency=low
+
+  * [8510207] Do not install upstart job file
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 15 Dec 2009 08:57:24 +0100
+
+dkms (2.1.1.0-1) unstable; urgency=low
+
+  * [3122b6c] Imported Upstream version 2.1.1.0
+  * [ac6fb91] Removed patches applied in upstream
+  * [d40faf7] debian/rules: Use new make install-debian target
+  * [5d2e1e4] debian/rules: Do not stop /etc/init.d/dkms_autoinstaller
+    on upgrade
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Mon, 14 Dec 2009 22:38:54 +0100
+
+dkms (2.1.0.1-4) unstable; urgency=low
+
+  * [fdaa289] Use new upstream patch for optimized init. (Closes: #560267)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 11 Dec 2009 09:11:01 +0100
+
+dkms (2.1.0.1-3) unstable; urgency=low
+
+  [ David Paleino ]
+  * [d3f1e76] debian/control: updated my email address
+
+  [ Giuseppe Iuculano ]
+  * [ad96cbc] Updated vcs control fields
+  * [40941ad] /etc/init.d/dkms_autoinstaller:
+    - optimize with a single find call instead of multiple loops with ls.
+    - port to POSIX sh and drop the /bin/bash from the shebang.
+    - drop localization of the usage message - this is inconsistent with all
+      other init scripts on the system.
+    - use case instead of grep for string matching
+    - Patch based on work done by Steve Langasek, thanks (LP: #484386)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sun, 06 Dec 2009 18:36:43 +0100
+
+dkms (2.1.0.1-2) unstable; urgency=low
+
+  [ David Paleino ]
+  * [47e453e] debian/patches/02-improve_error_message.patch: improve
+    error message, and add Debian/Ubuntu specific suggestion.
+    (Closes: #553600)
+
+  [ Giuseppe Iuculano ]
+  * [27f707a] Do not build as a nobody user and don't chown the build
+    directory, no files should be owned by nobody. (Closes: #554168)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Tue, 03 Nov 2009 22:52:30 +0100
+
+dkms (2.1.0.1-1) unstable; urgency=low
+
+  * [34e006a] debian/patches/02_dkms.8.patch: Fix typos in the man page,
+    thanks A. Costa (Closes: #534662)
+  * [7735c89] Imported Upstream version 2.1.0.1
+  * [3bdb6c1] Removed all patches, they are now merged in upstream.
+    Thanks to Mario Limonciello.
+  * [dbb778c] debian/rules: template-dkms-mkdeb/debian/postrm was
+    removed in upstream, do not chmod it
+  * [09cd9d3] Updated to standards version 3.8.3 (No changes needed)
+  * [96663f0] Updated my email address and removed DM-Upload-Allowed
+    control field. Thanks to Ben Hutchings for his previous sponsorship
+  * [4848db2] debian/patches/01_init.patch: Added dkms_autoinstaller in
+    Provides and fixed init.d-script-does-not-provide-itself lintian
+    warning
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 03 Oct 2009 11:12:04 +0200
 
 dkms (2.0.22.0-1) unstable; urgency=low
 
