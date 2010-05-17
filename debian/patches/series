@@ -1,2 +1,4 @@
-# This is empty for now
 improved-error-messages.patch
+fix-bashism.patch
+manpage-update.patch
+use-system-tmpdir.patch

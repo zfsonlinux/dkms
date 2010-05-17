@@ -1,0 +1,97 @@
+Description: Upstream changes introduced in version 2.1.1.2-3
+ This patch has been created by dpkg-source during the package build.
+ Here's the last changelog entry, hopefully it gives details on why
+ those changes were made:
+ .
+ dkms (2.1.1.2-3) UNRELEASED; urgency=low
+ .
+   [ Michael Gilbert ]
+   * Add missing depends on python (needed by dkms.py).
+   * Update to source format 3 (quilt) for better patch management/handling.
+   * Improve the status info displayed during the kernel postinst, and
+     provide informative/useful messages when things go awry.
+   * Fix bashism in dkms_common.postinst (closes: #581079).
+   * Document odd behavior of MAKE[#] (closes: #553625).
+   * Document package naming convention (closes: #571753).
+ .
+ The person named in the Author field signed this changelog entry.
+Author: Michael Gilbert <michael.s.gilbert@gmail.com>
+Bug-Debian: http://bugs.debian.org/553625
+Bug-Debian: http://bugs.debian.org/571753
+Bug-Debian: http://bugs.debian.org/581079
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- dkms-2.1.1.2.orig/dkms
++++ dkms-2.1.1.2/dkms
+@@ -3592,7 +3592,8 @@ current_kernel=`uname -r`
+ dkms_tree="/var/lib/dkms"
+ source_tree="/usr/src"
+ install_tree="/lib/modules"
+-tmp_location="/tmp"
++tmp_file=`mktemp --tmpdir dkms.XXXXXXXX`
++tmp_location=`dirname $tmp_file`
+ verbose=""
+ dkms_frameworkconf="/etc/dkms/framework.conf"
+ 
+--- dkms-2.1.1.2.orig/dkms_find-provides
++++ dkms-2.1.1.2/dkms_find-provides
+@@ -59,7 +59,7 @@ get_modinfo() {
+ }
+ 
+ 
+-TMPDIR=$(mktemp -d /tmp/dkms-findprovides-$$-$RANDOM-XXXXXX)
++TMPDIR=$(mktemp -d --tmpdir dkms-findprovides-$$-$RANDOM-XXXXXX)
+ trap "rm -rf $TMPDIR >/dev/null 2>&1"  QUIT EXIT HUP INT TERM
+ 
+ modlist=
+--- dkms-2.1.1.2.orig/Makefile
++++ dkms-2.1.1.2/Makefile
+@@ -88,7 +88,7 @@ tarball: $(TARBALL)
+ 
+ $(TARBALL):
+ 	mkdir -p $(deb_destdir)
+-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
++	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
+ 	cp -a ../$(RELEASE_NAME) $${tmp_dir}/$(RELEASE_STRING) ; \
+ 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms > $${tmp_dir}/$(RELEASE_STRING)/dkms ; \
+ 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms.spec > $${tmp_dir}/$(RELEASE_STRING)/dkms.spec ; \
+@@ -105,7 +105,7 @@ $(TARBALL):
+ 
+ 
+ rpm: $(TARBALL) dkms.spec
+-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
++	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
+ 	mkdir -p $${tmp_dir}/{BUILD,RPMS,SRPMS,SPECS,SOURCES} ; \
+ 	cp $(TARBALL) $${tmp_dir}/SOURCES ; \
+ 	sed "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms.spec > $${tmp_dir}/SPECS/dkms.spec ; \
+@@ -129,7 +129,7 @@ debmagic: $(TARBALL)
+ 	cd -
+ 
+ debs:
+-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
++	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
+ 	make debmagic DEB_TMP_BUILDDIR=$${tmp_dir} DIST=$(DIST); \
+ 	rm -rf $${tmp_dir}
+ 
+--- dkms-2.1.1.2.orig/dkms_autoinstaller
++++ dkms-2.1.1.2/dkms_autoinstaller
+@@ -32,7 +32,7 @@ fi
+ invoke_command ()
+ {
+     local exitval=0
+-    local exitval_file=`mktemp /tmp/dkms.XXXXXX`
++    local exitval_file=`mktemp --tmpdir dkms.XXXXXX`
+     if [ "$3" = background ] && [ -z "$verbose" ]; then
+         (eval $1 >/dev/null 2>&1; echo "exitval=$?" >> "$exitval_file") &
+         while [ -e "$exitval_file" ] && ! [ -s "$exitval_file" ]; do

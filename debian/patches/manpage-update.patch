@@ -1,0 +1,42 @@
+Description: Upstream changes introduced in version 2.1.1.2-3
+ This patch has been created by dpkg-source during the package build.
+ Here's the last changelog entry, hopefully it gives details on why
+ those changes were made:
+ .
+ dkms (2.1.1.2-3) UNRELEASED; urgency=low
+ .
+   [ Michael Gilbert ]
+   * Add missing depends on python (needed by dkms.py).
+   * Update to source format 3 (quilt) for better patch management/handling.
+   * Improve the status info displayed during the kernel postinst, and
+     provide informative/useful messages when things go awry.
+   * Fix bashism in dkms_common.postinst (closes: #581079).
+ .
+ The person named in the Author field signed this changelog entry.
+Author: Michael Gilbert <michael.s.gilbert@gmail.com>
+Bug-Debian: http://bugs.debian.org/581079
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- dkms-2.1.1.2.orig/dkms.8
++++ dkms-2.1.1.2/dkms.8
+@@ -477,6 +477,9 @@ directives match against the kernel bein
+ will be used to build your module. If no MAKE directive is specified or if no
+ MAKE_MATCH matches the kernel being built for, DKMS
+ will attempt to use a generic MAKE command to build your module.
++
++KERNELRELEASE will be automatically appended to MAKE[#].  If you want to
++suppress this behavior, you can quote the make command: 'make'.
+ .TP
+ .B MAKE_MATCH[#]=
+ See the above entry on
