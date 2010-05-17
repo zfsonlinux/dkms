@@ -13,7 +13,9 @@ Vcs-Browser: http://git.debian.org/?p=collab-maint/dkms.git
 
 Package: dkms
 Architecture: all
-Depends: ${misc:Depends}, module-init-tools,
+Depends: ${misc:Depends},
+ module-init-tools,
+ python,
  gcc,
  make | build-essential | dpkg-dev
 Recommends: patch,

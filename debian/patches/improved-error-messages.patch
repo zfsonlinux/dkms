@@ -1,0 +1,58 @@
+Description: Improve kernel postinst status information.
+Author: Michael Gilbert <michael.s.gilbert@gmail.com>
+--- dkms-2.1.1.2.orig/kernel_postinst.d_dkms
++++ dkms-2.1.1.2/kernel_postinst.d_dkms
+@@ -4,5 +4,10 @@
+ inst_kern=$1
+ 
+ if [ -x /usr/lib/dkms/dkms_autoinstaller ]; then
+-    exec /usr/lib/dkms/dkms_autoinstaller start $inst_kern > /dev/null
++    /usr/lib/dkms/dkms_autoinstaller start $inst_kern >&2
++fi
++
++if [ ! -e /lib/modules/$inst_kern/build/include ] ; then
++    echo "dkms: WARNING: linux headers are missing, which may explain the above failures." >&2
++    echo "      please install the linux-headers-$inst_kern package to fix this." >&2
+ fi
+--- dkms-2.1.1.2.orig/kernel_prerm.d_dkms
++++ dkms-2.1.1.2/kernel_prerm.d_dkms
+@@ -8,7 +8,7 @@ while read line; do
+    name=`echo "$line" | awk '{print $1}' | sed 's/,$//'`
+    vers=`echo "$line" | awk '{print $2}' | sed 's/,$//'`
+    arch=`echo "$line" | awk '{print $4}' | sed 's/:$//'`
+-   echo "Uninstalling: $name $vers ($inst_kern) ($arch)"
++   echo "dkms: uninstalling: $name $vers ($inst_kern) ($arch)" >&2
+    dkms uninstall -m $name -v $vers -k $inst_kern -a $arch
+ done < <(dkms status -k $inst_kern 2>/dev/null | grep ": installed")
+ fi
+--- dkms-2.1.1.2.orig/dkms_autoinstaller
++++ dkms-2.1.1.2/dkms_autoinstaller
+@@ -58,7 +58,8 @@ dkms_tree="/var/lib/dkms"
+ # See how we were called.
+ case "$1" in
+   start)
+-    log_daemon_msg "Running DKMS auto installation service for kernel $kernel"
++    log_daemon_msg "dkms: running auto installation service for kernel $kernel"
++    echo ""
+ 
+     if [ -z "$kernel" ]; then
+         if [ -L /vmlinuz -a -e /vmlinuz ]; then
+@@ -96,7 +97,7 @@ case "$1" in
+             [ "$current_state" = "installed" -o "$current_state" = "installed-weak" ] && already_installed="true" && already_installed_version=$version_in_tree
+         done
+ 
+-        log_action_begin_msg " $module_in_tree ($version_in_tree)"
++        log_action_begin_msg "      $module_in_tree ($version_in_tree)"
+ 
+         # Based on what we know, either do it or not
+         if [ "$current_state" = "broken" ]; then
+@@ -147,9 +148,6 @@ case "$1" in
+             fi
+         fi
+     done
+-    if [ -z "$modules_needing_status" ]; then
+-        log_end_msg 0
+-    fi
+     ;;
+   stop|restart|force-reload|status|reload)
+     # ignore
