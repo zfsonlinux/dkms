@@ -5,6 +5,10 @@ dkms (2.1.1.2-3) UNRELEASED; urgency=low
   * Update to source format 3 (quilt) for better patch management/handling.
   * Improve the status info displayed during the kernel postinst, and
     provide informative/useful messages when things go awry.
+  * Fix bashism in dkms_common.postinst (closes: #581079).
+  * Document odd behavior of MAKE[#] (closes: #553625).
+  * Document package naming convention (closes: #571753).
+  * Use system TMPDIR setting in all scripts (closes: #581568).
 
  -- Michael Gilbert <michael.s.gilbert@gmail.com>  Sun, 16 May 2010 18:59:38 -0400
 
