@@ -32,7 +32,7 @@ fi
 invoke_command ()
 {
     local exitval=0
-    local exitval_file=`mktemp --tmpdir dkms.XXXXXX`
+    local exitval_file=`mktemp /tmp/dkms.XXXXXX`
     if [ "$3" = background ] && [ -z "$verbose" ]; then
         (eval $1 >/dev/null 2>&1; echo "exitval=$?" >> "$exitval_file") &
         while [ -e "$exitval_file" ] && ! [ -s "$exitval_file" ]; do
@@ -58,8 +58,7 @@ dkms_tree="/var/lib/dkms"
 # See how we were called.
 case "$1" in
   start)
-    log_daemon_msg "dkms: running auto installation service for kernel $kernel"
-    echo ""
+    log_daemon_msg "Running DKMS auto installation service for kernel $kernel"
 
     if [ -z "$kernel" ]; then
         if [ -L /vmlinuz -a -e /vmlinuz ]; then
@@ -97,7 +96,7 @@ case "$1" in
             [ "$current_state" = "installed" -o "$current_state" = "installed-weak" ] && already_installed="true" && already_installed_version=$version_in_tree
         done
 
-        log_action_begin_msg "      $module_in_tree ($version_in_tree)"
+        log_action_begin_msg " $module_in_tree ($version_in_tree)"
 
         # Based on what we know, either do it or not
         if [ "$current_state" = "broken" ]; then
@@ -148,6 +147,9 @@ case "$1" in
             fi
         fi
     done
+    if [ -z "$modules_needing_status" ]; then
+        log_end_msg 0
+    fi
     ;;
   stop|restart|force-reload|status|reload)
     # ignore

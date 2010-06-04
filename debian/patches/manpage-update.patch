@@ -1,0 +1,13 @@
+Description: Document MAKE[#] behavior 
+--- dkms-2.1.1.2.orig/dkms.8
++++ dkms-2.1.1.2/dkms.8
+@@ -477,6 +477,9 @@ directives match against the kernel bein
+ will be used to build your module. If no MAKE directive is specified or if no
+ MAKE_MATCH matches the kernel being built for, DKMS
+ will attempt to use a generic MAKE command to build your module.
++
++KERNELRELEASE will be automatically appended to MAKE[#].  If you want to
++suppress this behavior, you can quote the make command: 'make'.
+ .TP
+ .B MAKE_MATCH[#]=
+ See the above entry on
