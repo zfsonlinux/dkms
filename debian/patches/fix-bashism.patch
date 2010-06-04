@@ -1,0 +1,12 @@
+Description: Fix bashism 
+--- dkms-2.1.1.2.orig/dkms_common.postinst
++++ dkms-2.1.1.2/dkms_common.postinst
+@@ -99,7 +99,7 @@ get_newest_kernel() {
+         CURRENT_ABI=${CURRENT_ABI%%-*}
+         NEWEST_KERNEL=$(_get_newest_kernel_debian "$CURRENT_VERSION-$CURRENT_ABI")
+ 
+-    elif [ `which rpm &>/dev/null` ]; then
++    elif [ `which rpm >/dev/null` ]; then
+         # If RPM based
+         NEWEST_KERNEL=$(_get_newest_kernel_rhel)
+     fi

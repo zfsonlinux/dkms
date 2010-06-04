@@ -1,0 +1,65 @@
+Description: Use system setting for tmpdir
+Author: Michael Gilbert <michael.s.gilbert@gmail.com>
+--- dkms-2.1.1.2.orig/dkms
++++ dkms-2.1.1.2/dkms
+@@ -3592,7 +3592,8 @@ current_kernel=`uname -r`
+ dkms_tree="/var/lib/dkms"
+ source_tree="/usr/src"
+ install_tree="/lib/modules"
+-tmp_location="/tmp"
++tmp_file=`mktemp --tmpdir dkms.XXXXXXXX`
++tmp_location=`dirname $tmp_file`
+ verbose=""
+ dkms_frameworkconf="/etc/dkms/framework.conf"
+ 
+--- dkms-2.1.1.2.orig/dkms_find-provides
++++ dkms-2.1.1.2/dkms_find-provides
+@@ -59,7 +59,7 @@ get_modinfo() {
+ }
+ 
+ 
+-TMPDIR=$(mktemp -d /tmp/dkms-findprovides-$$-$RANDOM-XXXXXX)
++TMPDIR=$(mktemp -d --tmpdir dkms-findprovides-$$-$RANDOM-XXXXXX)
+ trap "rm -rf $TMPDIR >/dev/null 2>&1"  QUIT EXIT HUP INT TERM
+ 
+ modlist=
+--- dkms-2.1.1.2.orig/Makefile
++++ dkms-2.1.1.2/Makefile
+@@ -88,7 +88,7 @@ tarball: $(TARBALL)
+ 
+ $(TARBALL):
+ 	mkdir -p $(deb_destdir)
+-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
++	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
+ 	cp -a ../$(RELEASE_NAME) $${tmp_dir}/$(RELEASE_STRING) ; \
+ 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms > $${tmp_dir}/$(RELEASE_STRING)/dkms ; \
+ 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms.spec > $${tmp_dir}/$(RELEASE_STRING)/dkms.spec ; \
+@@ -105,7 +105,7 @@ $(TARBALL):
+ 
+ 
+ rpm: $(TARBALL) dkms.spec
+-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
++	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
+ 	mkdir -p $${tmp_dir}/{BUILD,RPMS,SRPMS,SPECS,SOURCES} ; \
+ 	cp $(TARBALL) $${tmp_dir}/SOURCES ; \
+ 	sed "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms.spec > $${tmp_dir}/SPECS/dkms.spec ; \
+@@ -129,7 +129,7 @@ debmagic: $(TARBALL)
+ 	cd -
+ 
+ debs:
+-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
++	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
+ 	make debmagic DEB_TMP_BUILDDIR=$${tmp_dir} DIST=$(DIST); \
+ 	rm -rf $${tmp_dir}
+ 
+--- dkms-2.1.1.2.orig/dkms_autoinstaller
++++ dkms-2.1.1.2/dkms_autoinstaller
+@@ -32,7 +32,7 @@ fi
+ invoke_command ()
+ {
+     local exitval=0
+-    local exitval_file=`mktemp /tmp/dkms.XXXXXX`
++    local exitval_file=`mktemp --tmpdir dkms.XXXXXX`
+     if [ "$3" = background ] && [ -z "$verbose" ]; then
+         (eval $1 >/dev/null 2>&1; echo "exitval=$?" >> "$exitval_file") &
+         while [ -e "$exitval_file" ] && ! [ -s "$exitval_file" ]; do
