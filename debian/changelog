@@ -1,4 +1,4 @@
-dkms (2.1.1.2-3) UNRELEASED; urgency=low
+dkms (2.1.1.2-3) unstable; urgency=low
 
   [ Michael Gilbert ]
   * Update to source format 3 (quilt) for better patch management/handling.
@@ -9,7 +9,11 @@ dkms (2.1.1.2-3) UNRELEASED; urgency=low
   * Document package naming convention (closes: #571753).
   * Use system TMPDIR setting in all scripts (closes: #581568).
 
- -- Michael Gilbert <michael.s.gilbert@gmail.com>  Sun, 16 May 2010 18:59:38 -0400
+  [ Giuseppe Iuculano ]
+  * [208b229] Added a lintian override for python-script-but-no-python-
+    dep, dkms.py is an apport hook
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 04 Jun 2010 13:53:23 +0200
 
 dkms (2.1.1.2-2) unstable; urgency=low
 
