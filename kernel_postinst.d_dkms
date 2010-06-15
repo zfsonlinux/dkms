@@ -4,5 +4,10 @@
 inst_kern=$1
 
 if [ -x /usr/lib/dkms/dkms_autoinstaller ]; then
-    exec /usr/lib/dkms/dkms_autoinstaller start $inst_kern > /dev/null
+    /usr/lib/dkms/dkms_autoinstaller start $inst_kern >&2
+fi
+
+if [ ! -e /lib/modules/$inst_kern/build/include ] ; then
+    echo "dkms: WARNING: linux headers are missing, which may explain the above failures." >&2
+    echo "      please install the linux-headers-$inst_kern package to fix this." >&2
 fi
