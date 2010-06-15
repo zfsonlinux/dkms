@@ -6,8 +6,6 @@
 
 CURVER = $(shell dpkg-parsechangelog | grep ^Version | cut -d" " -f2 | cut -d"-" -f1 )
 
-include /usr/share/quilt/quilt.make
-
 dh_dkms.1: debian/scripts/dh_dkms
 	pod2man \
 		--center "DKMS Debhelper" \
@@ -19,7 +17,7 @@ build-stamp: $(QUILT_STAMPFN)
 	dh_testdir
 	touch $@
 
-clean: unpatch
+clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
@@ -40,6 +38,7 @@ binary-indep: build install
 	dh_testroot
 	dh_installchangelogs 
 	dh_installdocs AUTHORS debian/HOWTO.Debian
+	dh_lintian
 	dh_installexamples
 	dh_installman
 	dh_link

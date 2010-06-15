@@ -1,8 +1,25 @@
-dkms (2.1.1.2-2fakesync1) lucid; urgency=low
+dkms (2.1.1.2-3fakesync1) maverick; urgency=low
 
-  * Fakesync with debian (LP: #534843)
+  * Fake sync due to mismatching orig tarball (LP: #594363).
 
- -- Mario Limonciello <Mario_Limonciello@Dell.com>  Sun, 28 Mar 2010 00:45:36 -0500
+ -- Artur Rona <ari-tczew@tlen.pl>  Tue, 15 Jun 2010 00:53:13 +0200
+
+dkms (2.1.1.2-3) unstable; urgency=low
+
+  [ Michael Gilbert ]
+  * Update to source format 3 (quilt) for better patch management/handling.
+  * Improve the status info displayed during the kernel postinst, and
+    provide informative/useful messages when things go awry.
+  * Fix bashism in dkms_common.postinst (closes: #581079).
+  * Document odd behavior of MAKE[#] (closes: #553625).
+  * Document package naming convention (closes: #571753).
+  * Use system TMPDIR setting in all scripts (closes: #581568).
+
+  [ Giuseppe Iuculano ]
+  * [208b229] Added a lintian override for python-script-but-no-python-
+    dep, dkms.py is an apport hook
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 04 Jun 2010 13:53:23 +0200
 
 dkms (2.1.1.2-2) unstable; urgency=low
 
