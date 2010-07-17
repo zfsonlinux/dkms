@@ -2,3 +2,4 @@ improved-error-messages.patch
 fix-bashism.patch
 manpage-update.patch
 use-system-tmpdir.patch
+remove-old-mod.patch
