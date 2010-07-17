@@ -1,0 +1,34 @@
+dkms.conf allows to set a BUILD_EXCLUSIVE_KERNEL / BUILD_EXCLUSIVE_ARCH 
+parameter to specify a regular expression which defines the subset of 
+kernels / architectures which DKMS is allowed to build the module for. If 
+the kernel being built for does not match against this regular 
+expressions, the dkms build will error out with exit code 9.
+
+This patch changes dkms_common.postinst to handle this dkms build 
+error gracefully by skipping build for the non matching kernels.
+--- a/dkms_common.postinst
++++ b/dkms_common.postinst
+@@ -231,8 +231,22 @@ for KERNEL in $KERNELS; do
+         fi
+         if [ -e /lib/modules/$KERNEL/build/include ]; then
+             echo "Building initial module for $KERNEL"
++            set +e
+             dkms build -m $NAME -v $VERSION -k $KERNEL $ARCH > /dev/null
+-            echo "Done."
++            case $? in
++            9)
++                set -e
++                echo "Skipped."
++                continue
++                ;;
++            0)
++                set -e
++                echo "Done."
++                ;;
++            *)
++                exit $?
++                ;;
++            esac
+             dkms_status=`dkms status -m $NAME -v $VERSION -k $KERNEL $ARCH`
+         else
+             echo "Module build for the currently running kernel was skipped since the"
