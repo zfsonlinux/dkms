@@ -1,3 +1,16 @@
+dkms (2.1.1.2-4) unstable; urgency=low
+
+  * [f649aa1] Added coreutils >= 7.4 in Depends (Closes: #586356)
+  * [01c7c14] Remove old modules when removing a kernel (Closes: #586724)
+    - thanks to Jan Muszynski
+  * [b6182ba] Bump to Standards-Version 3.9.0, no changes needed
+  * [eaeddb3] dkms_common.postinst: handle dkms build error gracefully
+    by skipping build for the non matching kernels. (Closes: #588585) -
+    thanks to Jan-Marek Glogowski
+  * [73533c2] Promote lsb-release to Pre-Depends (Closes: #589308)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 17 Jul 2010 13:23:43 +0200
+
 dkms (2.1.1.2-3) unstable; urgency=low
 
   [ Michael Gilbert ]
