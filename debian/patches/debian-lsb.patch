@@ -1,0 +1,12 @@
+Set DISTRIB_ID=Debian in case lsb_release is missing
+--- a/dkms
++++ b/dkms
+@@ -367,6 +367,8 @@ function distro_version()
+         DISTRIB_ID=$(lsb_release -i -s)
+         DISTRIB_RELEASE=$(lsb_release -r -s)
+         LSB_RELEASE=1
++    else
++	DISTRIB_ID=Debian
+     fi
+ 
+     case "${DISTRIB_ID}" in
