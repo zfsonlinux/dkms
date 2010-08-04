@@ -1,3 +1,18 @@
+dkms (2.1.1.2-5) unstable; urgency=low
+
+  * [bd3b35d] Set DISTRIB_ID=Debian in case lsb_release is missing
+  * [2465627] Removed lsb-release from Pre-Depends
+  * [1732998] Do not use lsb_release to determine the distribution, add
+    a static assignment (Closes: #547353)
+  * [d00ff09] Do not return error if /etc/dkms/framework.conf is missing
+    (LP: #613407) - thanks to pasadrul
+  * [618efc8] Copy from the right directory with mkdsc and copy
+    source.changes when building with mkdsc (LP: #611652) - thanks to
+    David Henningsson
+  * [f23d6b0] Bump to standards-version 3.9.1, no changes needed
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Wed, 04 Aug 2010 16:03:16 +0200
+
 dkms (2.1.1.2-4) unstable; urgency=low
 
   * [f649aa1] Added coreutils >= 7.4 in Depends (Closes: #586356)
