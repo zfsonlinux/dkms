@@ -1,0 +1,20 @@
+Do not use lsb_release to determine the distribution, add a a static assignment
+
+This patch should not be merged upstream
+--- a/dkms
++++ b/dkms
+@@ -363,10 +363,10 @@ function distro_version()
+     if [ -r /etc/lsb-release ]; then
+         . /etc/lsb-release
+         LSB_RELEASE=1
+-    elif type lsb_release >/dev/null 2>&1; then
+-        DISTRIB_ID=$(lsb_release -i -s)
+-        DISTRIB_RELEASE=$(lsb_release -r -s)
+-        LSB_RELEASE=1
++    else
++	DISTRIB_ID=Debian
++	DISTRIB_RELEASE=$(cat /etc/debian_version)
++	LSB_RELEASE=1
+     fi
+ 
+     case "${DISTRIB_ID}" in
