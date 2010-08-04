@@ -6,3 +6,4 @@ remove-old-mod.patch
 skip-non-matching-kernel.patch
 debian-lsb.patch
 framework_conf.patch
+mkdsc.patch
