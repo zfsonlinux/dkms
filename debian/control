@@ -18,7 +18,6 @@ Depends: ${misc:Depends},
  gcc,
  make | build-essential | dpkg-dev,
  coreutils (>= 7.4)
-Pre-Depends: lsb-release
 Recommends: patch,
  fakeroot,
  menu | sudo,
