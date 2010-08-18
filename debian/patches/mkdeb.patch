@@ -1,0 +1,18 @@
+Description: Check for debhelper installation when using 'dkms mkdeb'
+Author: Michael Gilbert <michael.s.gilbert@gmail.com>
+Bug-Debian: http://bugs.debian.org/592863
+--- dkms-2.1.1.2.orig/dkms
++++ dkms-2.1.1.2/dkms
+@@ -3250,6 +3250,12 @@ function make_debian_test_depends()
+     if ! which dpkg-buildpackage >/dev/null 2>&1 ; then
+         INSTALL_PACKAGES="dpkg-dev $INSTALL_PACKAGES"
+     fi
++    
++    # Check whether debhelper commands are present
++    if ! which dh_testdir >/dev/null 2>&1 ; then
++        INSTALL_PACKAGES="debhelper $INSTALL_PACKAGES"
++    fi
++
+     echo "$INSTALL_PACKAGES"
+ }
+ 
