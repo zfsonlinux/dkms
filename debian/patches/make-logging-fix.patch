@@ -1,9 +1,11 @@
-Description: Upstream changes introduced in version 2.1.1.2-5
+Description: Improved logging for compound make statements 
 Author: Anders Kaseorg <andersk@mit.edu>
-Bug-Debian: http://bugs.debian.org/755972
---- dkms-2.1.1.2.orig/dkms
-+++ dkms-2.1.1.2/dkms
-@@ -25,14 +25,14 @@ function invoke_command ()
+Bug-Debian: http://bugs.debian.org/577972
+Index: dkms-2.1.1.2/dkms
+===================================================================
+--- dkms-2.1.1.2.orig/dkms	2010-08-18 00:10:16.000000000 -0400
++++ dkms-2.1.1.2/dkms	2010-08-18 00:12:58.000000000 -0400
+@@ -25,14 +25,14 @@
      local exitval_file=`mktemp $tmp_location/dkms.XXXXXX`
      [ -z "$verbose" ] && echo -en "$2..." || echo -e "$1"
      if [ "$3" == background ] && [ -z "$verbose" ]; then
@@ -20,12 +22,12 @@ Bug-Debian: http://bugs.debian.org/755972
      fi
      [ $exitval -gt 0 ] && echo -en "(bad exit status: $exitval)"
      rm -f "$exitval_file"
-@@ -1524,7 +1524,7 @@ function do_build()
+@@ -1524,7 +1524,7 @@
      echo $"`date`" >> "$dkms_tree/$module/$module_version/build/make.log"
      local the_make_command=`echo $make_command | sed "s/^make/make KERNELRELEASE=${kernelver_array[0]}/"`
  
 -    invoke_command "$the_make_command >> $dkms_tree/$module/$module_version/build/make.log 2>&1" "$the_make_command" background
-+    invoke_command "{$the_make_command;} >> $dkms_tree/$module/$module_version/build/make.log 2>&1" "$the_make_command" background
++    invoke_command "{ $the_make_command; } >> $dkms_tree/$module/$module_version/build/make.log 2>&1" "$the_make_command" background
  
      # Make sure good return status
      if [ "$?" -ne 0 ]; then
