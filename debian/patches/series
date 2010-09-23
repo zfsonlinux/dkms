@@ -2,3 +2,4 @@ improved-error-messages.patch
 fix-bashism.patch
 manpage-update.patch
 use-system-tmpdir.patch
+improve-the-logic-behind-kernels-detection.patch

@@ -1,3 +1,13 @@
+dkms (2.1.1.2-3ubuntu1) maverick; urgency=low
+
+  * debian/patches/improve-the-logic-behind-kernels-detection.patch:
+    - Before using the current kernel we need to make sure that this
+      kernel doesn't belong to the host of a chroot and we should
+      also be more careful when adding kernels to the candidates
+      list (LP: #602408).
+
+ -- Alberto Milone <alberto.milone@canonical.com>  Thu, 23 Sep 2010 18:59:55 +0200
+
 dkms (2.1.1.2-3fakesync1) maverick; urgency=low
 
   * Fake sync due to mismatching orig tarball (LP: #594363).
