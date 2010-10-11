@@ -1,3 +1,12 @@
+dkms (2.1.1.2-3ubuntu1.1) maverick-proposed; urgency=low
+
+  * debian/control:
+    - depend on patch instead of recommending it, if its missing
+      the "patches" feature of dkms will no longer work and that
+      will cause build failures (LP: #653899)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 11 Oct 2010 09:27:28 +0200
+
 dkms (2.1.1.2-3ubuntu1) maverick; urgency=low
 
   * debian/patches/improve-the-logic-behind-kernels-detection.patch:
