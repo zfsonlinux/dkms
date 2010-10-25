@@ -53,7 +53,7 @@ uname=`uname -mr`
 arch=${uname#* }
 kernel_preparation_done=""
 dkms_tree="/var/lib/dkms"
-[ -e /etc/dkms/framework.conf ] && . /etc/dkms/framework.conf 2>/dev/null
+. /etc/dkms/framework.conf 2>/dev/null
 
 # See how we were called.
 case "$1" in

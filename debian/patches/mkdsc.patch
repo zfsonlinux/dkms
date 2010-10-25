@@ -1,0 +1,40 @@
+From 55321c5537c963206d51c9965aa7816c7a5dfef0 Mon Sep 17 00:00:00 2001
+From: David Henningsson <david.henningsson@canonical.com>
+Date: Fri, 30 Jul 2010 12:43:48 +0200
+Subject: [PATCH] Copy from the right directory with mkdsc
+
+Signed-off-by: David Henningsson <david.henningsson@canonical.com>
+---
+ dkms |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+From 469f8cc9d9db1390c5ce43fb839240c1538491bc Mon Sep 17 00:00:00 2001
+From: David Henningsson <david.henningsson@canonical.com>
+Date: Fri, 30 Jul 2010 13:15:28 +0200
+Subject: [PATCH 2/2] Also copy source.changes when building with mkdsc
+
+Signed-off-by: David Henningsson <david.henningsson@canonical.com>
+---
+ dkms |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+--- a/dkms
++++ b/dkms
+@@ -3390,7 +3390,8 @@ function make_debian()
+                 echo $"Error! There was a problem creating your ${create_type}." >&2
+                 exit 7
+             fi
+-            invoke_command "mv '$temp_dir/${debian_package}-dkms_${module_version}.dsc' '$temp_dir/${debian_package}-dkms_${module_version}.tar.gz' '$deb_basedir'" "Moving built files to $deb_basedir"
++	    package_prefix="$temp_dir/${debian_package}-dkms_${module_version}"
++	    invoke_command "mv '${package_prefix}.dsc' '${package_prefix}_source.changes' '${package_prefix}.tar.gz' '$deb_basedir'" "Moving built files to $deb_basedir"
+             ;;
+         deb)
+             invoke_command "dpkg-buildpackage -rfakeroot -d -b -us -uc 1>/dev/null" "Building binary package"
+@@ -3410,7 +3411,7 @@ function make_debian()
+ 
+     if in_temporary_trees; then
+         echo "Copying built files to "`pwd`"/.." >&2
+-        cp "$dkms_tree/$module/$module_version/deb/"* ..
++        cp "${deb_basedir}/"* ..
+     fi
+ 
+     #cleanup
