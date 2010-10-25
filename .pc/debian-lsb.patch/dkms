@@ -363,10 +363,10 @@ function distro_version()
     if [ -r /etc/lsb-release ]; then
         . /etc/lsb-release
         LSB_RELEASE=1
-    else
-	DISTRIB_ID=Debian
-	DISTRIB_RELEASE=$(cat /etc/debian_version)
-	LSB_RELEASE=1
+    elif type lsb_release >/dev/null 2>&1; then
+        DISTRIB_ID=$(lsb_release -i -s)
+        DISTRIB_RELEASE=$(lsb_release -r -s)
+        LSB_RELEASE=1
     fi
 
     case "${DISTRIB_ID}" in
@@ -3390,8 +3390,7 @@ function make_debian()
                 echo $"Error! There was a problem creating your ${create_type}." >&2
                 exit 7
             fi
-	    package_prefix="$temp_dir/${debian_package}-dkms_${module_version}"
-	    invoke_command "mv '${package_prefix}.dsc' '${package_prefix}_source.changes' '${package_prefix}.tar.gz' '$deb_basedir'" "Moving built files to $deb_basedir"
+            invoke_command "mv '$temp_dir/${debian_package}-dkms_${module_version}.dsc' '$temp_dir/${debian_package}-dkms_${module_version}.tar.gz' '$deb_basedir'" "Moving built files to $deb_basedir"
             ;;
         deb)
             invoke_command "dpkg-buildpackage -rfakeroot -d -b -us -uc 1>/dev/null" "Building binary package"
@@ -3411,7 +3410,7 @@ function make_debian()
 
     if in_temporary_trees; then
         echo "Copying built files to "`pwd`"/.." >&2
-        cp "${deb_basedir}/"* ..
+        cp "$dkms_tree/$module/$module_version/deb/"* ..
     fi
 
     #cleanup

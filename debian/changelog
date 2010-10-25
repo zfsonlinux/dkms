@@ -1,3 +1,46 @@
+dkms (2.1.1.2-5ubuntu1) natty; urgency=low
+
+  * Merge from Debian unstable, remaining changes:
+    - debian/control:
+      - depend on patch instead of recommending it, if its missing
+        the "patches" feature of dkms will no longer work and that
+        will cause build failures (LP: #653899)
+    - debian/patches/improve-the-logic-behind-kernels-detection.patch:
+      - Before using the current kernel we need to make sure that this
+        kernel doesn't belong to the host of a chroot and we should
+        also be more careful when adding kernels to the candidates
+        list (LP: #602408).
+
+ -- Benjamin Drung <bdrung@ubuntu.com>  Mon, 25 Oct 2010 01:32:41 +0200
+
+dkms (2.1.1.2-5) unstable; urgency=low
+
+  * [bd3b35d] Set DISTRIB_ID=Debian in case lsb_release is missing
+  * [2465627] Removed lsb-release from Pre-Depends
+  * [1732998] Do not use lsb_release to determine the distribution, add
+    a static assignment (Closes: #547353)
+  * [d00ff09] Do not return error if /etc/dkms/framework.conf is missing
+    (LP: #613407) - thanks to pasadrul
+  * [618efc8] Copy from the right directory with mkdsc and copy
+    source.changes when building with mkdsc (LP: #611652) - thanks to
+    David Henningsson
+  * [f23d6b0] Bump to standards-version 3.9.1, no changes needed
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Wed, 04 Aug 2010 16:03:16 +0200
+
+dkms (2.1.1.2-4) unstable; urgency=low
+
+  * [f649aa1] Added coreutils >= 7.4 in Depends (Closes: #586356)
+  * [01c7c14] Remove old modules when removing a kernel (Closes: #586724)
+    - thanks to Jan Muszynski
+  * [b6182ba] Bump to Standards-Version 3.9.0, no changes needed
+  * [eaeddb3] dkms_common.postinst: handle dkms build error gracefully
+    by skipping build for the non matching kernels. (Closes: #588585) -
+    thanks to Jan-Marek Glogowski
+  * [73533c2] Promote lsb-release to Pre-Depends (Closes: #589308)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 17 Jul 2010 13:23:43 +0200
+
 dkms (2.1.1.2-3ubuntu1.1) maverick-proposed; urgency=low
 
   * debian/control:
@@ -16,12 +59,6 @@ dkms (2.1.1.2-3ubuntu1) maverick; urgency=low
       list (LP: #602408).
 
  -- Alberto Milone <alberto.milone@canonical.com>  Thu, 23 Sep 2010 18:59:55 +0200
-
-dkms (2.1.1.2-3fakesync1) maverick; urgency=low
-
-  * Fake sync due to mismatching orig tarball (LP: #594363).
-
- -- Artur Rona <ari-tczew@tlen.pl>  Tue, 15 Jun 2010 00:53:13 +0200
 
 dkms (2.1.1.2-3) unstable; urgency=low
 
