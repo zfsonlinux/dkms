@@ -9,3 +9,4 @@ framework_conf.patch
 mkdsc.patch
 make-logging-fix.patch
 mkdeb.patch
+improve-the-logic-behind-kernels-detection.patch
