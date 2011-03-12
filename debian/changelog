@@ -1,3 +1,22 @@
+dkms (2.1.1.2-6) unstable; urgency=low
+
+  [ Michael Gilbert ]
+  * [430b97f] Fix logging for compound make statements (closes: #577972)
+    - Thanks to Anders Kaseorg!
+  * [935ae61] Check for debhelper when using 'dkms mkdeb' (closes: #592863)
+  * [e739e8c] fixup logging patch
+
+  [ Giuseppe Iuculano ]
+  * [46cc01a] Merge from Ubuntu: Before using the current kernel we need to make
+    sure that this kernel doesn't belong to the host of a chroot and we should
+    also be more careful when adding kernels to the candidates list
+    (LP: #602408). - Thanks to Alberto Milone
+  * [313d661] Merge from Ubuntu: depend on patch instead of recommending it, if
+    its missing the "patches" feature of dkms will no longer work and that will
+    cause build failures (LP: #653899)  Thanks to Michael Vogt
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 12 Mar 2011 11:07:47 +0100
+
 dkms (2.1.1.2-5) unstable; urgency=low
 
   * [bd3b35d] Set DISTRIB_ID=Debian in case lsb_release is missing

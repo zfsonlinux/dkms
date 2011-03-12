@@ -17,9 +17,9 @@ Depends: ${misc:Depends},
  module-init-tools,
  gcc,
  make | build-essential | dpkg-dev,
- coreutils (>= 7.4)
-Recommends: patch,
- fakeroot,
+ coreutils (>= 7.4),
+ patch
+Recommends: fakeroot,
  menu | sudo,
  linux-headers-2.6-686 | linux-headers-2.6-amd64 | linux-headers-generic | linux-headers,
  linux-image
