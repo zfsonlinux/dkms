@@ -3250,12 +3250,6 @@ function make_debian_test_depends()
     if ! which dpkg-buildpackage >/dev/null 2>&1 ; then
         INSTALL_PACKAGES="dpkg-dev $INSTALL_PACKAGES"
     fi
-    
-    # Check whether debhelper commands are present
-    if ! which dh_testdir >/dev/null 2>&1 ; then
-        INSTALL_PACKAGES="debhelper $INSTALL_PACKAGES"
-    fi
-
     echo "$INSTALL_PACKAGES"
 }
 
