@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# We're passed the version of the kernel being installed
-inst_kern=$1
-
-if [ -x /usr/lib/dkms/dkms_autoinstaller ]; then
-    exec /usr/lib/dkms/dkms_autoinstaller start $inst_kern > /dev/null
-fi

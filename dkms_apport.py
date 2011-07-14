@@ -29,30 +29,50 @@ optparser.add_option('-m', help="Specify the DKMS module to find the package for
                      action='store', type='string', dest='module')
 optparser.add_option('-v', help="Specify the DKMS version to find the package for",
                      action='store', type='string', dest='version')
+optparser.add_option('-k', help="Specify the kernel version",
+                     action='store', type='string', dest='kernel')
 options=optparser.parse_args()[0]
 
 if not options.module or not options.version:
-    print >> sys.stderr, 'ERROR, both -m and -v are required'
+    print >> sys.stderr, 'ERROR (dkms apport): both -m and -v are required'
     sys.exit(2)
 
 package=packaging.get_file_package('/usr/src/' + options.module + '-' + options.version)
 if package is None:
-    print >> sys.stderr, 'ERROR: binary package for %s: %s not found' % (options.module,options.version)
+    print >> sys.stderr, 'ERROR (dkms apport): binary package for %s: %s not found' % (options.module,options.version)
     sys.exit(1)
+
+if options.kernel:
+    # TODO: Ubuntu specific
+    kernel_package = "linux-headers-" + options.kernel
+
+    if not apport.packaging.is_distro_package(kernel_package):
+        print >> sys.stderr, 'ERROR (dkms apport): kernel package %s is not supported' % (kernel_package,)
+        sys.exit(1)
 
 make_log=os.path.join('/var','lib','dkms',options.module,options.version,'build','make.log')
 
 report = apport.Report('Package')
 report['Package'] = package
-report['SourcePackage'] = apport.packaging.get_source(package)
-report['ErrorMessage'] = "%s kernel module failed to build" % options.module
+try:
+    report['SourcePackage'] = apport.packaging.get_source(package)
+except ValueError:
+    print >> sys.stderr, 'ERROR (dkms apport): unable to determine source package for %s' % package
+    sys.exit(3)
 try:
     version = packaging.get_version(package)
 except ValueError:
-    version = 'N/A'
+    version = '(not installed)'
 if version is None:
-    version = 'N/A'
-report['PackageVersion'] = version
-attach_file_if_exists(report, make_log, 'DKMSBuildLog')
-report.write(open(apport.fileutils.make_report_path(report), 'w'))
+    version = '(not installed)'
 
+if report['SourcePackage'] == 'fglrx-installer':
+    fglrx_make_log = os.path.join('/var','lib','dkms',options.module,options.version,'build','make.sh.log')
+    attach_file_if_exists(report, fglrx_make_log, 'FglrxBuildLog')
+
+report['PackageVersion'] = version
+report['Title'] = "%s %s: %s kernel module failed to build" % (package, version, options.module)
+attach_file_if_exists(report, make_log, 'DKMSBuildLog')
+if options.kernel:
+    report['DKMSKernelVersion'] = options.kernel
+report.write(open(apport.fileutils.make_report_path(report), 'w'))
