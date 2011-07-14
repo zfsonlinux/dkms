@@ -6,11 +6,32 @@
 
 set -e
 
+uname_s=$(uname -s)
+
+_get_kernel_dir() {
+    KVER=$1
+    case ${uname_s} in
+	Linux)		DIR="/lib/modules/$KVER/build" ;;
+	GNU/kFreeBSD)	DIR="/usr/src/kfreebsd-headers-$KVER/sys" ;;
+    esac
+    echo $DIR
+}
+
+_check_kernel_dir() {
+    DIR=$(_get_kernel_dir $1)
+    case ${uname_s} in
+	Linux)		test -e $DIR/include ;;
+	GNU/kFreeBSD)	test -e $DIR/kern && test -e $DIR/conf/kmod.mk ;;
+	*)		return 1 ;;
+    esac
+    return $?
+}
+
 # Check the existence of a kernel named as $1
 _is_kernel_name_correct() {
     CORRECT="no"
     KERNEL_NAME=$1
-    
+
     for kernel in /boot/config-*; do
         KERNEL=${kernel#*-}
         if [ "${KERNEL}" = "${KERNEL_NAME}" ]; then
@@ -30,7 +51,7 @@ _get_newest_kernel_debian() {
     NEWEST_KERNEL=
     NEWEST_VERSION=
     NEWEST_ABI=
-    
+
     for kernel in /boot/config-*; do
         KERNEL=${kernel#*-}
         KERNEL_VERSION=${KERNEL%%-*}
@@ -44,7 +65,7 @@ _get_newest_kernel_debian() {
             # Get the biggest version
             COMPARE_TO="$NEWEST_VERSION-$NEWEST_ABI"
         fi
-            
+
         # if $kernel is greater than $COMPARE_TO
         if [ `dpkg --compare-versions "$KERNEL_VERSION-$ABI" gt "$COMPARE_TO" && echo "yes" || \
               echo "no"` = "yes" ]; then
@@ -61,7 +82,7 @@ _get_newest_kernel_debian() {
 # is the most recent kernel then the function will print a null string.
 _get_newest_kernel_rhel() {
     NEWEST_KERNEL=
-    
+
     LAST_INSTALLED_KERNEL=$(rpm -q --whatprovides kernel  --last | grep kernel -m1 | cut -f1 -d' ')
 
     LIK_FORMATTED_NAME=$(rpm -q $LAST_INSTALLED_KERNEL --queryformat="%{VERSION}-%{RELEASE}.%{ARCH}\n")
@@ -71,7 +92,7 @@ _get_newest_kernel_rhel() {
         NEWEST_KERNEL=$LIK_FORMATTED_NAME
     else
         # Hack for Mandriva where $LIK_FORMATTED_NAME is broken
-        LIK_NAME=$(rpm -q $LAST_INSTALLED_KERNEL --queryformat="%{NAME}\n") 
+        LIK_NAME=$(rpm -q $LAST_INSTALLED_KERNEL --queryformat="%{NAME}\n")
         LIK_TYPE=${LIK_NAME#kernel-}
         LIK_TYPE=${LIK_TYPE%%-*}
         LIK_STRIPPED=${LIK_NAME#kernel-}
@@ -135,11 +156,6 @@ if [ -e "/var/lib/dkms/$NAME/$VERSION" ]; then
 fi
 
 #Load new files, by source package and by tarball
-echo "Loading new $NAME-$VERSION DKMS files..."
-if [ -d "/usr/src/$NAME-$VERSION" ]; then
-    dkms add -m $NAME -v $VERSION > /dev/null
-fi
-
 if [ -f "$TARBALL_ROOT/$NAME-$VERSION.dkms.tar.gz" ]; then
     if ! dkms ldtarball --archive "$TARBALL_ROOT/$NAME-$VERSION.dkms.tar.gz"; then
         echo ""
@@ -151,8 +167,11 @@ if [ -f "$TARBALL_ROOT/$NAME-$VERSION.dkms.tar.gz" ]; then
         echo " - Corrupt distribution specific archive"
         echo ""
         echo ""
-        exit 2 
+        exit 2
     fi
+elif [ -d "/usr/src/$NAME-$VERSION" ]; then
+    echo "Loading new $NAME-$VERSION DKMS files..."
+    dkms add -m $NAME -v $VERSION > /dev/null
 fi
 
 # On 1st installation, let us look for a directory
@@ -160,10 +179,10 @@ fi
 # is found it is possible that buildd is being used
 # and that uname -r is giving us the name of the
 # kernel used by the buildd machine.
-# 
+#
 # If this is the case we try to build the kernel
-# module for each kernel which has a directory in 
-# /lib/modules. Furthermore we will have to tell 
+# module for each kernel which has a directory in
+# /lib/modules. Furthermore we will have to tell
 # DKMS which architecture it should build the module
 # for (e.g. if the buildd machine is using a
 # 2.6.24-23-xen 64bit kernel).
@@ -242,7 +261,7 @@ for KERNEL in $KERNELS; do
             echo " since the package source was not provided"
             continue
         fi
-        if [ -e /lib/modules/$KERNEL/build/include ]; then
+        if _check_kernel_dir $KERNEL; then
             echo "Building initial module for $KERNEL"
             set +e
             dkms build -m $NAME -v $VERSION -k $KERNEL $ARCH > /dev/null
