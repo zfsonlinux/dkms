@@ -1,0 +1,26 @@
+--- a/dkms
++++ b/dkms
+@@ -233,6 +233,9 @@ setup_kernels_arches()
+ do_depmod()
+ {
+     # $1 = kernel version
++    if [ "${uname_s}" != "Linux" ] ; then
++        return
++    fi
+     if [[ -f /boot/System.map-$1 ]]; then
+ 	/sbin/depmod -a "$1" -F "/boot/System.map-$1"
+     else
+--- a/kernel_postinst.d_dkms
++++ b/kernel_postinst.d_dkms
+@@ -39,11 +39,6 @@ if [ -x /usr/lib/dkms/dkms_autoinstaller
+     /usr/lib/dkms/dkms_autoinstaller start $inst_kern >&2
+ fi
+ 
+-if [ ! -e /lib/modules/$inst_kern/build/include ] ; then
+-    echo "dkms: WARNING: linux headers are missing, which may explain the above failures." >&2
+-    echo "      please install the linux-headers-$inst_kern package to fix this." >&2
+-fi
+-
+ if ! _check_kernel_dir $inst_kern ; then
+     echo "dkms: WARNING: $kernel headers are missing, which may explain the above failures." >&2
+     echo "      please install the $header_pkg package to fix this." >&2

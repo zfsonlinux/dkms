@@ -1,2 +1,3 @@
 improved-error-messages.patch
 debian-lsb.patch
+kfreebsd.patch
