@@ -4,7 +4,7 @@
  do_depmod()
  {
      # $1 = kernel version
-+    if [ "${uname_s}" != "Linux" ] ; then
++    if [ "${current_os}" != "Linux" ] ; then
 +        return
 +    fi
      if [[ -f /boot/System.map-$1 ]]; then
