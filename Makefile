@@ -1,8 +1,8 @@
-RELEASE_DATE := "16-Feb-2009"
+RELEASE_DATE := "14-July-2011"
 RELEASE_MAJOR := 2
-RELEASE_MINOR := 1
-RELEASE_SUBLEVEL := 1
-RELEASE_EXTRALEVEL := .2
+RELEASE_MINOR := 2
+RELEASE_SUBLEVEL := 0
+RELEASE_EXTRALEVEL := .1
 RELEASE_NAME := dkms
 RELEASE_VERSION := $(RELEASE_MAJOR).$(RELEASE_MINOR).$(RELEASE_SUBLEVEL)$(RELEASE_EXTRALEVEL)
 RELEASE_STRING := $(RELEASE_NAME)-$(RELEASE_VERSION)
@@ -14,6 +14,7 @@ ETC = $(DESTDIR)/etc/dkms
 VAR = $(DESTDIR)/var/lib/dkms
 MAN = $(DESTDIR)/usr/share/man/man8
 INITD = $(DESTDIR)/etc/init.d
+INITD_RH = $(DESTDIR)/etc/rc.d/init.d 
 LIBDIR = $(DESTDIR)/usr/lib/dkms
 BASHDIR = $(DESTDIR)/etc/bash_completion.d
 KCONF = $(DESTDIR)/etc/kernel
@@ -35,11 +36,9 @@ install:
 	mkdir -m 0755 -p $(VAR) $(SBIN) $(MAN) $(ETC) $(BASHDIR) $(SHAREDIR) $(LIBDIR)
 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms > dkms.versioned
 	mv -f dkms.versioned dkms
-	mkdir   -p -m 0755 $(SHAREDIR)/apport/package-hooks
 	install -p -m 0755 dkms_common.postinst $(LIBDIR)/common.postinst
 	install -p -m 0755 dkms $(SBIN)
 	install -p -m 0755 dkms_autoinstaller $(LIBDIR)
-	install -p -m 0755 dkms_apport.py $(SHAREDIR)/apport/package-hooks/dkms.py
 	install -p -m 0644 dkms_framework.conf $(ETC)/framework.conf
 	install -p -m 0644 dkms_dbversion $(VAR)
 	install -p -m 0644 dkms.bash-completion $(BASHDIR)/dkms
@@ -58,18 +57,21 @@ doc-perms:
 	chmod 0644 $(DOCFILES)
 
 install-redhat: install doc-perms
-	mkdir -m 0755 -p  $(INITD)
+	mkdir -m 0755 -p  $(INITD_RH)
 	install -p -m 0755 dkms_mkkerneldoth $(LIBDIR)/mkkerneldoth
 	install -p -m 0755 dkms_find-provides $(LIBDIR)/find-provides
 	install -p -m 0755 lsb_release $(LIBDIR)/lsb_release
 	install -p -m 0644 template-dkms-mkrpm.spec $(ETC)
-	install -p -m 0755 dkms_autoinstaller $(INITD)
+	install -p -m 0644 template-dkms-redhat-kmod.spec $(ETC)
+	install -p -m 0755 dkms_autoinstaller $(INITD_RH)
 
 install-doc:
 	mkdir -m 0755 -p $(DOCDIR)
 	install -p -m 0644 $(DOCFILES) $(DOCDIR)
 
 install-debian: install install-doc
+	mkdir   -p -m 0755 $(SHAREDIR)/apport/package-hooks
+	install -p -m 0755 dkms_apport.py $(SHAREDIR)/apport/package-hooks/dkms_packages.py
 	mkdir   -p -m 0755 $(KCONF)/header_postinst.d
 	install -p -m 0755 kernel_postinst.d_dkms $(KCONF)/header_postinst.d/dkms
 	mkdir   -p -m 0755 $(ETC)/template-dkms-mkdeb/debian
@@ -88,7 +90,7 @@ tarball: $(TARBALL)
 
 $(TARBALL):
 	mkdir -p $(deb_destdir)
-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
+	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
 	cp -a ../$(RELEASE_NAME) $${tmp_dir}/$(RELEASE_STRING) ; \
 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms > $${tmp_dir}/$(RELEASE_STRING)/dkms ; \
 	sed -e "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms.spec > $${tmp_dir}/$(RELEASE_STRING)/dkms.spec ; \
@@ -105,7 +107,7 @@ $(TARBALL):
 
 
 rpm: $(TARBALL) dkms.spec
-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
+	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
 	mkdir -p $${tmp_dir}/{BUILD,RPMS,SRPMS,SPECS,SOURCES} ; \
 	cp $(TARBALL) $${tmp_dir}/SOURCES ; \
 	sed "s/\[INSERT_VERSION_HERE\]/$(RELEASE_VERSION)/" dkms.spec > $${tmp_dir}/SPECS/dkms.spec ; \
@@ -129,7 +131,7 @@ debmagic: $(TARBALL)
 	cd -
 
 debs:
-	tmp_dir=`mktemp -d /tmp/dkms.XXXXXXXX` ; \
+	tmp_dir=`mktemp -d --tmpdir dkms.XXXXXXXX` ; \
 	make debmagic DEB_TMP_BUILDDIR=$${tmp_dir} DIST=$(DIST); \
 	rm -rf $${tmp_dir}
 
