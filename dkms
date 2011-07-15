@@ -233,6 +233,9 @@ setup_kernels_arches()
 do_depmod()
 {
     # $1 = kernel version
+    if [ "${current_os}" != "Linux" ] ; then
+        return
+    fi
     if [[ -f /boot/System.map-$1 ]]; then
 	/sbin/depmod -a "$1" -F "/boot/System.map-$1"
     else
@@ -341,10 +344,9 @@ distro_version()
     # try the LSB-provided strings first
     if [ -r /etc/lsb-release ]; then
 	. /etc/lsb-release
-    else
-       DISTRIB_ID=Debian
-       DISTRIB_RELEASE=$(cat /etc/debian_version)
-       LSB_RELEASE=1
+    elif type lsb_release >/dev/null 2>&1; then
+	DISTRIB_ID=$(lsb_release -i -s)
+	DISTRIB_RELEASE=$(lsb_release -r -s)
     fi
 
     case ${DISTRIB_ID} in
@@ -377,7 +379,7 @@ override_dest_module_location()
     local orig_location="$1"
     [[ ${addon_modules_dir} ]] && echo "/${addon_modules_dir}" && return
 
-    if [ "$uname_s" = "GNU/kFreeBSD" ] ; then
+    if [ "$current_os" = "GNU/kFreeBSD" ] ; then
 	# Does not support subdirs, regardless of distribution
 	echo "" && return
     fi
