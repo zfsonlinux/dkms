@@ -1,3 +1,10 @@
+dkms (2.2.0.1-2) unstable; urgency=low
+
+  * [6b2d392] Run depmod command only in Linux.
+    Thanks to Robert Millan (Closes: #631657)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 15 Jul 2011 16:00:05 +0200
+
 dkms (2.2.0.1-1) unstable; urgency=low
 
   * [18353fe] Imported Upstream version 2.2.0.1
