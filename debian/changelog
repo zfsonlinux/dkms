@@ -1,3 +1,12 @@
+dkms (2.2.0.1-1) unstable; urgency=low
+
+  * [18353fe] Imported Upstream version 2.2.0.1
+  * [2a56b4e] Refreshed and removed patches merged upstream.
+  * [c552af9] Use linux-headers-686-pae and linux-headers-amd64 in Recommends
+    (Closes: #628873)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Fri, 15 Jul 2011 12:56:08 +0200
+
 dkms (2.1.1.2-6) unstable; urgency=low
 
   [ Michael Gilbert ]
