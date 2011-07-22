@@ -158,7 +158,6 @@ set_module_suffix()
 set_kernel_source_dir()
 {
     # $1 = the kernel to base the directory on
-    [[ $kernel_source_dir ]] && return
     kernel_source_dir="$(_get_kernel_dir "$1")"
 }
 
@@ -925,10 +924,24 @@ read_conf_or_die() {
 run_build_script() {
     # $1 = script type
     # $2 = script to run
-    [[ $2 && -x $dkms_tree/$module/$module_version/source/${2%% *} ]] || return 0
-    echo $""
-    echo $"Running the $1 script:"
-    $dkms_tree/$module/$module_version/source/$2
+    local script_type run
+    [[ $2 ]] || return 0
+    case "$1" in
+        pre_build|post_build) script_type='build';;
+        *) script_type='source'
+    esac
+    run="$dkms_tree/$module/$module_version/$script_type/$2"
+    if [[ -x ${run%% *} ]]; then
+        echo $""
+        echo $"Running the $1 script:"
+        (
+            cd "$dkms_tree/$module/$module_version/$script_type/"
+            exec $run
+        )
+    else
+        echo $""
+        warn $"The $1 script is not executable."
+    fi
 }
 
 # Register a DKMS-ified source tree with DKMS.
@@ -1164,9 +1177,6 @@ prepare_build()
     rm -rf "$dkms_tree/$module/$module_version/build"
     cp -rf "$dkms_tree/$module/$module_version/source/" "$dkms_tree/$module/$module_version/build"
 
-    # Run the pre_build script
-    run_build_script pre_build "$pre_build"
-
     cd "$dkms_tree/$module/$module_version/build"
 
     # Apply any patches
@@ -1179,6 +1189,9 @@ prepare_build()
 	    report_build_problem 6 $"Application of patch $p failed." \
 	    $"Check $dkms_tree/$module/$module_version/build/ for more information."
     done
+
+    # Run the pre_build script
+    run_build_script pre_build "$pre_build"
 }
 
 # Build our previously prepared source tree.  prepare_build must be called
@@ -3128,27 +3141,28 @@ autoinstall() {
     # Walk through our list of installed and built modules, and create
     # a list of modules that need to be reinstalled.
     while read status mvka; do
-	# if it has not been built, do not try and build it now.
-	[[ $status = added ]] && continue
-	IFS='/' read m v k a <<< "$mvka"
-	[[ ! $last_m ]] && last_m="$m"
-	# If the module is already installed or weak-installed, skip it.
-	_is_module_installed "$m" "$v" "$kernelver" "$arch" && continue
-	module_status_weak "$m" "$v" "$kernelver" "$arch" >/dev/null && continue
-	# if the module does not want to be autoinstalled, skip it.
-	read_conf_or_die "$k" "$a" "$dkms_tree/$m/$v/source/dkms.conf"
-	if [[ ! $AUTOINSTALL ]]; then
-	    continue
-	# otherwise, only autoinstall the latest version we have hanging around.
-	elif [[ $last_m != $m ]]; then
-	    last_m="$m"
-	    last_v='0'
-	    [[ $tenative ]] && to_install[${#to_install[@]}]="$tenative"
-	    tenative=''
-	elif [[ $last_m = $m && ($(VER $v) > $(VER $last_v)) ]]; then
-	    last_v="$v"
-	    tenative="$m/$v"
-	fi
+        # if it has not been built, do not try and build it now.
+        [[ $status = added ]] && continue
+        IFS='/' read m v k a <<< "$mvka"
+        [[ ! $last_m ]] && last_m="$m"
+        # If the module is already installed or weak-installed, skip it.
+        _is_module_installed "$m" "$v" "$kernelver" "$arch" && continue
+        module_status_weak "$m" "$v" "$kernelver" "$arch" >/dev/null && continue
+        # if the module does not want to be autoinstalled, skip it.
+        read_conf_or_die "$k" "$a" "$dkms_tree/$m/$v/source/dkms.conf"
+        if [[ ! $AUTOINSTALL ]]; then
+            continue
+        # otherwise, only autoinstall the latest version we have hanging around.
+        elif [[ $last_m != $m ]]; then
+            last_m="$m"
+            last_v='0'
+            [[ $tenative ]] && to_install[${#to_install[@]}]="$tenative"
+            tenative=''
+        fi
+        if [[ ($(VER $v) > $(VER $last_v)) ]]; then
+            last_v="$v"
+            tenative="$m/$v"
+        fi
     done < <(module_status)
     # We may have exited the loop with $tenative set.  If it is,
     # it contains something that should be updated.
@@ -3156,8 +3170,8 @@ autoinstall() {
     [[ $to_install ]] || return 0
     # Install modules that need to be updated in parallel.
     for mv in "${to_install[@]}"; do
-	IFS=/ read m v <<< "$mv"
-	(module="$m"; module_version="$v"; install_module) &
+        IFS=/ read m v <<< "$mv"
+        (module="$m"; module_version="$v"; install_module) &
     done
     wait
 }
@@ -3410,7 +3424,7 @@ while (($# > 0)); do
 	--templatekernel*)   read_arg template_kernel "$1" "$2" || shift;;
 	-c)                  read_arg conf "$1" "$2" || shift;;
 	--quiet|-q)          exec >/dev/null 2>&1;;
-	--version|-V)        echo $"dkms: 2.2.0.1"
+	--version|-V)        echo $"dkms: 2.2.0.2"
 			     exit 0;;
 	--no-prepare-kernel) no_prepare_kernel="no-prepare-kernel";;
 	--no-clean-kernel)   no_clean_kernel="no-clean-kernel";;
