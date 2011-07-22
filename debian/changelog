@@ -1,3 +1,17 @@
+dkms (2.2.0.2-1) unstable; urgency=low
+
+  [ Mario Limonciello ]
+  * [c5846b6] Imported Upstream version 2.2.0.2
+    - Doesn't leave files in /tmp (Closes: #633802)
+    - Autoinstall works on multiple kernels (Closes: #634979) (LP: #812979)
+    - PRE_BUILD command working directory fix. (LP: #812088)
+  * [83b5f6e] Drop kfreebsd.patch.  Merged upstream
+
+  [ Giuseppe Iuculano ]
+  * [a80ecc5] Updated VCS control field
+
+ -- Mario Limonciello <Mario_Limonciello@Dell.com>  Fri, 22 Jul 2011 13:36:32 -0500
+
 dkms (2.2.0.1-3) unstable; urgency=low
 
   * [c9f7ed0] Fixed kFreeBSD subdirs check
