@@ -1,3 +1,12 @@
+dkms (2.2.0.2-1ubuntu1) oneiric; urgency=low
+
+  [ Brian Murray]
+  * Add a duplicate signature to the apport hook, so that reports caused by
+    a common failure can more easily be identified as duplicates.
+    LP: #766160.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 01 Sep 2011 10:37:41 -0700
+
 dkms (2.2.0.2-1) unstable; urgency=low
 
   [ Mario Limonciello ]
