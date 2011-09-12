@@ -1,3 +1,10 @@
+dkms (2.2.0.2-1ubuntu2) oneiric; urgency=low
+
+  * Prevent crash in apport hook if the package is not an Ubuntu one
+    (LP: #816199) 
+
+ -- Brian Murray <brian@ubuntu.com>  Mon, 12 Sep 2011 13:55:21 -0700
+
 dkms (2.2.0.2-1ubuntu1) oneiric; urgency=low
 
   [ Brian Murray]
