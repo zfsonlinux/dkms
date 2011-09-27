@@ -1,3 +1,10 @@
+dkms (2.2.0.2-1ubuntu3) oneiric; urgency=low
+
+  * Disable the reserved tree name check. Thanks to Mario
+    Lemonciello for the patch. (LP: #855635)
+
+ -- David Henningsson <david.henningsson@canonical.com>  Tue, 27 Sep 2011 07:59:21 +0200
+
 dkms (2.2.0.2-1ubuntu2) oneiric; urgency=low
 
   * Prevent crash in apport hook if the package is not an Ubuntu one
