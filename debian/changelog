@@ -1,3 +1,9 @@
+dkms (2.2.0.2-1ubuntu4) oneiric; urgency=low
+
+  * Autoinstall modules that have just been added too. (LP: #867922)
+
+ -- Mario Limonciello <Mario_Limonciello@Dell.com>  Wed, 05 Oct 2011 18:17:21 -0500
+
 dkms (2.2.0.2-1ubuntu3) oneiric; urgency=low
 
   * Disable the reserved tree name check. Thanks to Mario
