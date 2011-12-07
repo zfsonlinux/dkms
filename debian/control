@@ -1,13 +1,12 @@
 Source: dkms
 Section: kernel
 Priority: optional
-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
-XSBC-Original-Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
+Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
 Uploaders: David Paleino <dapal@debian.org>,
  Mario Limonciello <Mario_Limonciello@dell.com>,
  Giuseppe Iuculano <iuculano@debian.org>
-Build-Depends: debhelper (>= 7), quilt
-Standards-Version: 3.9.1
+Build-Depends: debhelper (>= 7.0.50~), quilt
+Standards-Version: 3.9.2
 Homepage: http://linux.dell.com/dkms
 Vcs-Git: git://git.debian.org/pkg-dkms/dkms.git
 Vcs-Browser: http://git.debian.org/?p=pkg-dkms/dkms.git

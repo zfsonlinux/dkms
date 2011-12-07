@@ -1,31 +1,13 @@
-dkms (2.2.0.2-1ubuntu4) oneiric; urgency=low
+dkms (2.2.0.3-1) unstable; urgency=low
 
-  * Autoinstall modules that have just been added too. (LP: #867922)
+  * [e24a52f] Imported Upstream version 2.2.0.3
+  * [09da5c7] bump standards version
+  * [713ebfd] add missing debhelper token to preinst
+  * [8970435] add versioned build depends for debhelper
+  * [db4238c] switch to dh7
+  * [13a34c7] update lintian override for DKMS apport rule
 
- -- Mario Limonciello <Mario_Limonciello@Dell.com>  Wed, 05 Oct 2011 18:17:21 -0500
-
-dkms (2.2.0.2-1ubuntu3) oneiric; urgency=low
-
-  * Disable the reserved tree name check. Thanks to Mario
-    Lemonciello for the patch. (LP: #855635)
-
- -- David Henningsson <david.henningsson@canonical.com>  Tue, 27 Sep 2011 07:59:21 +0200
-
-dkms (2.2.0.2-1ubuntu2) oneiric; urgency=low
-
-  * Prevent crash in apport hook if the package is not an Ubuntu one
-    (LP: #816199) 
-
- -- Brian Murray <brian@ubuntu.com>  Mon, 12 Sep 2011 13:55:21 -0700
-
-dkms (2.2.0.2-1ubuntu1) oneiric; urgency=low
-
-  [ Brian Murray]
-  * Add a duplicate signature to the apport hook, so that reports caused by
-    a common failure can more easily be identified as duplicates.
-    LP: #766160.
-
- -- Steve Langasek <steve.langasek@ubuntu.com>  Thu, 01 Sep 2011 10:37:41 -0700
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 07 Dec 2011 13:21:33 -0600
 
 dkms (2.2.0.2-1) unstable; urgency=low
 
