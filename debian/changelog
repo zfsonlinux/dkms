@@ -1,3 +1,14 @@
+dkms (2.2.0.3-1) unstable; urgency=low
+
+  * [e24a52f] Imported Upstream version 2.2.0.3
+  * [09da5c7] bump standards version
+  * [713ebfd] add missing debhelper token to preinst
+  * [8970435] add versioned build depends for debhelper
+  * [db4238c] switch to dh7
+  * [13a34c7] update lintian override for DKMS apport rule
+
+ -- Mario Limonciello <mario_limonciello@dell.com>  Wed, 07 Dec 2011 13:21:33 -0600
+
 dkms (2.2.0.2-1) unstable; urgency=low
 
   [ Mario Limonciello ]
