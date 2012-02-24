@@ -1,7 +1,8 @@
 Source: dkms
 Section: kernel
 Priority: optional
-Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Dynamic Kernel Modules Support Team <pkg-dkms-maint@lists.alioth.debian.org>
 Uploaders: David Paleino <dapal@debian.org>,
  Mario Limonciello <Mario_Limonciello@dell.com>,
  Giuseppe Iuculano <iuculano@debian.org>

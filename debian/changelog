@@ -1,3 +1,13 @@
+dkms (2.2.0.3-1ubuntu1) precise; urgency=low
+
+  * Only report bugs about supported kernel versions. This fixes a regression
+    introduced in 2.2.0.2-1ubuntu2. (LP: #940285)
+    - Add apport_supported_kernel_packages.diff:
+      Check the result of is_distro_package() and fix the check if the kernel
+      header package is installed at all.
+
+ -- Felix Geyer <debfx@ubuntu.com>  Fri, 24 Feb 2012 14:08:47 +0100
+
 dkms (2.2.0.3-1) unstable; urgency=low
 
   * [e24a52f] Imported Upstream version 2.2.0.3
