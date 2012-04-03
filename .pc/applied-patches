@@ -1,1 +1,2 @@
 apport_supported_kernel_packages.diff
+Add-support-for-forcing-modules-installation.patch
