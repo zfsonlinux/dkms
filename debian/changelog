@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1ubuntu3) precise-proposed; urgency=low
+
+  * Add linux-headers-generic-pae to recommended headers packages so that i386
+    installs get the right headers (LP: #986475)
+
+ -- Scott Kitterman <scott@kitterman.com>  Sat, 21 Apr 2012 15:01:27 -0400
+
 dkms (2.2.0.3-1ubuntu2) precise; urgency=low
 
   [ Alberto Milone ]
