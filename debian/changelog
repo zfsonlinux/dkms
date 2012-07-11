@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1ubuntu5) quantal; urgency=low
+
+  * debian/control: added 'dpkg-dev' and 'debhelper' to Suggests (LP:
+    #989998)
+
+ -- Aditya Vaidya <kroq.gar78@gmail.com>  Wed, 11 Jul 2012 08:28:02 -0400
+
 dkms (2.2.0.3-1ubuntu4) quantal; urgency=low
 
   * Add apport_python3.patch: Port apport hook to Python 3 (LP: #1013171) and
