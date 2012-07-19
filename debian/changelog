@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Do not fail if /lib/modules does not exist.  (Closes: #666023)
+  * Remove the directory where the module was installed.  (Closes: #657145)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Thu, 19 Jul 2012 22:20:45 +0200
+
 dkms (2.2.0.3-1) unstable; urgency=low
 
   * [e24a52f] Imported Upstream version 2.2.0.3
