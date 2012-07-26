@@ -1,3 +1,26 @@
+dkms (2.2.0.3-1.1ubuntu1) quantal-proposed; urgency=low
+
+  * Merge from Debian unstable, remaining changes:
+    - Add apport_supported_kernel_packages.diff:
+      Only report bugs about supported kernel versions.
+    - Add Add-support-for-forcing-modules-installation.patch, backported
+      from trunk:
+      Add support to force module installation by adding files to
+      /usr/share/dkms/modules_to_force_install
+    - Add apport_python3.patch: Port apport hook to Python 3 and
+      take care of opening the output file in binary mode
+    - debian/control: added 'dpkg-dev' and 'debhelper' to Suggests.
+
+ -- Felix Geyer <debfx@ubuntu.com>  Thu, 26 Jul 2012 11:43:22 +0200
+
+dkms (2.2.0.3-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Do not fail if /lib/modules does not exist.  (Closes: #666023)
+  * Remove the directory where the module was installed.  (Closes: #657145)
+
+ -- Andreas Beckmann <debian@abeckmann.de>  Thu, 19 Jul 2012 22:20:45 +0200
+
 dkms (2.2.0.3-1ubuntu5) quantal; urgency=low
 
   * debian/control: added 'dpkg-dev' and 'debhelper' to Suggests (LP:
