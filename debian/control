@@ -21,9 +21,7 @@ Depends: ${misc:Depends},
  coreutils (>= 7.4),
  patch
 Recommends: fakeroot,
- menu | sudo,
- linux-headers-generic-pae | linux-headers-686-pae | linux-headers-amd64 | linux-headers-generic | linux-headers,
- linux-image
+ menu | sudo
 Description: Dynamic Kernel Module Support Framework
  DKMS is a framework designed to allow individual kernel modules to be upgraded
  without changing the whole kernel. It is also very easy to rebuild modules as

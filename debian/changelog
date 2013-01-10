@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1ubuntu3.1) precise-proposed; urgency=low
+
+  * Don't Recommend any linux-headers packages, our installers
+    all install headers matching your kernel anyway, and this
+    dependency causes more problems than it solves (LP: #960770)
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Thu, 10 Jan 2013 13:11:20 +0200
+
 dkms (2.2.0.3-1ubuntu3) precise-proposed; urgency=low
 
   * Add linux-headers-generic-pae to recommended headers packages so that i386
