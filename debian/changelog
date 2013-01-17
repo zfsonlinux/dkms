@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1.1ubuntu1.1) quantal; urgency=low
+
+  * Don't Recommend any linux-headers packages, our installers
+    all install headers matching your kernel anyway, and this
+    dependency causes more problems than it solves (LP: #960770)
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Thu, 17 Jan 2013 16:27:13 -0700
+
 dkms (2.2.0.3-1.1ubuntu1) quantal-proposed; urgency=low
 
   * Merge from Debian unstable, remaining changes:
