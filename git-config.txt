@@ -1,0 +1,69 @@
+# .git/config
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = git@github.com:zfsonlinux/dkms.git
+[remote "debian"]
+	url = git://git.debian.org/pkg-dkms/dkms.git
+	fetch = +refs/heads/*:refs/remotes/debian/*
+[remote "dell"]
+	url = http://linux.dell.com/git/dkms.git
+	fetch = +refs/heads/*:refs/remotes/dell/*
+[remote "precise"]
+	url = bzr::lp:ubuntu/precise/dkms
+	fetch = +refs/heads/*:refs/remotes/precise/*
+[remote "precise-proposed"]
+	url = bzr::lp:ubuntu/precise-proposed/dkms
+	fetch = +refs/heads/*:refs/remotes/precise-proposed/*
+[remote "quantal"]
+	url = bzr::lp:ubuntu/quantal/dkms
+	fetch = +refs/heads/*:refs/remotes/quantal/*
+[remote "quantal-proposed"]
+	url = bzr::lp:ubuntu/quantal-proposed/dkms
+	fetch = +refs/heads/*:refs/remotes/quantal-proposed/*
+[remote "raring"]
+	url = bzr::lp:ubuntu/raring/dkms
+	fetch = +refs/heads/*:refs/remotes/raring/*
+[remote "raring-proposed"]
+	url = bzr::lp:ubuntu/raring-proposed/dkms
+	fetch = +refs/heads/*:refs/remotes/raring-proposed/*
+[branch "upstream/debian/master"]
+	remote = debian
+	merge = refs/heads/master
+[branch "upstream/debian/pristine-tar"]
+	remote = debian
+	merge = refs/heads/pristine-tar
+[branch "upstream/debian/upstream-repo/master"]
+	remote = debian
+	merge = refs/heads/upstream-repo/master
+[branch "upstream/debian/upstream"]
+	remote = debian
+	merge = refs/heads/upstream
+[branch "upstream/dell/master"]
+	remote = dell
+	merge = refs/heads/master
+[branch "upstream/dell/sles"]
+	remote = dell
+	merge = refs/heads/sles
+[branch "upstream/ubuntu/precise/master"]
+	remote = precise
+	merge = refs/heads/master
+[branch "upstream/ubuntu/precise-proposed/master"]
+	remote = precise-proposed
+	merge = refs/heads/master
+[branch "upstream/ubuntu/quantal/master"]
+	remote = quantal
+	merge = refs/heads/master
+[branch "upstream/ubuntu/quantal-proposed/master"]
+	remote = quantal-proposed
+	merge = refs/heads/master
+[branch "upstream/ubuntu/raring/master"]
+	remote = raring
+	merge = refs/heads/master
+[branch "upstream/ubuntu/raring-proposed/master"]
+	remote = raring-proposed
+	merge = refs/heads/master
