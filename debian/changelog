@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1ubuntu3.1+zfs4~precise1) precise; urgency=low
+
+  * Add 0001-Add-POST_BUILD-to-the-dkms_conf_variables-list.patch
+  * Add 0002-Use-STRIP-0-as-the-default-for-the-STRIP-array.patch
+  * Add 0003-Add-dependency-logic-for-automatic-builds.patch
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 21 Jan 2013 21:11:17 -0600
+
 dkms (2.2.0.3-1ubuntu3.1) precise-proposed; urgency=low
 
   * Don't Recommend any linux-headers packages, our installers

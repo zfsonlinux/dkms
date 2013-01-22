@@ -1,0 +1,42 @@
+From: Darik Horn <dajhorn@vanadac.com>
+Date: Fri, 28 Dec 2012 11:04:07 -0600
+Subject: Use STRIP[0] as the default for the STRIP array.
+
+If STRIP[0]='no' is set for the first module in a dkms.conf file,
+then all other modules are usually built the same way. Producing
+stripped and unstripped modules in the same build is rarely useful.
+
+Thus, if STRIP[0] is explicitly set, then use it as the default
+value for all other unset entries in the STRIP array.
+---
+ dkms   |    3 ++-
+ dkms.8 |    1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/dkms b/dkms
+index 9355f4e..fdc9d77 100644
+--- a/dkms
++++ b/dkms
+@@ -517,7 +517,8 @@ read_conf()
+ 	esac
+ 	case ${STRIP[$index]} in
+ 	    [nN]*) strip[$index]="no";;
+-	    *)     strip[$index]="yes";;
++	    [yY]*) strip[$index]="yes";;
++	    '')    strip[$index]=${strip[0]:-yes};;
+ 	esac
+ 
+ 	# If unset, set by defaults
+diff --git a/dkms.8 b/dkms.8
+index 908d9db..ddc4514 100644
+--- a/dkms.8
++++ b/dkms.8
+@@ -720,6 +720,7 @@ array directive.
+ .B STRIP[#]=
+ By default strip is considered to be "yes".  If set to "no", DKMS will not
+ run strip \-g against your built module to remove debug symbols from it.
++STRIP[0] is used as the default for any unset entries in the STRIP array.
+ .TP
+ .B PACKAGE_NAME=
+ This directive is used to give the name associated with the entire package of modules.  This is the same
+-- 
