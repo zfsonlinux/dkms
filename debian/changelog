@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1.2+zfs4) wheezy; urgency=low
+
+  * Import debian/patches with dependency support.
+  * Add debian/gbp.conf file.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Sat, 26 Jan 2013 17:06:02 -0600
+
 dkms (2.2.0.3-1.2) unstable; urgency=low
 
   * Non-maintainer upload.
