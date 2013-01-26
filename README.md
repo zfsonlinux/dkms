@@ -26,12 +26,12 @@ $ cd dkms
 
 1. List the current releases by branch name:
 ```
-$ git branch --list | grep master/
+$ git branch --list 'master/*'
 ```
 
 1. Or list previous releases by tag name:
 ```
-$ git tag --list | grep master/
+$ git tag --list 'master/*'
 ```
 
 1. Checkout the branch name or tag name that you want to build.  For example,
@@ -44,7 +44,6 @@ $ git checkout master/ubuntu/precise
 ```
 $ git-buildpackage -uc -us
 ```
-(Those two switches disable package signing.)
 
 1. And clean the working tree afterwards by doing this:
 ```
