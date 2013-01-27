@@ -12,8 +12,7 @@ from this repository using the git-buildpackage tool.
 
 Just do quick builds like this:
 ```
-$ apt-get source --build spl-linux
-$ apt-get source --build zfs-linux
+$ apt-get source --build dkms
 ```
 
 ## Developer Build Instructions
