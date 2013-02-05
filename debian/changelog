@@ -1,3 +1,9 @@
+dkms (2.2.0.3-1.1ubuntu2+zfs5~raring1) raring; urgency=low
+
+  * Fix zfs autoinstall failures for kernel upgrades.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Tue, 05 Feb 2013 00:11:30 -0600
+
 dkms (2.2.0.3-1.1ubuntu2+zfs4~raring1) raring; urgency=low
 
   * Add 0001-Add-POST_BUILD-to-the-dkms_conf_variables-list.patch
