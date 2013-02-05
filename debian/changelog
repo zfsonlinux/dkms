@@ -1,3 +1,9 @@
+dkms (2.2.0.3-1ubuntu3.1+zfs5~precise1) precise; urgency=low
+
+  * Fix autoinstall failures for kernel upgrades.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 04 Feb 2013 23:59:41 -0600
+
 dkms (2.2.0.3-1ubuntu3.1+zfs4~precise1) precise; urgency=low
 
   * Add 0001-Add-POST_BUILD-to-the-dkms_conf_variables-list.patch
