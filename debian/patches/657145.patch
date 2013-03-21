@@ -5,11 +5,11 @@ Subject: remove the directory where the module was installed
  remaining empty directories
 Bug-Debian: http://bugs.debian.org/657145
 
-diff --git a/dkms b/dkms
-index 042acc0..c96cd8f 100644
+Index: b/dkms
+===================================================================
 --- a/dkms
 +++ b/dkms
-@@ -1579,6 +1579,9 @@ do_uninstall()
+@@ -1579,6 +1579,9 @@
  	    echo $" - Uninstallation"
  	    echo $"   - Deleting from: $install_tree/$1${real_dest_module_location}/"
  	    rm -f "$install_tree/$1${real_dest_module_location}/${dest_module_name[$count]}$module_suffix"

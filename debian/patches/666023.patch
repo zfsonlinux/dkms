@@ -2,11 +2,11 @@ From: Andreas Beckmann <debian@abeckmann.de>
 Subject: do not fail if /lib/modules does not exist
 Bug-Debian: http://bugs.debian.org/666023
 
-diff --git a/dkms_common.postinst b/dkms_common.postinst
-index d8cf3a7..0c8cfc1 100644
+Index: b/dkms_common.postinst
+===================================================================
 --- a/dkms_common.postinst
 +++ b/dkms_common.postinst
-@@ -146,7 +146,7 @@ if [ -z "$NAME" ] || [ -z "$VERSION" ]; then
+@@ -146,7 +146,7 @@
      exit 1
  fi
  
