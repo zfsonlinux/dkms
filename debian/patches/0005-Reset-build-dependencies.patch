@@ -1,0 +1,33 @@
+From: Brian Behlendorf <behlendorf1@llnl.gov>
+Date: Wed, 20 Mar 2013 14:31:31 -0700
+Subject: Reset build dependencies
+
+For each iteration we need to rebuild ithe list of uninstalled
+build dependencies.  To do this next_depends must be reset for
+each pass so it can be recalculated.  Otherwise, we can hit the
+install_count early return and not install all the requested
+packages.
+
+The code should also use 'continue 2' instead of 'break 2' to
+ensure the full list of build_depends is checked.
+---
+ dkms |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/dkms b/dkms
+index 73071ea..d88237e 100644
+--- a/dkms
++++ b/dkms
+@@ -3217,9 +3217,10 @@ autoinstall() {
+ 
+ 		# Step 1: Remove installed modules from all dependency lists.
+ 		for m in ${!build_depends[@]}; do
++			next_depends=
+ 			for d in ${build_depends[$m]}; do
+ 				for i in ${installed_modules[@]}; do
+-					[[ "$d" = "$i" ]] && break 2
++					[[ "$d" = "$i" ]] && continue 2
+ 				done
+ 				next_depends+="$d "
+ 			done
+-- 
