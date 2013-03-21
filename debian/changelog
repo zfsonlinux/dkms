@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1.2+zfs6) wheezy; urgency=low
+
+  * Reimport and refresh debian/patches. Set build 6 here to reflect the
+    current Ubuntu release; build 5 for Debian Wheezy was not published.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Wed, 20 Mar 2013 19:48:38 -0500
+
 dkms (2.2.0.3-1.2+zfs4) wheezy; urgency=low
 
   * Import debian/patches with dependency support.
