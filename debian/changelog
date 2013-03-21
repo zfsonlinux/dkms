@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1ubuntu3.1+zfs6~precise1) precise; urgency=low
+
+  [ Brian Behlendorf ]
+  * Add Reset-build-dependencies.patch
+
+ -- Darik Horn <dajhorn@vanadac.com>  Wed, 20 Mar 2013 19:12:51 -0500
+
 dkms (2.2.0.3-1ubuntu3.1+zfs5~precise1) precise; urgency=low
 
   * Fix autoinstall failures for kernel upgrades.
