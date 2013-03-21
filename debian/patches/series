@@ -7,3 +7,4 @@ apport_python3.patch
 0002-Use-STRIP-0-as-the-default-for-the-STRIP-array.patch
 0003-Add-dependency-logic-for-automatic-builds.patch
 0004-Fix-zfs-autoinstall-failures-for-kernel-upgrades.patch
+0005-Reset-build-dependencies.patch
