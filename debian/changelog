@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1.1ubuntu2+zfs6~raring1) raring; urgency=low
+
+  [ Brian Behlendorf ]
+  * Add Reset-build-dependencies.patch
+
+ -- Darik Horn <dajhorn@vanadac.com>  Wed, 20 Mar 2013 19:16:54 -0500
+
 dkms (2.2.0.3-1.1ubuntu2+zfs5~raring1) raring; urgency=low
 
   * Fix zfs autoinstall failures for kernel upgrades.
