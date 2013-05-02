@@ -87,10 +87,12 @@ if 'DKMSBuildLog' in report:
     if 'Segmentation fault' in report['DKMSBuildLog']:
         sys.stderr.write('ERROR (dkms apport): There was a segmentation fault when trying to build the module\n')
         sys.exit(1)
+    dupe_sig = ''
     for line in report['DKMSBuildLog'].split('\n'):
-        if ': error:' in line:
-            report['DuplicateSignature'] = 'dkms:%s:%s:%s' % (package, version, line.strip())
-            break
+        if line.endswith(this_year):
+            continue
+        dupe_sig += line + '\n'
+    report['DuplicateSignature'] = dupe_sig
 
 if options.kernel:
     report['DKMSKernelVersion'] = options.kernel
