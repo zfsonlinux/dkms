@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1.1ubuntu3) saucy; urgency=low
+
+  * Add apport_dup_signature.patch: Don't use the whole DKMS build log as
+    duplicate signature, this is way too long. Just use the first actual
+    compiler error, together with the package name and version. (LP: #1175785)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 02 May 2013 15:39:26 -0700
+
 dkms (2.2.0.3-1.1ubuntu2) raring; urgency=low
 
   * Don't Recommend any linux-headers packages, our installers
