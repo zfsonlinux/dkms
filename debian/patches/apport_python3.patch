@@ -1,12 +1,12 @@
 Description: Port apport hook to Python 3 and take care of opening the output file in binary mode.
 Author: Martin Pitt <martin.pitt@ubuntu.com>
-Bug-Ubuntu: https://launchpad.net/1008092
-Bug-Ubuntu: https://launchpad.net/1013171
+Bug-Ubuntu: https://launchpad.net/bugs/1008092
+Bug-Ubuntu: https://launchpad.net/bugs/1013171
 
 Index: dkms-2.2.0.3/dkms_apport.py
 ===================================================================
---- dkms-2.2.0.3.orig/dkms_apport.py	2012-06-21 08:43:45.000000000 +0200
-+++ dkms-2.2.0.3/dkms_apport.py	2012-06-21 08:46:17.362949955 +0200
+--- dkms-2.2.0.3.orig/dkms_apport.py	2013-05-29 08:04:46.000000000 +0200
++++ dkms-2.2.0.3/dkms_apport.py	2013-05-29 08:28:40.000000000 +0200
 @@ -1,4 +1,4 @@
 -#!/usr/bin/python
 +#!/usr/bin/python3
@@ -68,3 +68,18 @@ Index: dkms-2.2.0.3/dkms_apport.py
 -report.write(open(apport.fileutils.make_report_path(report), 'w'))
 +with open(apport.fileutils.make_report_path(report), 'wb') as f:
 +    report.write(f)
+Index: dkms-2.2.0.3/dkms
+===================================================================
+--- dkms-2.2.0.3.orig/dkms	2013-05-29 08:04:46.000000000 +0200
++++ dkms-2.2.0.3/dkms	2013-05-29 08:30:55.406135813 +0200
+@@ -3032,8 +3032,8 @@
+ report_build_problem()
+ {
+     #If apport is on the system, files a build problem
+-    if [ -x /usr/share/apport/apport ] && which python>/dev/null; then
+-	python /usr/share/apport/package-hooks/dkms_packages.py -m $module -v $module_version -k ${kernelver[0]}
++    if [ -x /usr/share/apport/apport ] && which python3 >/dev/null; then
++	python3 /usr/share/apport/package-hooks/dkms_packages.py -m $module -v $module_version -k ${kernelver[0]}
+     fi
+     die "$@"
+ }
