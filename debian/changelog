@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1.1ubuntu4) saucy; urgency=low
+
+  * apport_python3.patch: Fix bug links in header.
+  * apport_python3.patch: Call package hook through python3, not python.
+    (LP: #1171344)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 29 May 2013 08:31:34 +0200
+
 dkms (2.2.0.3-1.1ubuntu3) saucy; urgency=low
 
   * Add apport_dup_signature.patch: Don't use the whole DKMS build log as
