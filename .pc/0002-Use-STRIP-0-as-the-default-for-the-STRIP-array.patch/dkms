@@ -517,8 +517,7 @@ read_conf()
 	esac
 	case ${STRIP[$index]} in
 	    [nN]*) strip[$index]="no";;
-	    [yY]*) strip[$index]="yes";;
-	    '')    strip[$index]=${strip[0]:-yes};;
+	    *)     strip[$index]="yes";;
 	esac
 
 	# If unset, set by defaults
@@ -3163,26 +3162,15 @@ make_kmp()
 # by hand if dkms_autoinstaller is not used.
 autoinstall() {
     local status mv mvka m v k a last_v last_m tenative
-    local install_count next_depends
     local -a to_install=()
-    local -a next_install=()
-    local -a installed_modules=()
-    local -A build_depends=()
-
     # Walk through our list of installed and built modules, and create
     # a list of modules that need to be reinstalled.
     while read status mvka; do
         IFS='/' read m v k a <<< "$mvka"
         [[ ! $last_m ]] && last_m="$m"
         # If the module is already installed or weak-installed, skip it.
-        if _is_module_installed "$m" "$v" "$kernelver" "$arch"; then
-		installed_modules[${#installed_modules[@]}]="$m"
-		continue
-	fi
-        if module_status_weak "$m" "$v" "$kernelver" "$arch" >/dev/null; then
-		installed_modules[${#installed_modules[@]}]="$m"
-		continue
-	fi
+        _is_module_installed "$m" "$v" "$kernelver" "$arch" && continue
+        module_status_weak "$m" "$v" "$kernelver" "$arch" >/dev/null && continue
         # if the module does not want to be autoinstalled, skip it.
         read_conf_or_die "$k" "$a" "$dkms_tree/$m/$v/source/dkms.conf"
         if [[ ! $AUTOINSTALL ]]; then
@@ -3191,10 +3179,7 @@ autoinstall() {
         elif [[ $last_m != $m ]]; then
             last_m="$m"
             last_v='0'
-            if [[ $tenative ]]; then
-                to_install[${#to_install[@]}]="$tenative"
-                build_depends["$m"]="${BUILD_DEPENDS[@]}"
-            fi
+            [[ $tenative ]] && to_install[${#to_install[@]}]="$tenative"
             tenative=''
         fi
         if [[ ($(VER $v) > $(VER $last_v)) ]]; then
@@ -3204,50 +3189,14 @@ autoinstall() {
     done < <(module_status)
     # We may have exited the loop with $tenative set.  If it is,
     # it contains something that should be updated.
-    if [[ $tenative ]]; then
-        to_install[${#to_install[@]}]="$tenative"
-        build_depends["$m"]="${BUILD_DEPENDS[@]}"
-    fi
+    [[ $tenative ]] && to_install[${#to_install[@]}]="$tenative"
     [[ $to_install ]] || return 0
-
-	while true; do
-		install_count=0
-		next_install=( )
-
-		# Step 1: Remove installed modules from all dependency lists.
-		for m in ${!build_depends[@]}; do
-			next_depends=
-			for d in ${build_depends[$m]}; do
-				for i in ${installed_modules[@]}; do
-					[[ "$d" = "$i" ]] && continue 2
-				done
-				next_depends+="$d "
-			done
-			build_depends[$m]="${next_depends%% }"
-		done
-
-		# Step 2: Install modules that have an empty dependency list.
-		for mv in "${to_install[@]}"; do
-			IFS=/ read m v <<< "$mv"
-			if [[ -z "${build_depends[$m]}" ]]; then
-				(module="$m"; module_version="$v"; install_module) &
-				installed_modules[${#installed_modules[@]}]="$m"
-				install_count=$(($install_count +1))
-			else
-				next_install[${#next_install[@]}]="$mv"
-			fi
-		done
-
-		wait
-
-		# Step 3: Keep going if at least one module was installed during
-		# this iteration.
-		[[ "$install_count" -gt 0 ]] || break;
-
-		# Step 4: Remove modules that were installed during Step 2 from
-		# the job queue.
-		to_install=( "${next_install[@]}" )
-	done
+    # Install modules that need to be updated in parallel.
+    for mv in "${to_install[@]}"; do
+        IFS=/ read m v <<< "$mv"
+        (module="$m"; module_version="$v"; install_module) &
+    done
+    wait
 }
 
 function make_redhat3_driver_disk ()
