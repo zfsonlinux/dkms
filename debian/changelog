@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1.1ubuntu4+zfs1~saucy) saucy; urgency=low
+
+  * Import ZoL patch-queue.
+  * Add debian/gbp.conf file.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 15 Jul 2013 16:38:36 -0500
+
 dkms (2.2.0.3-1.1ubuntu4) saucy; urgency=low
 
   * apport_python3.patch: Fix bug links in header.
