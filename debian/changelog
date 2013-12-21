@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1ubuntu3.2) precise-proposed; urgency=low
+
+  * Backport from trunk: Add patch that fixes have_one_kernel for non-
+    zero return code. (LP: #1261116)
+
+ -- Antonius Riha <antoniusriha@gmail.com>  Sat, 21 Dec 2013 10:15:29 +0100
+
 dkms (2.2.0.3-1ubuntu3.1) precise-proposed; urgency=low
 
   * Don't Recommend any linux-headers packages, our installers
