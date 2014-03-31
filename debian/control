@@ -23,7 +23,7 @@ Depends: ${misc:Depends},
 Recommends: fakeroot,
  menu | sudo
 Suggests: dpkg-dev, debhelper
-Provides: zfs-dkms-build_depends
+Provides: zfs-dkms-build-depends
 Description: Dynamic Kernel Module Support Framework
  DKMS is a framework designed to allow individual kernel modules to be upgraded
  without changing the whole kernel. It is also very easy to rebuild modules as
