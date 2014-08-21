@@ -14,7 +14,7 @@ Vcs-Browser: http://git.debian.org/?p=pkg-dkms/dkms.git
 Package: dkms
 Architecture: all
 Depends: ${misc:Depends},
- module-init-tools,
+ kmod,
  gcc,
  make | build-essential | dpkg-dev,
  coreutils (>= 7.4),
