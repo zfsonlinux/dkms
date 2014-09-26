@@ -1,3 +1,9 @@
+dkms (2.2.0.3-1.1ubuntu5+zfs9~utopic) utopic; urgency=low
+
+  * Update gbp.conf file for Ubuntu 14.10 Utopic Unicorn.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Thu, 25 Sep 2014 21:29:29 -0500
+
 dkms (2.2.0.3-1.1ubuntu5+zfs9~trusty) trusty; urgency=low
 
   * Rename zfs-dkms-build_depends to zfs-dkms-build-depends.
