@@ -1,3 +1,22 @@
+dkms (2.2.0.3-1.1ubuntu5+zfs9~trusty) trusty; urgency=low
+
+  * Rename zfs-dkms-build_depends to zfs-dkms-build-depends.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 31 Mar 2014 02:21:33 -0500
+
+dkms (2.2.0.3-1.1ubuntu5+zfs8~trusty) trusty; urgency=low
+
+  * Rename zfs-dkms to zfs-dkms-build_depends.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 31 Mar 2014 02:07:11 -0500
+
+dkms (2.2.0.3-1.1ubuntu5+zfs7~trusty) trusty; urgency=low
+
+  * Import the ZoL patch-queue and gbp.conf file.
+  * Provide a virtual zfs-dkms package.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 31 Mar 2014 01:35:14 -0500
+
 dkms (2.2.0.3-1.1ubuntu5) trusty; urgency=low
 
   [ Mario Limonciello ]
