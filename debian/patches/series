@@ -1,3 +1,5 @@
 666023.patch
 657145.patch
 688904.patch
+757758.patch
+fix_have_one_kernel_for_non-zero_return_code.diff
