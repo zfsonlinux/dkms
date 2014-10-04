@@ -1,3 +1,15 @@
+dkms (2.2.0.3-2) unstable; urgency=low
+
+  * [49fccbc] Depends on kmod | kldutils (Closes: #761728)
+  * [9064776] Fixed "sed without options" issue.
+    Thanks to Cristian Ionescu-Idbohrn (Closes: #757758, 763929)
+  * [1fa1a31] fixes have_one_kernel for non-zero return code.
+    Thanks to Mario Limonciello (Closes: #659672, #735181)
+  * [ba6140d] Added Multi-Arch: foreign.
+    Thanks to Ben Hutchings (Closes: #693634)
+
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 04 Oct 2014 19:51:23 +0200
+
 dkms (2.2.0.3-1.3) unstable; urgency=medium
 
   * Non-maintainer upload.
