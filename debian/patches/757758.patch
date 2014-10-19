@@ -1,0 +1,39 @@
+Index: b/dkms
+===================================================================
+--- a/dkms
++++ b/dkms
+@@ -748,6 +748,11 @@ moduleconfig_update_obsoletes()
+     [[ ${modules_conf_obsoletes[@]} ]] || return 0
+     # generate sed args to remove obsolete modules
+     local mod_diff
++
++    # FIXME: /etc/modules.conf and /etc/sysconfig/kernel style syntax are
++    #        mentioned here, but I'm also seeing /etc/modprobe.d/dkms and
++    #        /etc/modprobe.d/nvidia-current.conf which will be treated as
++    #        non- /etc/sysconfig/kernel; is that correct?
+     for ((index=0; index < ${#dest_module_name[@]}; index++)); do
+ 	[[ ${modules_conf_obsoletes[$index]} ]] || continue
+ 	for obsolete_module in ${modules_conf_obsoletes[$index]//,/ }; do
+@@ -764,16 +769,17 @@ moduleconfig_update_obsoletes()
+     # do all the changes at once, record the diffs for posterity
+     for file in "$@"; do
+ 	[[ $file && -w $file ]] || continue
++	_tmpf="$temp_dir_name/${file##*/}.new"
+ 	if [[ $file = /etc/sysconfig/kernel ]]; then
+-	    sed "${sa_sck_o[@]}" "$file" > "$temp_dir_name/${file##*/}.new"
++	    [ -z "${sa_sck_o[@]}" ] || sed "${sa_sck_o[@]}" "$file" > "$_tmpf"
+ 	else
+-	    sed "${sa_mc_o[@]}" "$file" > "$temp_dir_name/${file##*/}.new"
++	    [ -z "${sa_mc_o[@]}" ] || sed "${sa_mc_o[@]}" "$file" > "$_tmpf"
+ 	fi
+-	if ! mod_diff=$(diff -u "$temp_dir_name/${file##*/}.new" "$file"); then
++	if [ -f "$_tmpf" ] && ! mod_diff=$(diff -u "$_tmpf" "$file"); then
+ 	    echo $"$file updated to replace obsoleted module references:"
+ 	    echo "$mod_diff"
+-	    cp -fp "$temp_dir_name/${file##*/}.new" "$file"
+-	    rm -f "$temp_dir_name/${file##*/}.new"
++	    cp -fp "$_tmpf" "$file"
++	    rm -f "$_tmpf"
+ 	fi
+     done
+ }
