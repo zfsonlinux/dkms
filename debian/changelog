@@ -1,3 +1,9 @@
+dkms (2.2.0.3-1.1ubuntu5+zfs10~utopic) utopic; urgency=low
+
+  * Add patch for LP#1358373 and DBTS#757758.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Sun, 19 Oct 2014 17:55:17 -0500
+
 dkms (2.2.0.3-1.1ubuntu5+zfs9~utopic) utopic; urgency=low
 
   * Update gbp.conf file for Ubuntu 14.10 Utopic Unicorn.
