@@ -19,6 +19,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+shopt -s extglob
 
 # All of the variables we will accept from dkms.conf.
 # Does not include directives
@@ -760,16 +761,17 @@ moduleconfig_update_obsoletes()
     # do all the changes at once, record the diffs for posterity
     for file in "$@"; do
 	[[ $file && -w $file ]] || continue
+	_tmpf="$temp_dir_name/${file##*/}.new"
 	if [[ $file = /etc/sysconfig/kernel ]]; then
-	    sed "${sa_sck_o[@]}" "$file" > "$temp_dir_name/${file##*/}.new"
+	    [ -z "${sa_sck_o[@]}" ] || sed "${sa_sck_o[@]}" "$file" > "$_tmpf"
 	else
-	    sed "${sa_mc_o[@]}" "$file" > "$temp_dir_name/${file##*/}.new"
+	    [ -z "${sa_mc_o[@]}" ] || sed "${sa_mc_o[@]}" "$file" > "$_tmpf"
 	fi
-	if ! mod_diff=$(diff -u "$temp_dir_name/${file##*/}.new" "$file"); then
+	if [ -f "$_tmpf" ] && ! mod_diff=$(diff -u "$_tmpf" "$file"); then
 	    echo $"$file updated to replace obsoleted module references:"
 	    echo "$mod_diff"
-	    cp -fp "$temp_dir_name/${file##*/}.new" "$file"
-	    rm -f "$temp_dir_name/${file##*/}.new"
+	    cp -fp "$_tmpf" "$file"
+	    rm -f "$_tmpf"
 	fi
     done
 }
@@ -1270,28 +1272,6 @@ build_module()
     echo $"DKMS: build completed."
 }
 
-# Force the installation of a module if this is listed
-# in the files in $forced_modules_dir, if any
-force_installation()
-{
-    forced_modules_dir="/usr/share/dkms/modules_to_force_install"
-    to_force=""
-    if [ -d $forced_modules_dir ]; then
-        for elem in $forced_modules_dir/*; do
-            if [ -e $elem ]; then
-                to_force="$to_force $(cat $elem)"
-            fi
-        done
-
-        for elem in $to_force; do
-            if [ "${1}" = "${elem}" ]; then
-                return 0
-            fi
-        done
-    fi
-    return 1
-}
-
 # Install a previously built module
 # There are huge swaths of code here that special-case for various distros.
 # They should be split into their own functions.
@@ -1301,13 +1281,6 @@ install_module()
     is_module_built "$module" "$module_version" "$kernelver" "$arch" || build_module
     local base_dir="$dkms_tree/$module/$module_version/$kernelver/$arch"
     check_module_args install
-
-    # Save the status of $force
-    tmp_force="$force"
-
-    # If the module is set to be force-installed
-    force_installation $module && echo "Forcing installation of $module" \
-        && force="true"
 
     # Make sure that kernel exists to install into
     [[ -e $install_tree/$kernelver ]] || die 6 \
@@ -1446,9 +1419,6 @@ install_module()
     }
     echo $""
     echo $"DKMS: install completed."
-
-    # Restore the status of $force
-    force="$tmp_force"
 }
 
 # List each kernel object that has been installed for a particular module.
@@ -1859,7 +1829,7 @@ module_status_built_extra() (
 # we do not get word splitting where it would be inconvienent.
 module_status_built() {
     local ret=1 directory ka k a state oifs="$IFS" IFS=''
-    for directory in "$dkms_tree/$1/$2/"${3:-[0-9].*}/${4:-*}; do
+    for directory in "$dkms_tree/$1/$2/"${3:-+([0-9]).*}/${4:-*}; do
 	IFS="$oifs"
 	ka="${directory#$dkms_tree/$1/$2/}"
 	k="${ka%/*}"
@@ -3032,8 +3002,8 @@ make_kmp_srpm()
 report_build_problem()
 {
     #If apport is on the system, files a build problem
-    if [ -x /usr/share/apport/apport ] && which python3 >/dev/null; then
-	python3 /usr/share/apport/package-hooks/dkms_packages.py -m $module -v $module_version -k ${kernelver[0]}
+    if [ -x /usr/share/apport/apport ] && which python>/dev/null; then
+	python /usr/share/apport/package-hooks/dkms_packages.py -m $module -v $module_version -k ${kernelver[0]}
     fi
     die "$@"
 }
