@@ -1,3 +1,11 @@
+dkms (2.2.0.3-2ubuntu2) vivid; urgency=medium
+
+  * Add apport_package_key_with_version.patch: Include the package version in
+    the Package data as apport does this with any crash file it creates and
+    the Error Tracker expects to find the version there.
+
+ -- Brian Murray <brian@ubuntu.com>  Fri, 14 Nov 2014 10:37:49 -0800
+
 dkms (2.2.0.3-2ubuntu1) vivid; urgency=medium
 
   * Merge with Debian unstable. Remaining Ubuntu changes:

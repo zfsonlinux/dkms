@@ -7,3 +7,4 @@ apport_supported_kernel_packages.diff
 Add-support-for-forcing-modules-installation.patch
 apport_python3.patch
 apport_dup_signature.patch
+apport_package_key_with_version.patch
