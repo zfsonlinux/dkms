@@ -5,3 +5,4 @@ Add-support-for-forcing-modules-installation.patch
 apport_python3.patch
 apport_dup_signature.patch
 fix_have_one_kernel_for_non-zero_return_code.diff
+fixed_sed_without_options_issue.patch

@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1.1ubuntu5.14.10) utopic; urgency=medium
+
+  * fixed_sed_without_options_issue.patch: Backport of patch to fix sed issues.
+    (LP: #1358373)
+
+ -- Chris J Arges <chris.j.arges@canonical.com>  Mon, 01 Dec 2014 16:53:16 -0600
+
 dkms (2.2.0.3-1.1ubuntu5) trusty; urgency=low
 
   [ Mario Limonciello ]
