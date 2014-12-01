@@ -26,7 +26,7 @@ Index: b/dkms
         build_exclude OBSOLETE_BY MAKE MAKE_MATCH MODULES_CONF
         modules_conf_array PATCH PATCH_MATCH patch_array BUILT_MODULE_NAME
         built_module_name BUILT_MODULE_LOCATION built_module_location
-@@ -3166,15 +3166,26 @@
+@@ -3167,15 +3167,26 @@ make_kmp()
  # by hand if dkms_autoinstaller is not used.
  autoinstall() {
      local status mv mvka m v k a last_v last_m tenative
@@ -55,7 +55,7 @@ Index: b/dkms
          # if the module does not want to be autoinstalled, skip it.
          read_conf_or_die "$k" "$a" "$dkms_tree/$m/$v/source/dkms.conf"
          if [[ ! $AUTOINSTALL ]]; then
-@@ -3183,7 +3194,10 @@
+@@ -3184,7 +3195,10 @@ autoinstall() {
          elif [[ $last_m != $m ]]; then
              last_m="$m"
              last_v='0'
@@ -67,7 +67,7 @@ Index: b/dkms
              tenative=''
          fi
          if [[ ($(VER $v) > $(VER $last_v)) ]]; then
-@@ -3193,14 +3207,50 @@
+@@ -3194,14 +3208,50 @@ autoinstall() {
      done < <(module_status)
      # We may have exited the loop with $tenative set.  If it is,
      # it contains something that should be updated.
@@ -129,7 +129,7 @@ Index: b/dkms.8
 ===================================================================
 --- a/dkms.8
 +++ b/dkms.8
-@@ -826,6 +826,14 @@
+@@ -826,6 +826,14 @@ on
  .B dkms_autoinstaller
  for more information.
  .TP

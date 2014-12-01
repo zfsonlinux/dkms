@@ -2,19 +2,7 @@ Index: b/dkms
 ===================================================================
 --- a/dkms
 +++ b/dkms
-@@ -748,6 +748,11 @@ moduleconfig_update_obsoletes()
-     [[ ${modules_conf_obsoletes[@]} ]] || return 0
-     # generate sed args to remove obsolete modules
-     local mod_diff
-+
-+    # FIXME: /etc/modules.conf and /etc/sysconfig/kernel style syntax are
-+    #        mentioned here, but I'm also seeing /etc/modprobe.d/dkms and
-+    #        /etc/modprobe.d/nvidia-current.conf which will be treated as
-+    #        non- /etc/sysconfig/kernel; is that correct?
-     for ((index=0; index < ${#dest_module_name[@]}; index++)); do
- 	[[ ${modules_conf_obsoletes[$index]} ]] || continue
- 	for obsolete_module in ${modules_conf_obsoletes[$index]//,/ }; do
-@@ -764,16 +769,17 @@ moduleconfig_update_obsoletes()
+@@ -763,16 +763,17 @@ moduleconfig_update_obsoletes()
      # do all the changes at once, record the diffs for posterity
      for file in "$@"; do
  	[[ $file && -w $file ]] || continue

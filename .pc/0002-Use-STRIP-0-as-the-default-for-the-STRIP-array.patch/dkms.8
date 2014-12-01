@@ -720,7 +720,6 @@ array directive.
 .B STRIP[#]=
 By default strip is considered to be "yes".  If set to "no", DKMS will not
 run strip \-g against your built module to remove debug symbols from it.
-STRIP[0] is used as the default for any unset entries in the STRIP array.
 .TP
 .B PACKAGE_NAME=
 This directive is used to give the name associated with the entire package of modules.  This is the same
@@ -825,14 +824,6 @@ will automatically try to install this module on any kernel you boot into.  See 
 on
 .B dkms_autoinstaller
 for more information.
-.TP
-.B BUILD_DEPENDS[#]=
-This optional directive is an array that allows you to specify other modules as
-dependencies for your module. Each array element should be the
-.B PACKAGE_NAME
-of another module that is managed by dkms. Do not specify a version or
-architecture in the dependency. Note that this directive is only advisory;
-missing or broken dependencies cause non-fatal warnings.
 .TP
 .B BUILD_EXCLUSIVE_KERNEL=
 This optional directive allows you to specify a regular expression which defines
