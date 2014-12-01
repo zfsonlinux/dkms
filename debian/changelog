@@ -1,3 +1,10 @@
+dkms (2.2.0.3-1.1ubuntu5.14.04+zfs9~trusty) trusty; urgency=medium
+
+  * fixed_sed_without_options_issue.patch: Backport of patch to fix sed issues.
+    (LP: #1358373)
+
+ -- Darik Horn <dajhorn@vanadac.com>  Mon, 01 Dec 2014 16:53:16 -0600
+
 dkms (2.2.0.3-1.1ubuntu5+zfs9~trusty) trusty; urgency=low
 
   * Rename zfs-dkms-build_depends to zfs-dkms-build-depends.
