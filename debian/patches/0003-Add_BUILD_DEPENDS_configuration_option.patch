@@ -17,7 +17,13 @@ Index: b/dkms
 ===================================================================
 --- a/dkms
 +++ b/dkms
-@@ -24,7 +24,7 @@
+@@ -19,12 +19,13 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ #
+ 
++shopt -s extglob
+ 
+ # All of the variables we will accept from dkms.conf.
  # Does not include directives
  readonly dkms_conf_variables="CLEAN REMAKE_INITRD remake_initrd PACKAGE_NAME
         PACKAGE_VERSION POST_ADD POST_BUILD POST_INSTALL POST_REMOVE PRE_BUILD
@@ -26,7 +32,16 @@ Index: b/dkms
         build_exclude OBSOLETE_BY MAKE MAKE_MATCH MODULES_CONF
         modules_conf_array PATCH PATCH_MATCH patch_array BUILT_MODULE_NAME
         built_module_name BUILT_MODULE_LOCATION built_module_location
-@@ -3167,15 +3167,26 @@ make_kmp()
+@@ -1864,7 +1865,7 @@ module_status_built_extra() (
+ # we do not get word splitting where it would be inconvienent.
+ module_status_built() {
+     local ret=1 directory ka k a state oifs="$IFS" IFS=''
+-    for directory in "$dkms_tree/$1/$2/"${3:-[0-9].*}/${4:-*}; do
++    for directory in "$dkms_tree/$1/$2/"${3:-+([0-9]).*}/${4:-*}; do
+ 	IFS="$oifs"
+ 	ka="${directory#$dkms_tree/$1/$2/}"
+ 	k="${ka%/*}"
+@@ -3167,15 +3168,26 @@ make_kmp()
  # by hand if dkms_autoinstaller is not used.
  autoinstall() {
      local status mv mvka m v k a last_v last_m tenative
@@ -55,7 +70,7 @@ Index: b/dkms
          # if the module does not want to be autoinstalled, skip it.
          read_conf_or_die "$k" "$a" "$dkms_tree/$m/$v/source/dkms.conf"
          if [[ ! $AUTOINSTALL ]]; then
-@@ -3184,7 +3195,10 @@ autoinstall() {
+@@ -3184,7 +3196,10 @@ autoinstall() {
          elif [[ $last_m != $m ]]; then
              last_m="$m"
              last_v='0'
@@ -67,7 +82,7 @@ Index: b/dkms
              tenative=''
          fi
          if [[ ($(VER $v) > $(VER $last_v)) ]]; then
-@@ -3194,14 +3208,50 @@ autoinstall() {
+@@ -3194,14 +3209,50 @@ autoinstall() {
      done < <(module_status)
      # We may have exited the loop with $tenative set.  If it is,
      # it contains something that should be updated.

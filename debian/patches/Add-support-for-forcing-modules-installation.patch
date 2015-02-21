@@ -13,11 +13,11 @@ Signed-off-by: Alberto Milone <alberto.milone@canonical.com>
  dkms |   32 ++++++++++++++++++++++++++++++++
  1 files changed, 32 insertions(+), 0 deletions(-)
 
-diff --git a/dkms b/dkms
-index 042acc0..b26af41 100644
+Index: b/dkms
+===================================================================
 --- a/dkms
 +++ b/dkms
-@@ -1270,6 +1270,28 @@ build_module()
+@@ -1275,6 +1275,28 @@ build_module()
      echo $"DKMS: build completed."
  }
  
@@ -46,7 +46,7 @@ index 042acc0..b26af41 100644
  # Install a previously built module
  # There are huge swaths of code here that special-case for various distros.
  # They should be split into their own functions.
-@@ -1280,6 +1302,13 @@ install_module()
+@@ -1285,6 +1307,13 @@ install_module()
      local base_dir="$dkms_tree/$module/$module_version/$kernelver/$arch"
      check_module_args install
  
@@ -60,7 +60,7 @@ index 042acc0..b26af41 100644
      # Make sure that kernel exists to install into
      [[ -e $install_tree/$kernelver ]] || die 6 \
  	$"The directory $install_tree/$kernelver doesn't exist." \
-@@ -1417,6 +1446,9 @@ install_module()
+@@ -1422,6 +1451,9 @@ install_module()
      }
      echo $""
      echo $"DKMS: install completed."
@@ -70,6 +70,3 @@ index 042acc0..b26af41 100644
  }
  
  # List each kernel object that has been installed for a particular module.
--- 
-1.7.5.4
-
