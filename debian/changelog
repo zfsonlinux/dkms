@@ -1,3 +1,12 @@
+dkms (2.2.0.3-2ubuntu2+zfs1~vivid) vivid; urgency=low
+
+  [ Darik Horn ]
+  * Update gbp.conf for Ubuntu 15.04 Vivid Vervet.
+  * Merge branch 'upstream/ubuntu/vivid/master' into master/ubuntu/vivid
+  * Refresh debian/patches after upstream merge.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Sat, 21 Feb 2015 15:24:22 -0500
+
 dkms (2.2.0.3-2ubuntu2) vivid; urgency=medium
 
   * Add apport_package_key_with_version.patch: Include the package version in
