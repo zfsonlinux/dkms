@@ -19,13 +19,12 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-shopt -s extglob
 
 # All of the variables we will accept from dkms.conf.
 # Does not include directives
 readonly dkms_conf_variables="CLEAN REMAKE_INITRD remake_initrd PACKAGE_NAME
-       PACKAGE_VERSION POST_ADD POST_BUILD POST_INSTALL POST_REMOVE PRE_BUILD
-       PRE_INSTALL BUILD_DEPENDS BUILD_EXCLUSIVE_KERNEL BUILD_EXCLUSIVE_ARCH
+       PACKAGE_VERSION POST_ADD POST_INSTALL POST_REMOVE PRE_BUILD
+       PRE_INSTALL BUILD_EXCLUSIVE_KERNEL BUILD_EXCLUSIVE_ARCH
        build_exclude OBSOLETE_BY MAKE MAKE_MATCH MODULES_CONF
        modules_conf_array PATCH PATCH_MATCH patch_array BUILT_MODULE_NAME
        built_module_name BUILT_MODULE_LOCATION built_module_location
@@ -163,14 +162,11 @@ set_kernel_source_dir()
 
 # A little test function for DKMS commands that only work on one kernel.
 have_one_kernel() {
-    if (( ${#kernelver[@]} != 1 )); then
-        die 4 $"The action $1 does not support multiple kernel version" \
-        $"parameters on the command line."
-    fi
-    if [[ $all ]]; then
-        die 5 $"The action $1 does not support the --all" \
-        $"parameter."
-    fi
+    (( ${#kernelver[@]} > 1 )) && \
+	die 4 $"The action $1 does not support multiple kernel version" \
+	$"parameters on the command line."
+    [[ $all ]] && die 5 $"The action $1 does not support the --all" \
+	$"parameter."
 }
 
 # Set up the kernelver and arch arrays.  You must have a 1:1 correspondence --
@@ -521,8 +517,7 @@ read_conf()
 	esac
 	case ${STRIP[$index]} in
 	    [nN]*) strip[$index]="no";;
-	    [yY]*) strip[$index]="yes";;
-	    '')    strip[$index]=${strip[0]:-yes};;
+	    *)     strip[$index]="yes";;
 	esac
 
 	# If unset, set by defaults
@@ -765,17 +760,16 @@ moduleconfig_update_obsoletes()
     # do all the changes at once, record the diffs for posterity
     for file in "$@"; do
 	[[ $file && -w $file ]] || continue
-	_tmpf="$temp_dir_name/${file##*/}.new"
 	if [[ $file = /etc/sysconfig/kernel ]]; then
-	    [ -z "${sa_sck_o[@]}" ] || sed "${sa_sck_o[@]}" "$file" > "$_tmpf"
+	    sed "${sa_sck_o[@]}" "$file" > "$temp_dir_name/${file##*/}.new"
 	else
-	    [ -z "${sa_mc_o[@]}" ] || sed "${sa_mc_o[@]}" "$file" > "$_tmpf"
+	    sed "${sa_mc_o[@]}" "$file" > "$temp_dir_name/${file##*/}.new"
 	fi
-	if [ -f "$_tmpf" ] && ! mod_diff=$(diff -u "$_tmpf" "$file"); then
+	if ! mod_diff=$(diff -u "$temp_dir_name/${file##*/}.new" "$file"); then
 	    echo $"$file updated to replace obsoleted module references:"
 	    echo "$mod_diff"
-	    cp -fp "$_tmpf" "$file"
-	    rm -f "$_tmpf"
+	    cp -fp "$temp_dir_name/${file##*/}.new" "$file"
+	    rm -f "$temp_dir_name/${file##*/}.new"
 	fi
     done
 }
@@ -1276,28 +1270,6 @@ build_module()
     echo $"DKMS: build completed."
 }
 
-# Force the installation of a module if this is listed
-# in the files in $forced_modules_dir, if any
-force_installation()
-{
-    forced_modules_dir="/usr/share/dkms/modules_to_force_install"
-    to_force=""
-    if [ -d $forced_modules_dir ]; then
-        for elem in $forced_modules_dir/*; do
-            if [ -e $elem ]; then
-                to_force="$to_force $(cat $elem)"
-            fi
-        done
-
-        for elem in $to_force; do
-            if [ "${1}" = "${elem}" ]; then
-                return 0
-            fi
-        done
-    fi
-    return 1
-}
-
 # Install a previously built module
 # There are huge swaths of code here that special-case for various distros.
 # They should be split into their own functions.
@@ -1307,13 +1279,6 @@ install_module()
     is_module_built "$module" "$module_version" "$kernelver" "$arch" || build_module
     local base_dir="$dkms_tree/$module/$module_version/$kernelver/$arch"
     check_module_args install
-
-    # Save the status of $force
-    tmp_force="$force"
-
-    # If the module is set to be force-installed
-    force_installation $module && echo "Forcing installation of $module" \
-        && force="true"
 
     # Make sure that kernel exists to install into
     [[ -e $install_tree/$kernelver ]] || die 6 \
@@ -1452,9 +1417,6 @@ install_module()
     }
     echo $""
     echo $"DKMS: install completed."
-
-    # Restore the status of $force
-    force="$tmp_force"
 }
 
 # List each kernel object that has been installed for a particular module.
@@ -1865,7 +1827,7 @@ module_status_built_extra() (
 # we do not get word splitting where it would be inconvienent.
 module_status_built() {
     local ret=1 directory ka k a state oifs="$IFS" IFS=''
-    for directory in "$dkms_tree/$1/$2/"${3:-+([0-9]).*}/${4:-*}; do
+    for directory in "$dkms_tree/$1/$2/"${3:-[0-9].*}/${4:-*}; do
 	IFS="$oifs"
 	ka="${directory#$dkms_tree/$1/$2/}"
 	k="${ka%/*}"
@@ -3038,8 +3000,8 @@ make_kmp_srpm()
 report_build_problem()
 {
     #If apport is on the system, files a build problem
-    if [ -x /usr/share/apport/apport ] && which python3 >/dev/null; then
-	python3 /usr/share/apport/package-hooks/dkms_packages.py -m $module -v $module_version -k ${kernelver[0]}
+    if [ -x /usr/share/apport/apport ] && which python>/dev/null; then
+	python /usr/share/apport/package-hooks/dkms_packages.py -m $module -v $module_version -k ${kernelver[0]}
     fi
     die "$@"
 }
@@ -3168,26 +3130,15 @@ make_kmp()
 # by hand if dkms_autoinstaller is not used.
 autoinstall() {
     local status mv mvka m v k a last_v last_m tenative
-    local install_count next_depends
     local -a to_install=()
-    local -a next_install=()
-    local -a installed_modules=()
-    local -A build_depends=()
-
     # Walk through our list of installed and built modules, and create
     # a list of modules that need to be reinstalled.
     while read status mvka; do
         IFS='/' read m v k a <<< "$mvka"
         [[ ! $last_m ]] && last_m="$m"
         # If the module is already installed or weak-installed, skip it.
-        if _is_module_installed "$m" "$v" "$kernelver" "$arch"; then
-		installed_modules[${#installed_modules[@]}]="$m"
-		continue
-	fi
-        if module_status_weak "$m" "$v" "$kernelver" "$arch" >/dev/null; then
-		installed_modules[${#installed_modules[@]}]="$m"
-		continue
-	fi
+        _is_module_installed "$m" "$v" "$kernelver" "$arch" && continue
+        module_status_weak "$m" "$v" "$kernelver" "$arch" >/dev/null && continue
         # if the module does not want to be autoinstalled, skip it.
         read_conf_or_die "$k" "$a" "$dkms_tree/$m/$v/source/dkms.conf"
         if [[ ! $AUTOINSTALL ]]; then
@@ -3196,10 +3147,7 @@ autoinstall() {
         elif [[ $last_m != $m ]]; then
             last_m="$m"
             last_v='0'
-            if [[ $tenative ]]; then
-                to_install[${#to_install[@]}]="$tenative"
-                build_depends["$m"]="${BUILD_DEPENDS[@]}"
-            fi
+            [[ $tenative ]] && to_install[${#to_install[@]}]="$tenative"
             tenative=''
         fi
         if [[ ($(VER $v) > $(VER $last_v)) ]]; then
@@ -3209,50 +3157,14 @@ autoinstall() {
     done < <(module_status)
     # We may have exited the loop with $tenative set.  If it is,
     # it contains something that should be updated.
-    if [[ $tenative ]]; then
-        to_install[${#to_install[@]}]="$tenative"
-        build_depends["$m"]="${BUILD_DEPENDS[@]}"
-    fi
+    [[ $tenative ]] && to_install[${#to_install[@]}]="$tenative"
     [[ $to_install ]] || return 0
-
-	while true; do
-		install_count=0
-		next_install=( )
-
-		# Step 1: Remove installed modules from all dependency lists.
-		for m in ${!build_depends[@]}; do
-			next_depends=
-			for d in ${build_depends[$m]}; do
-				for i in ${installed_modules[@]}; do
-					[[ "$d" = "$i" ]] && continue 2
-				done
-				next_depends+="$d "
-			done
-			build_depends[$m]="${next_depends%% }"
-		done
-
-		# Step 2: Install modules that have an empty dependency list.
-		for mv in "${to_install[@]}"; do
-			IFS=/ read m v <<< "$mv"
-			if [[ -z "${build_depends[$m]}" ]]; then
-				(module="$m"; module_version="$v"; install_module) &
-				installed_modules[${#installed_modules[@]}]="$m"
-				install_count=$(($install_count +1))
-			else
-				next_install[${#next_install[@]}]="$mv"
-			fi
-		done
-
-		wait
-
-		# Step 3: Keep going if at least one module was installed during
-		# this iteration.
-		[[ "$install_count" -gt 0 ]] || break;
-
-		# Step 4: Remove modules that were installed during Step 2 from
-		# the job queue.
-		to_install=( "${next_install[@]}" )
-	done
+    # Install modules that need to be updated in parallel.
+    for mv in "${to_install[@]}"; do
+        IFS=/ read m v <<< "$mv"
+        (module="$m"; module_version="$v"; install_module) &
+    done
+    wait
 }
 
 function make_redhat3_driver_disk ()

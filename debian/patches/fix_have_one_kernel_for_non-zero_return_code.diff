@@ -3,11 +3,9 @@ Author: Mario Limonciello <Mario_Limonciello@Dell.com>
 Origin: upstream
 Bug-Ubuntu: https://bugs.launchpad.net/bugs/1261116
 
-Index: dkms/dkms
-===================================================================
---- dkms.orig/dkms	2014-01-10 16:33:48.000168000 +0100
-+++ dkms/dkms	2014-01-10 16:44:48.522601051 +0100
-@@ -162,11 +162,14 @@
+--- a/dkms
++++ b/dkms
+@@ -163,11 +163,14 @@
  
  # A little test function for DKMS commands that only work on one kernel.
  have_one_kernel() {

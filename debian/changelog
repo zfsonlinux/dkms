@@ -1,40 +1,51 @@
-dkms (2.2.0.3-1.1ubuntu5.14.10+zfs10+utopic) utopic; urgency=medium
+dkms (2.2.0.3-2ubuntu2) vivid; urgency=medium
 
-  * fixed_sed_without_options_issue.patch: Backport of patch to fix sed issues.
-    (LP: #1358373)
+  * Add apport_package_key_with_version.patch: Include the package version in
+    the Package data as apport does this with any crash file it creates and
+    the Error Tracker expects to find the version there.
 
- -- Darik Horn <dajhorn@vanadac.com>  Mon, 01 Dec 2014 16:53:16 -0600
+ -- Brian Murray <brian@ubuntu.com>  Fri, 14 Nov 2014 10:37:49 -0800
 
-dkms (2.2.0.3-1.1ubuntu5+zfs10~utopic) utopic; urgency=low
+dkms (2.2.0.3-2ubuntu1) vivid; urgency=medium
 
-  * Add patch for LP#1358373 and DBTS#757758.
+  * Merge with Debian unstable. Remaining Ubuntu changes:
+    - Some patches, see their patch header for details:
+      Add-support-for-forcing-modules-installation.patch,
+      apport_dup_signature.patch,
+      apport_python3.patch,
+      apport_supported_kernel_packages.diff
+  * Add debian/scripts/dkms-autopkgtest script: Common autopkgtest script for
+    testing a dkms source package.
 
- -- Darik Horn <dajhorn@vanadac.com>  Sun, 19 Oct 2014 17:55:17 -0500
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 11 Nov 2014 10:57:50 +0100
 
-dkms (2.2.0.3-1.1ubuntu5+zfs9~utopic) utopic; urgency=low
+dkms (2.2.0.3-2) unstable; urgency=low
 
-  * Update gbp.conf file for Ubuntu 14.10 Utopic Unicorn.
+  * [49fccbc] Depends on kmod | kldutils (Closes: #761728)
+  * [9064776] Fixed "sed without options" issue.
+    Thanks to Cristian Ionescu-Idbohrn (Closes: #757758, 763929)
+  * [1fa1a31] fixes have_one_kernel for non-zero return code.
+    Thanks to Mario Limonciello (Closes: #659672, #735181)
+  * [ba6140d] Added Multi-Arch: foreign.
+    Thanks to Ben Hutchings (Closes: #693634)
 
- -- Darik Horn <dajhorn@vanadac.com>  Thu, 25 Sep 2014 21:29:29 -0500
+ -- Giuseppe Iuculano <iuculano@debian.org>  Sat, 04 Oct 2014 19:51:23 +0200
 
-dkms (2.2.0.3-1.1ubuntu5+zfs9~trusty) trusty; urgency=low
+dkms (2.2.0.3-1.3) unstable; urgency=medium
 
-  * Rename zfs-dkms-build_depends to zfs-dkms-build-depends.
+  * Non-maintainer upload.
+  * Replace dependency on transitional module-init-tools package with kmod.
+    (Closes: #733695)
 
- -- Darik Horn <dajhorn@vanadac.com>  Mon, 31 Mar 2014 02:21:33 -0500
+ -- Michael Biebl <biebl@debian.org>  Thu, 21 Aug 2014 05:43:30 +0200
 
-dkms (2.2.0.3-1.1ubuntu5+zfs8~trusty) trusty; urgency=low
+dkms (2.2.0.3-1.2) unstable; urgency=low
 
-  * Rename zfs-dkms to zfs-dkms-build_depends.
+  * Non-maintainer upload.
+  * Don't fail if kernel major version number is not single-digit (like on
+    kfreebsd-10) (Closes: 688904)
 
- -- Darik Horn <dajhorn@vanadac.com>  Mon, 31 Mar 2014 02:07:11 -0500
-
-dkms (2.2.0.3-1.1ubuntu5+zfs7~trusty) trusty; urgency=low
-
-  * Import the ZoL patch-queue and gbp.conf file.
-  * Provide a virtual zfs-dkms package.
-
- -- Darik Horn <dajhorn@vanadac.com>  Mon, 31 Mar 2014 01:35:14 -0500
+ -- Christoph Egger <christoph@debian.org>  Fri, 05 Oct 2012 20:52:34 -0700
 
 dkms (2.2.0.3-1.1ubuntu5) trusty; urgency=low
 
