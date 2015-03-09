@@ -1,3 +1,11 @@
+dkms (2.2.0.3-1.1ubuntu5.14.10.1) utopic; urgency=medium
+
+  * Add apport_package_key_with_version.patch: Include the package version in
+    the Package data as apport does this with any report it creates and the
+    Error Tracker expects to find the version there. (LP: #1429967)
+
+ -- Brian Murray <brian@ubuntu.com>  Mon, 09 Mar 2015 11:16:12 -0700
+
 dkms (2.2.0.3-1.1ubuntu5.14.10) utopic; urgency=medium
 
   * fixed_sed_without_options_issue.patch: Backport of patch to fix sed issues.
