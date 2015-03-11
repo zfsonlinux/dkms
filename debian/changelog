@@ -1,3 +1,11 @@
+dkms (2.2.0.3-2ubuntu3+zfs1~vivid) vivid; urgency=medium
+
+  [ Steve Langasek ]
+  * Re-fix LP: #960770, the change for which was dropped in the latest merge
+    from Debian.
+
+ -- Darik Horn <dajhorn@vanadac.com>  Wed, 11 Mar 2015 11:15:36 -0700
+
 dkms (2.2.0.3-2ubuntu2+zfs1~vivid) vivid; urgency=low
 
   [ Darik Horn ]
